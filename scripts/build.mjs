@@ -1,0 +1,2 @@
+import {mkdir,cp,rm,writeFile} from 'node:fs/promises';
+const dest=new URL('../dist/',import.meta.url);await rm(dest,{force:true,recursive:true});await mkdir(dest,{recursive:true});for(const file of ['index.html','src','docs','public'])await cp(new URL('../'+file,import.meta.url),new URL('./'+file,dest),{recursive:true});await writeFile(new URL('./.nojekyll',dest),'');console.log('Static build output: dist/ (offline, no package dependency)');

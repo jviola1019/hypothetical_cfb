@@ -1,0 +1,3 @@
+import {performance} from 'node:perf_hooks';import {DEFAULT_CONFIG,simulateGame,simulateBatch} from '../src/engine.js';import {createTournament,simulateTournament,monteCarloTournament} from '../src/tournament.js';
+const measure=(name,fn)=>{const st=performance.now();const result=fn();console.log(`${name}: ${(performance.now()-st).toFixed(1)} ms`);return result};
+measure('1 game',()=>simulateGame(DEFAULT_CONFIG));measure('1,000 games + aggregate',()=>simulateBatch(DEFAULT_CONFIG,1000));for(const x of ['fbs12','fbs24','custom64','custom128'])measure(`${x}: 1 full tournament`,()=>simulateTournament(createTournament(x)));measure('12-team: 50 Monte Carlo tournaments',()=>monteCarloTournament(createTournament('fbs12'),50,DEFAULT_CONFIG));

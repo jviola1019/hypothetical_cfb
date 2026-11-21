@@ -1,0 +1,12 @@
+{
+  "version": "0.3.0-demo",
+  "retrieved": "2026-11-20",
+  "model": "synthetic-drive-generator",
+  "calibration": "not-trained",
+  "observed_game_rows": 0,
+  "real_player_rows": 0,
+  "team_names": "display identifiers only",
+  "season_options": {"min": 2010, "max": 2026, "synthetic": true},
+  "data_license": "no third party dataset included",
+  "source_notes": ["docs/DATA_PROVENANCE.md", "docs/MODEL_CARD.md"]
+}
