@@ -1,4 +1,5 @@
 import {FBS_TEAMS} from './catalog.js';
+import {getPlayerEvidence} from './playerEvidence.js';
 /**
  * Historical reference cards, 2025 completed season only.
  * These are observed full-season statistics, not point-in-time forecast inputs.
@@ -136,9 +137,25 @@ export function namedPlayer(id,role,season=2026){
  if(p){
    const pref=ROLE_PREFERENCE[role]||[];
    const candidates=p.filter(x=>pref.includes(x.position));
+   // The roster identifies eligible names, NOT starters. When a same-season
+   // derived player-event summary is available, rank roster-matched names by
+   // observed sample count and volume. It is not a projected depth chart.
+   const eventDoc=n===2026?getPlayerEvidence(id,2026):null;
+   const expectedStat=role==='QB'?'passingYards':role==='RB'?'rushingYards':role==='K'?'fieldGoalsMade':'receivingYards';
+   const normalize=name=>String(name).normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[\u2018\u2019]/g,"'").replace(/\s+/g,' ').trim().toLowerCase();
+   const evidence=new Map((eventDoc?.players||[]).filter(x=>x.stat===expectedStat).map(x=>[normalize(x.name),x]));
+   candidates.sort((a,b)=>{
+     const x=evidence.get(normalize(a.name)),y=evidence.get(normalize(b.name));
+     return (y?.n||0)-(x?.n||0)||(y?.mean||0)-(x?.mean||0)||a.name.localeCompare(b.name);
+   });
    const index=role==='WR2'?1:0;
    const selected=candidates[index];
-   if(selected)return {...selected,stat:null,total:null,games:null,rosterOnly:true};
+   if(selected){
+     const e=evidence.get(normalize(selected.name));
+     return {...selected,stat:null,total:null,games:null,rosterOnly:true,
+       selectionBasis:e?'2026-roster-matched-recorded-events':'2026-roster-position-only',
+       eventGames:e?.n||0};
+   }
  }
  return n===2025?HISTORICAL[id]?.players?.[role]||null:null;
 }

@@ -1,5 +1,5 @@
 {
-  "version": "0.9.1",
+  "version": "1.0.0",
   "releaseDate": "2026-11-21",
   "model": "neutral-fallback-with-historical-team-profile-when-loaded",
   "calibration": "game-generator-not-calibrated-player-props-not-calibrated",
@@ -41,5 +41,10 @@
     "teamA",
     "teamB",
     "venue"
-  ]
+  ],
+  "bracketFormats": "2,4,8,12,16,24,32,48,64,68,96,128,138",
+  "defaultSeeding": "2026 Elo research snapshot as of last scored game, or explicitly labeled observed/unranked fallback",
+  "simulatedAthleteIdentity": "2026 roster identity only; same-season derived athlete events may rank roster-linked illustrative positions; no verified starters",
+  "researchSourceCutoffUtc": "2026-11-15T18:00:00.000Z",
+  "realismNotice": "Score/drive and player prop simulations remain synthetic and uncalibrated; 2026 player-event histories are retrospective conditionally observed data"
 }

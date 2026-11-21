@@ -1,3 +1,11 @@
+# 1.0.0 — 2026 National Open / 2026-11-21
+
+- Source-ranked model seeds instead of alphabetical fields; ranked 2026 Elo (snapshot Nov 15), explicit fallback and committee disclaimer.
+- 138-team FBS playoff, 68-team March-style field and full seed-swap desk prior to simulation. Large mobile bracket paginated to 16 matches per page.
+- Linked the same-season 2026 full-name roster evidence to simulated players, game inspector and worker forecast distributions. Fixed worker/main-thread mismatch.
+- Added all-format, malicious-input, 2026 no-leak, and isolated worker-parity regression tests; architecture, QA and provenance documentation.
+- Kept real historical observations, derived player-event summaries and synthetic game outcomes visually separate.
+
 # Changelog
 
 ## v0.4.0 — November 21, 2026

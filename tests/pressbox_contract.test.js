@@ -54,5 +54,5 @@ test('three-tab navigation, reduced motion, visible focus, and data provenance r
  assert.match(app,/Hypothetical • uncalibrated/);
  assert.match(app,/2026 is not pristine holdout data/);
  assert.match(app,/Missing games and nonparticipation are not modeled as zeros/);
- assert.match(app,/Official format geometry, hypothetical entrants/);
+ assert.match(app,/Official CFP bracket geometry/);
 });

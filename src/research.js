@@ -28,6 +28,23 @@ export function installResearchSnapshot(x){
   report=structuredClone(x);
   return Object.keys(report.teamState).length;
 }
+/**
+ * As-of 2026 opponent-adjusted Elo rankings for fantasy seeding only.
+ * This is NOT the CFP Selection Committee order. Never use future game results
+ * for a historical forecast: the terminal ratings only rank a new bracket.
+ */
+export function evaluatedFbsRankings() {
+  if (!report) return null;
+  const schools = Object.entries(report.teamState)
+    .filter(([id, team]) => IDs.has(id) && Number.isFinite(team.elo))
+    .map(([id, team]) => ({id, score:team.elo, games:team.gamesCurrentSeason}));
+  if (schools.length < 130) return null;
+  schools.sort((a,b)=>b.score-a.score || b.games-a.games || a.id.localeCompare(b.id));
+  return {ids:schools.map(s=>s.id), scores:Object.fromEntries(schools.map(s=>[s.id,s.score])),
+    source:'2026 Elo research rating (provisional, not committee)', asOf:report.lastScoredGame||report.asOf,
+    model:report.modelVersion, covered:schools.length};
+}
+
 export const researchStatus=()=>report?{available:true,version:report.modelVersion,asOf:report.asOf,lastScoredGame:report.lastScoredGame,
   holdoutGames:report.holdout.evaluatedGames,trainingGames:report.training.games}: {available:false};
 export function evaluatedMatchup(a,b,venue){

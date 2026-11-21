@@ -1,3 +1,30 @@
+# GRIDIRON LAB 1.0 — as implemented (2026-11-21)
+
+## New implementation
+
+- Verified 2026 FBS roster snapshot in GitHub: 138 school rosters, **15,187 full-name athlete identities**; used in generated Game and playoff games. **Names are not verified starting lineups.** Derived 2026 player-event summaries are used only after same-school roster matching, to rank illustrative role slots.
+- Resolved worker/main-thread roster-linked player identity mismatch: the same 2026 evidence is sent to the browser worker, with isolated Node worker parity test.
+- Research Elo default rank order with explicit as-of date **2026-11-15** and provisional/committee distinction. Swaps are reversible, locked after beginning, and resettable.
+- User-facing 138 FBS National Open (10 preliminary games, 118 first-stage byes, 128-team main bracket, 137 total games), 68-team March-style competition, 64/96/128 and smaller formats; FCS mixed-field demo removed from public selector because it lacked a verified 2026 FCS roster.
+- New seeded-field journal, swap console, paginated round/quadrant bracket atlas capped at 16 games/page, purpose-built mobile layouts, fixed provenance and scores. Existing three main tabs retained.
+
+## Executed evidence
+
+- Node JS test suite: **77 passed, 1 skipped locally**, 0 failed. The skipped test requires large 2026 data files present in the GitHub repo, and will execute in remote CI.
+- Python tests **28/28 passed**. Syntax checks and static build passed. Chromium source-injected DOM harness **390px and 1370px** passed both regular format and 138-team browser interactions, reset/swap and match inspector. Actual isolated Node worker identity parity passed.
+- All 13 public tournament formats complete with N−1 games and one champion; a full 138-team single tournament median local Node runtime 14.16ms (10 runs). Major CSS foreground pairs have contrast >=9.8:1. Not physical iPhone measurements nor full WCAG certification.
+- Remote action/deployment status verified separately after GitHub commit (not asserted here).
+
+## Still incomplete
+
+- Player props and generated possessions remain **synthetic and uncalibrated**. Data recency differs by school; no verified live starts, injuries or playing time.
+- Research ratings from completed games only through Nov 15 are not current official rankings; no new independent backtest is claimed.
+- Real native Safari and browser Web Workers, full 92-case security testing, screen readers, and FBS/FCS official committee eligibility reconstruction require further verification.
+
+See `docs/ARCHITECTURE_V10.md`, `docs/VALIDATION_V10.md`, `docs/QA_GAUNTLET_V10.md`, `docs/DATA_PROVENANCE.md`.
+
+---
+
 # GRIDIRON LAB v0.9.1 — release status (2026-11-21)
 
 ## Implemented and tested locally

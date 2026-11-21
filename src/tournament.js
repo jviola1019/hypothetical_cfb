@@ -1,10 +1,13 @@
 import {TEAM_MAP,TEAMS,DEFAULT_CONFIG,ENGINE_VERSION,hash32,rng,validateConfig,simulateGame} from './engine.js';
 import {selectCFPField} from './cfpSelection.js';
+import {evaluatedFbsRankings} from './research.js';
+import {observed,sourceStatus} from './observed.js';
 export const FORMATS=[
 {id:'fbs12',label:'CFP 12 · 2026–27',size:12,kind:'official-fbs',byes:4,season:'2026–27'},
 {id:'fbs24',label:'CFP 24 · 2027–28',size:24,kind:'official-fbs',byes:8,season:'2027–28'},
 {id:'fcs24',label:'FCS-inspired 24 · mixed-field demo',size:24,kind:'fcs-inspired',byes:8,season:'hypothetical'},
-...([2,4,8,16,32,48,64,68,96,128].map(n=>({id:'custom'+n,label:`${n} teams · hypothetical`,size:n,kind:'hypothetical',byes:null,season:'custom'})))
+{id:'fullFbs138',label:'ALL 138 FBS · National open',size:138,kind:'hypothetical',byes:118,season:'2026 — all FBS'},
+...([2,4,8,16,32,48,64,68,96,128].map(n=>({id:'custom'+n,label:n===68?'MARCH MAYHEM · 68 teams':n===64?'NATIONAL 64 · four regions':n===128?'THE FIELD · 128 teams':`${n} teams · hypothetical`,size:n,kind:'hypothetical',byes:null,season:'custom'})))
 ];
 export const FORMAT_MAP=Object.fromEntries(FORMATS.map(x=>[x.id,x]));
 // Official field-qualification policy is not inferred from model ranking: users
@@ -29,8 +32,43 @@ function validSimulatedWinner(game,a,b){return !!game&&game.config?.a===a&&game.
 export function seedOrder(n){if(n<2||(n&(n-1))!==0)throw Error('Power-of-two bracket required');let a=[1,2];for(let m=4;m<=n;m*=2)a=a.flatMap(v=>[v,m+1-v]);return a;}
 export function rulesOrder(format){let n=1;while(n<format.size)n*=2;let order=seedOrder(n);if(format.id==='fbs24')order=[1,32,16,17,8,25,9,24,5,28,12,21,4,29,13,20,6,27,11,22,3,30,14,19,7,26,10,23,2,31,15,18];if(format.id==='fbs12')order=[1,16,8,9,4,13,5,12,2,15,7,10,3,14,6,11];return order;}
 export function validateParticipants(ids,formatId){const f=FORMAT_MAP[formatId];if(!f)throw Error('Unsupported bracket format');if(!Array.isArray(ids)||ids.length!==f.size)throw Error(`Expected ${f.size} participants`);if(new Set(ids).size!==ids.length)throw Error('Duplicate participant');if(ids.some(x=>!TEAM_MAP[x]))throw Error('Unknown team');return true;}
-export function defaultParticipants(formatId){const f=FORMAT_MAP[formatId];if(!f)throw Error('Unknown format');const fcs=TEAMS.filter(x=>x.division==='fcs').map(x=>x.id).concat(TEAMS.filter(x=>x.division==='fbs').map(x=>x.id));return (formatId==='fcs24'?fcs:TEAMS.filter(x=>x.division==='fbs').map(x=>x.id)).slice(0,f.size);}
-export function createTournament(formatId='fbs12',participants=defaultParticipants(formatId),seed=20261120){validateParticipants(participants,formatId);if(!Number.isSafeInteger(+seed)||+seed<0||+seed>4294967295)throw Error('Invalid seed');const f=FORMAT_MAP[formatId];const order=rulesOrder(f);const slots=order.map(i=>i<=f.size?participants[i-1]:null);return {formatId,participants:participants.slice(),seed:+seed,slots,stage:0,rounds:[],played:{},champion:null,version:ENGINE_VERSION};}
+/** Order is a 2026 *research seeding*, not a claim about CFP rankings. */
+export function ranked2026Field() {
+ const research=evaluatedFbsRankings();
+ if(research){
+   const ids=research.ids.concat(TEAMS.filter(x=>x.division==='fbs'&&!research.ids.includes(x.id)).map(x=>x.id));
+   return {...research,ids,source:'2026 Elo research rating · provisional',fallback:false};
+ }
+ const rows=TEAMS.filter(x=>x.division==='fbs').map(team=>({id:team.id,record:observed(team.id,2026)}));
+ const known=rows.filter(x=>x.record&&Number.isFinite(x.record.pointsFor)&&Number.isFinite(x.record.pointsAgainst));
+ if(known.length>=130){
+   // Explicitly provisional: win rate and scoring margin are not opponent-adjusted.
+   const score=x=>x.record ? (30*(x.record.wins/x.record.games-.5)+.5*(x.record.pointsFor-x.record.pointsAgainst)) : -Infinity;
+   rows.sort((a,b)=>score(b)-score(a)||a.id.localeCompare(b.id));
+   return {ids:rows.map(x=>x.id),source:'2026 observed win rate + scoring margin · unadjusted',
+    asOf:sourceStatus.seasons[2026]?.asOf||'2026 snapshot',covered:known.length,fallback:true};
+ }
+ return {ids:rows.map(x=>x.id),source:'UNRANKED fallback — no research dataset',asOf:'unavailable',covered:0,fallback:true};
+}
+export function defaultParticipants(formatId){
+ const f=FORMAT_MAP[formatId];if(!f)throw Error('Unknown format');
+ const ids=ranked2026Field().ids;
+ if(f.kind==='fcs-inspired')return TEAMS.filter(x=>x.division==='fcs').map(x=>x.id).concat(ids).slice(0,f.size);
+ if(f.size>ids.length)throw Error('Not enough FBS teams for this field');
+ return ids.slice(0,f.size);
+}
+/** Atomic, roster-preserving swap; allowed only before the first played round. */
+export function swapTournamentSeeds(t,from,to){
+ if(!t || t.champion || t.stage!==0 || t.rounds.length || Object.keys(t.played).length)throw Error('Reset the tournament before swapping seeds');
+ if(!Number.isInteger(from)||!Number.isInteger(to)||from<0||to<0||from>=t.participants.length||to>=t.participants.length)throw Error('Invalid seed number');
+ if(from===to)return t;
+ const ids=t.participants.slice();[ids[from],ids[to]]=[ids[to],ids[from]];
+ const next=createTournament(t.formatId,ids,t.seed);
+ return {...next,seedingSource:t.seedingSource};
+}
+
+export function createTournament(formatId='fbs12',participants=defaultParticipants(formatId),seed=20261120){validateParticipants(participants,formatId);if(!Number.isSafeInteger(+seed)||+seed<0||+seed>4294967295)throw Error('Invalid seed');const f=FORMAT_MAP[formatId];const order=rulesOrder(f);const slots=order.map(i=>i<=f.size?participants[i-1]:null);return {formatId,participants:participants.slice(),seed:+seed,slots,stage:0,rounds:[],played:{},champion:null,version:ENGINE_VERSION,
+  seedingSource:ranked2026Field().source};}
 /** Builds an official-geometry bracket only after explicit qualification inputs pass.
  * The returned bracket is still hypothetical until committee rankings/champions
  * have been independently verified against an official Selection Day release.
@@ -46,13 +84,16 @@ export const roundName=(f,stage)=>{
   if(remaining===1)return 'Championship';
   if(remaining===2)return 'Semifinals';
   if(remaining===3)return 'Quarterfinals';
-  if(f.size===68&&stage===0)return 'Play-in';
+  if(f.size===138&&stage===0)return 'FBS Play-in · 138 to 128';
+  if(f.size===68&&stage===0)return 'First Four · 68 to 64';
+  if(f.size===138&&stage===1)return 'Round of 128';
   if(f.size===68&&stage===1)return 'Round of 64';
   if(f.size===68&&stage===2)return 'Round of 32';
+  if(f.size>32&&stage===0&&(f.size & (f.size-1))!==0)return 'Qualifying round';
   if(stage===0)return 'First round';
   if(f.id==='fbs24'&&stage===1)return 'Second round';
   const fieldSize=Math.pow(2,remaining);
-  return fieldSize===32?'Round of 32':fieldSize===16?'Round of 16':`Round ${stage+1}`;
+  return fieldSize===128?'Round of 128':fieldSize===64?'Round of 64':fieldSize===32?'Round of 32':fieldSize===16?'Round of 16':`Round ${stage+1}`;
 };
 function gameConfig(a,b,base,stage,seed,formatId){const sa=Number(base?.seasonA??2026),sb=Number(base?.seasonB??2026);return {...DEFAULT_CONFIG,a,b,seasonA:sa,seasonB:sb,venue:formatId==='fbs12'&&stage===0?'a':formatId==='fbs24'&&stage<=1?'a':'neutral',pace:Number(base?.pace??1),shift:0,seed,siteKind:roundSite(formatId,stage)};}
 function readSlots(t){return t.slots.length/2}

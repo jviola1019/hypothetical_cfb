@@ -1,9 +1,9 @@
 {
   "name": "gridiron-lab",
   "private": true,
-  "version": "0.9.1",
+  "version": "1.0.0",
   "type": "module",
-  "description": "Offline-first football game and bracket sandbox with separate evaluated research; generated outcomes and player props remain uncalibrated.",
+  "description": "2026-roster-linked, model-seeded FBS football simulation sandbox with a 138-school National Open and independently labeled empirical research",
   "license": "MIT",
   "scripts": {
     "dev": "python3 -m http.server 4173",
