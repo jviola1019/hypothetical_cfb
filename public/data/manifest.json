@@ -15,7 +15,7 @@
   ],
   "scoringSourceCutoffUtc": "2026-11-15T18:00:00.000Z",
   "rosterUpstreamWeeklyRelease": "2026-11-16",
-  "sourceRefreshStatus": "Verified on GitHub Actions 44877761545; 2026 138/138 rosters, 14930 names; 2025 136/136 rosters, 15415 names; latest 2026 score 2026-11-15 UTC.",
+  "sourceRefreshStatus": "Verified on GitHub Actions 44878009382; 2026 138/138 roster schools, 15187 names (101 quality-vetted weekly, 37 CFBD); 2025 136/136 schools, 15415 names; source scores current through 2026-11-15.",
   "fittedPlayerPropModels": 0,
   "fittedGameModels": 0,
   "notice": "Official results and school-reported roster identity facts must not be confused with synthetic generated player performances or calibrated forecasts.",
@@ -25,8 +25,10 @@
     "docs/STATUS.md"
   ],
   "verifiedRoster2026Schools": 138,
-  "verifiedRoster2026Names": 14930,
+  "verifiedRoster2026Names": 15187,
   "verifiedRoster2025Schools": 136,
   "verifiedRoster2025Names": 15415,
-  "refreshWorkflowRunUrl": "https://github.com/jviola1019/hypothetical_cfb/actions/runs/44877761545"
+  "refreshWorkflowRunUrl": "https://github.com/jviola1019/hypothetical_cfb/actions/runs/44878009382",
+  "verifiedRoster2026WeeklySchools": 101,
+  "verifiedRoster2026PrimarySchools": 37
 }

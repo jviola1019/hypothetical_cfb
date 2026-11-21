@@ -12,11 +12,11 @@ Approximate alternating drive generator, with conditional scoring/turnover chanc
 
 ## Athlete identities versus player prop results
 
-The **2026 roster snapshot** (138 FBS schools, 14,930 roster names verified in the November 21 refresh) supplies full names and football position codes for recognized schools. Sorting a roster by position to label synthetic QB/RB/WR/TE roles **does not establish who starts, is available, or will receive opportunities**. No individual player usage, injury or depth-chart observations are fitted. If identity is missing the name slot is suppressed, and a fictitious human name is never invented. Past 2025 players are not reused as 2026 identities. All generated player box scores/props are synthetic samples; they are not statistically calibrated estimates of those named athletes.
+The **2026 roster snapshot** (138 FBS schools, 15,187 roster names verified in the November 21 refresh) supplies full names and football position codes for recognized schools. Sorting a roster by position to label synthetic QB/RB/WR/TE roles **does not establish who starts, is available, or will receive opportunities**. No individual player usage, injury or depth-chart observations are fitted. If identity is missing the name slot is suppressed, and a fictitious human name is never invented. Past 2025 players are not reused as 2026 identities. All generated player box scores/props are synthetic samples; they are not statistically calibrated estimates of those named athletes.
 
 ## Evaluation
 
-Training seasons: 0. Held-out seasons: 0. Empirical coverage: 2026 school results and 14,930 roster-listed names; 2025 school results and 15,415 roster-listed names. No athlete-specific fitted stat models. Proper scores, spread/total accuracy, individual player errors and forecast calibration: **not available**. Intended use: transparent game design and educational exploration. Not suitable for betting, official NCAA selection, fantasy lineup decisions, player assessment or policy making.
+Training seasons: 0. Held-out seasons: 0. Empirical coverage: 2026 school results and 15,187 roster-listed names; 2025 school results and 15,415 roster-listed names. No athlete-specific fitted stat models. Proper scores, spread/total accuracy, individual player errors and forecast calibration: **not available**. Intended use: transparent game design and educational exploration. Not suitable for betting, official NCAA selection, fantasy lineup decisions, player assessment or policy making.
 
 ## Risk and governance
 

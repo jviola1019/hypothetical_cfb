@@ -20,4 +20,6 @@ Initial dependency-free static synthetic football simulator with two tabs, 13 to
 - Added free source refresh workflow for 2025/2026 game results, 2026 rosters and 2025 CC0 roster archive, strict schema checks, bounded ZIP parsing, canonical team ID tests, and source cutoff notices.
 - Expanded local evidence to **20 Node** tests, **5 Python** tests, and headless Chromium browser checks at **390px** and **1370px**. None are empirical prediction model calibration.
 
-- GitHub Actions refresh run 44877761545 successfully produced source-backed 2026 138-team results and **138 school rosters / 14,930 names**, 2025 136-team results and **136 school rosters / 15,415 names**. Added explicit 2025 season-matched roster importer; numerical prop distributions remain synthetic.
+- GitHub Actions refresh run 44877761545 successfully produced source-backed 2026 138-team results and **138 school rosters / 15,187 names**, 2025 136-team results and **136 school rosters / 15,415 names**. Added explicit 2025 season-matched roster importer; numerical prop distributions remain synthetic.
+
+- Audited weekly 2026 roster completeness: later but truncated school feeds are no longer allowed to overwrite broad primary rosters. Published roster entries include per-program source provenance. Added a regression test for the 45-vs-120 player failure.
