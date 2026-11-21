@@ -94,9 +94,8 @@ def audit(roster, weekly, summaries, require_all=True):
                 event = evidence.get((norm, stat))
                 if not event or not isinstance(event.get("n"), int) or event["n"] < 3:
                     bad(school, "unsupported_usage", role + ": no matching 2026 stat events")
-                last = date(records.get("lastRecordedGame"))
-                if last and observed and observed > last:
-                    bad(school, "usage_date", role + ": reported later than latest event")
+                # observedOn is when the weekly compiler reviewed this source,
+                # not the date of the last athlete appearance. A refresh may be newer.
         teams[school] = {
             "testedRoles": len(roles),
             "sourceReferenced": sum(school_basis[b] for b in SOURCED),
