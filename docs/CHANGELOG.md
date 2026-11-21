@@ -51,3 +51,11 @@ Initial dependency-free static synthetic football simulator with two tabs, 13 to
 - Fixed aggregate realism defects: initial simulated score ~40 vs 2025 reference ~55; isolated pace repair gave ~247 plays vs reported ~134. After two constrained adjustments, 700 seeded simulated games yielded 55.34 points and 134.48 offensive plays. **Not fitted per-drive or per-player calibration**.
 - Added `tests/pressbox_contract.test.js`, `tests/aggregate_scale.test.js`, `tests/pressbox_browser.py`. 62/62 JS and 28/28 Python tests; desktop/mobile injected-DOM harness pass; native browser workers remain unverified.
 - Prepared original design and model separation architecture before code edits in `docs/ARCHITECTURE_V09.md`; verification `docs/VALIDATION_V09.md`. No new client secrets, sportsbook markets or unverified official playoff entrants.
+
+
+## v0.9.1 — November 21, 2026 · adversarial matchup repair
+
+- Removed random team-name-based unsupported power ratings. Games without season snapshots now assume equal-strength teams rather than fabricating favorites.
+- Fixed inverse interpretation of historical points allowed on opposing scoring probability; added 2025 known-strength fixture and zero-data fallback regressions.
+- Retuned illustration scoring scale after corrections; 700 seeded demo games now average 55.034 points and 134.989 plays (2025 aggregate scales), without claiming individualized calibration.
+- Extended unit suite to 64/64; retained 28/28 Python tests, static build and 390px/1370px DOM checks.

@@ -2,7 +2,7 @@ import {observed,namedPlayer} from './observed.js';
 import {FBS_TEAMS,FCS_REFERENCE} from './catalog.js';
 /* GRIDIRON LAB 0.4 — reproducible, synthetic, drive-level football lab.
    THESE PARAMETERS ARE NOT FITTED TO HISTORICAL RESULTS. */
-export const ENGINE_VERSION='0.9.0-aggregate-score-aligned-synthetic';
+export const ENGINE_VERSION='0.9.1-no-fabricated-rankings-synthetic';
 export const TEAMS = [...FBS_TEAMS,...FCS_REFERENCE];
 export const TEAM_MAP=Object.fromEntries(TEAMS.map(t=>[t.id,t]));
 export function hash32(x){let h=2166136261;for(const c of String(x)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
@@ -18,15 +18,19 @@ export function teamProfile(id,season=2026){
     // Deliberately simple *retrospective* proxy: full-season PPG is not pregame-safe.
     return {id,season,offense:clamp(0.55+0.45*historical.pointsFor/28,0.5,1.6),defense:clamp(0.55+0.45*historical.pointsAgainst/28,0.5,1.6),tempo:1,coverage:`${season}-snapshot-descriptive`};
   }
-  const r=rng(hash32(id+'|'+season+'|SYNTHETIC'));
-  return {id,season,offense:0.85+r()*0.33,defense:0.85+r()*0.33,tempo:0.85+r()*0.30,coverage:'synthetic'};
+  // No observed school-season data: assign a neutral, UNRANKED baseline.
+  // The previous team-ID seeded random power ranking gave unsupported schools
+  // invented favorite status and was not defensible as realism.
+  return {id,season,offense:1,defense:1,tempo:1,coverage:'unranked-synthetic-fallback'};
 }
 export function validateConfig(c){if(!c||!TEAM_MAP[c.a]||!TEAM_MAP[c.b]||c.a===c.b)throw Error('Select two different supported teams');for(const v of ['seasonA','seasonB'])if(!Number.isInteger(+c[v])||+c[v]<2010||+c[v]>2026)throw Error('Invalid demo season');if(!['neutral','a','b'].includes(c.venue))throw Error('Invalid venue');if(!Number.isFinite(+c.seed)||+c.seed<0||+c.seed>4294967295)throw Error('Invalid seed');if(!Number.isFinite(+c.pace)||+c.pace<0.7||+c.pace>1.35)throw Error('Invalid pace');if(!Number.isFinite(+c.shift)||Math.abs(+c.shift)>0.5)throw Error('Invalid strength adjustment');return true;}
 export const DEFAULT_CONFIG={a:'ole-miss',b:'georgia',seasonA:2026,seasonB:2026,venue:'neutral',pace:1,shift:0,seed:20261121};
 function newPlayers(team,season){const p={QB:{id:team+'-QB',label:'QB1 · synthetic',passingAttempts:0,completions:0,passingYards:0,passingTD:0,interceptions:0,rushAttempts:0,rushYards:0,rushingTD:0},RB:{id:team+'-RB',label:'RB1 · synthetic',rushAttempts:0,rushYards:0,rushingTD:0,targets:0,receptions:0,receivingYards:0,receivingTD:0},WR1:{id:team+'-WR1',label:'WR1 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},WR2:{id:team+'-WR2',label:'WR2 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},TE:{id:team+'-TE',label:'TE1 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},K:{id:team+'-K',label:'K1 · synthetic',fieldGoalsAttempted:0,fieldGoalsMade:0,extraPointsAttempted:0,extraPointsMade:0}};for(const [role,player] of Object.entries(p)){const named=namedPlayer(team,role,season);player.label=named?.name||('Unassigned '+role+' · model-only');player.historical=Boolean(named)}return p;}
 function initStats(team,season){return {team,points:0,passYards:0,rushYards:0,passAttempts:0,completions:0,rushAttempts:0,passingTD:0,rushingTD:0,turnovers:0,fumblesLost:0,drives:0,plays:0,fieldGoals:0,twoPointAttempts:0,twoPointMade:0,overtimePoints:0,byQuarter:[0,0,0,0],players:newPlayers(team,season)};}
 function distribute(r,n,weights){const a=weights.map(()=>0);for(let j=0;j<n;j++)a[choose(r,weights)]++;return a}
-function drive(r,s,opponent,p,opp,opts){const start=opts.ot?75:(Number.isInteger(opts.start)?clamp(opts.start,5,95):randint(r,18,37));const pace=opts.pace;const offense=clamp(p.offense+(opts.shift||0),0.45,1.7);const matchup=clamp(offense/opp.defense,0.50,1.65);const fieldBonus=opts.ot?0.20:0;const tdChance=clamp(0.275*matchup+fieldBonus+(opts.home?0.012:0),0.10,0.72);const fgChance=clamp(0.165*matchup+(opts.ot?0.05:0),0.05,0.29);const turnoverChance=clamp(0.105/matchup,0.03,0.20);let z=r(),outcome=z<tdChance?'TD':z<tdChance+fgChance?'FG':z<tdChance+fgChance+turnoverChance?'TO':'PUNT';const yardToGoal=100-start;const gain=outcome==='TD'?yardToGoal:outcome==='FG'?Math.max(0,yardToGoal-randint(r,15,33)):randint(r,0,Math.max(1,Math.min(yardToGoal-1,57)));
+function drive(r,s,opponent,p,opp,opts){const start=opts.ot?75:(Number.isInteger(opts.start)?clamp(opts.start,5,95):randint(r,18,37));const pace=opts.pace;const offense=clamp(p.offense+(opts.shift||0),0.45,1.7);// defense is proportional to POINTS ALLOWED: >1 means weaker defense,
+  // so offense should increase (not decrease) against it.
+  const matchup=clamp(offense*opp.defense,0.50,1.65);const fieldBonus=opts.ot?0.20:0;const tdChance=clamp(0.2475*matchup+fieldBonus+(opts.home?0.012:0),0.10,0.72);const fgChance=clamp(0.1485*matchup+(opts.ot?0.05:0),0.05,0.29);const turnoverChance=clamp(0.105/matchup,0.03,0.20);let z=r(),outcome=z<tdChance?'TD':z<tdChance+fgChance?'FG':z<tdChance+fgChance+turnoverChance?'TO':'PUNT';const yardToGoal=100-start;const gain=outcome==='TD'?yardToGoal:outcome==='FG'?Math.max(0,yardToGoal-randint(r,15,33)):randint(r,0,Math.max(1,Math.min(yardToGoal-1,57)));
 const plays=outcome==='TD'?clamp(Math.round(gain/15)+randint(r,1,2),3,11):clamp(Math.round(gain/13)+randint(r,1,3),3,10);
 const passAttempts=clamp(Math.round(plays*(0.51+(r()-.5)*.24)),1,plays-1);const rushAttempts=plays-passAttempts;
 let completions=0;for(let i=0;i<passAttempts;i++)if(r()<clamp(.60+0.07*(matchup-1),.48,.72))completions++;

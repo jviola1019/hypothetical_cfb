@@ -45,3 +45,8 @@ Remediation: reduce average drive duration (thus increase possessions) by adjust
 
 ### Second moment: offensive snaps
 Following the drive-duration adjustment, a 700-game seeded audit produced 26.35 possessions/game and 246.96 offensive plays/game. This is not plausible for contemporary FBS football. External 2025 collegiate-football pace reference (On3, 2026 feature) reports ~134.0 combined plays/game and 5.61 plays/possession: https://www.on3.com/news/the-latest-reason-why-passing-is-important-to-rushing-potency/ . We will alter ONLY the yardage-to-play-count heuristic, then require accounting checks and a deterministic regression guard for both total points and plays. This calibrates two unconditional first moments; it does not claim drive-, EPA-, conditional-passing- or player-prop calibration.
+
+
+## Adversarial review discovery after initial v0.9.0 publication (v0.9.1 repair)
+
+The published design's added multi-program audit exposed a **source-absence model-integrity defect**: hashed school identifiers were used as school-specific synthetic power strengths, making games favor arbitrary unsupported teams; the no-data provider must now yield explicit equal neutral priors. A separate historical-defense direction defect divided offense by the opponent's points-allowed factor, improperly favoring offenses facing stronger defenses. Both repairs were made after the initial design commit, with unit regressions first and subsequent aggregate retuning. These are transparent bug repairs, not evidence of new training data. Current v0.9.1 illustrative default means at 700 deterministic seeds: 55.034 combined points, 134.989 offensive plays, 26.386 generated possessions, 2.717 turnovers.

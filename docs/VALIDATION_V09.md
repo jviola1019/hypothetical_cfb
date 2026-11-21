@@ -10,7 +10,7 @@
 | Procedure | Observed result | Limit |
 |---|---|---|
 | `npm run check` | Pass, all source JS syntax checks | Not static type checking; JavaScript app |
-| `npm test` | **62/62 pass**, including 7 new game/UI aggregate checks | Selected fixtures, not exhaustive correctness |
+| `npm test` | **64/64 pass**, including 9 new game/UI/fallback checks | Selected fixtures, not exhaustive correctness |
 | `python3 -m unittest discover -s tests -p 'test_*.py'` | **28/28 pass** | Local source fixtures only |
 | `npm run build` | Pass; offline static `dist/` | Static build only |
 | `python3 tests/pressbox_browser.py` | Pass at 1370×900 and 390×844: 3 tabs, 3 game controls, replay, score display, research view, bracket 12/24 game completion, match inspection, no horizontal overflow | Chromium DOM with source injected; native local navigation, JS modules and real Web Workers blocked |
@@ -23,12 +23,18 @@ Historical scale reference: public 2025 FBS source snapshot `public/data/season-
 
 | Measurement | Previous / initial defect | New sampled mean | Interpretation |
 |---|---:|---:|---|
-| Combined score per synthetic game | 40.397 | **55.340** | Unconditional first moment approximately aligned to 2025 scale |
-| Combined offensive plays | 246.96 after isolated pace change | **134.479** | Second unconditional moment approximately aligned to reported 2025 scale |
-| Generated possessions | 26.35 after pace change | **26.354** | Not fitted to independently verified real drive distribution |
-| Generated turnovers | Unchecked in earlier tuning | **3.12** | Descriptive only; not calibrated |
+| Combined score per synthetic game | 40.397 | **55.034** | Unconditional first moment approximately aligned to 2025 scale |
+| Combined offensive plays | 246.96 after isolated pace change | **134.989** | Second unconditional moment approximately aligned to reported 2025 scale |
+| Generated possessions | 26.35 after pace change | **26.386** | Not fitted to independently verified real drive distribution |
+| Generated turnovers | Unchecked in earlier tuning | **2.717** | Descriptive only; not calibrated |
 
 These means were computed across 700 seeded Ole Miss–Georgia demonstration games using `hash32('audit:'+i)` for i=0…699; season 2026 roster references are not a 2026 model holdout. New `tests/aggregate_scale.test.js` checks wide bounds for N=350. This is **not** evidence of calibrated individual conditional scoring, actual game outcomes, possessions, plays, turnovers, player usage, win probabilities or prop markets. Do not call the simulator historically trained.
+
+## Additional zero-data and defensive-sign adversarial regression
+
+Cross-fixture stress revealed that, when optional historical data were absent, the previous fallback generated **arbitrary school-ID-derived power rankings**, e.g. Akron could be strongly favored over Alabama with no observed basis. This was not a legitimate model. Replaced with a neutral, explicitly labeled `unranked-synthetic-fallback` profile. In this mode, no school claims predictive advantage. The historical team-profile defense feature also previously had the **wrong direction**: greater historical points allowed meant a *smaller* opposing scoring multiplier. The engine now multiplies the opponent's allowance factor and exercises a fixed 2025 Indiana-versus-Alabama regression. This is an internal consistency improvement, not an evidence-based player or game calibration.
+
+A second predeclared pacing/score adjustment was required after correcting the defensive sign and neutral profile: the 700-game neutral-matchup mean is now 55.034 points, 134.989 offensive plays and 2.717 turnovers. Previously published 55.340/134.479 numbers describe the first v0.9.0 candidate with invented fallback power, **not this corrected v0.9.1 release**. The stored historic 2025 comparison sample has a real points-only reference; play count reference remains approximate.
 
 ## Safety and data audit
 - HTML text is escaped before DOM insertion. No new untrusted script dependencies or client credentials. Only allowed same-origin source artifacts are loaded; boundaries defined in source adapters.

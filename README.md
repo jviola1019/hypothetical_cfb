@@ -1,4 +1,4 @@
-# GRIDIRON LAB · PRESSBOX NIGHT SHIFT (v0.9)
+# GRIDIRON LAB · PRESSBOX NIGHT SHIFT (v0.9.1)
 
 **A free, offline-first college-football game and playoff simulator.** Pick two FBS teams and a venue, then see one replayable generated game: scoring by quarter, gameplay/drive timeline, full team and named-athlete box, player stat threshold frequencies, empirical *research* estimate where available, and readable probability distributions. The **Playoffs** tab builds 2–128-team hypothetical brackets with individual game inspection. The **Model & Validation** tab holds all technical statistics, model diagnostics, source cutoffs and caveats.
 

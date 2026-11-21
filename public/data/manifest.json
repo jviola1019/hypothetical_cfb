@@ -1,7 +1,7 @@
 {
-  "version": "0.9.0",
+  "version": "0.9.1",
   "releaseDate": "2026-11-21",
-  "model": "empirical-pregame-research-plus-aggregate-aligned-but-uncalibrated-generative-game",
+  "model": "neutral-fallback-with-historical-team-profile-when-loaded",
   "calibration": "game-generator-not-calibrated-player-props-not-calibrated",
   "primarySeason": 2026,
   "historicalSeason": 2025,
@@ -18,7 +18,7 @@
   "sourceRefreshStatus": "Verified on GitHub Actions 44878009382; 2026 138/138 roster schools, 15187 names (101 quality-vetted weekly, 37 CFBD); 2025 136/136 schools, 15415 names; source scores current through 2026-11-15.",
   "fittedPlayerPropModels": 0,
   "fittedGameModels": 1,
-  "notice": "Historical reference data and independently evaluated pregame models are distinct from fictional replay scores, drives and named-player props. Game aggregate scoring/play pacing aligned to published 2025 scales only; no proof of individual game or drive calibration.",
+  "notice": "Source-backed historical team references and empirical pregame models remain distinct from uncalibrated fictional scores, drives and named-player props. No external historical record -> neutral power, not invented school-specific ratings. Defense score-allowance influence corrected; illustrative game scale tuned only to unconditional 2025 reference.",
   "sources": [
     "docs/DATA_PROVENANCE.md",
     "docs/MODEL_CARD.md",

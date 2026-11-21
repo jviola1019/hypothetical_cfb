@@ -11,7 +11,7 @@ test('2025 historical reference limited to four explicitly sourced schools', () 
     assert.equal(observed(id, 2024), null);
   }
   assert.equal(observed('tennessee', 2025), null);
-  assert.equal(teamProfile('tennessee', 2025).coverage, 'synthetic');
+  assert.equal(teamProfile('tennessee', 2025).coverage, 'unranked-synthetic-fallback');
   assert.equal(teamProfile('ole-miss', 2025).coverage, '2025-snapshot-descriptive');
 });
 

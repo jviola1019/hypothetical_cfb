@@ -1,12 +1,18 @@
-# GRIDIRON LAB v0.9 — release status (2026-11-21)
+# GRIDIRON LAB v0.9.1 — release status (2026-11-21)
 
 ## Implemented and tested locally
 - Three prominent destinations: **Game | Playoffs | Model & Validation**. Game edits only Team A, Team B and venue; clear result and replay, quarter scoreboard, drive/field diagram, player box/prop threshold tables, empirical forecast labels where available, tournament bracket and match inspector.
 - New responsive PRESSBOX / NIGHT SHIFT design, mineral ink + stadium green + signal chartreuse, original CSS/SVG field graphics, purposeful motion with reduced-motion fallback and 390px/1370px DOM browser tests.
 - No arbitrary betting-line inputs, seed/pace/strength editor or fictitious research probabilities.
-- Engine clock/score/player reconciliation remains covered by previous regression suites. Pacing and play-count heuristic adjusted for two unconditional 2025 college-football scale moments (about 55 combined points and 134 plays); **not a calibrated possession model**.
+- Engine clock/score/player reconciliation remains covered by previous regression suites. Pacing and play-count heuristic adjusted for two unconditional 2025 college-football scale moments (55.034 combined points and 134.989 plays); **not a calibrated possession model**.
 - 2026 school catalog 138/138; 2025 136/136. Optional derived player summaries and researcher evaluation remain available from original source-data pipeline; loading absence is explicit. Historic roster identity is not a depth chart.
-- 62/62 JS tests, 28/28 Python tests, JS syntax/build and desktop/mobile source-injected Chromium DOM harness passed. See `docs/VALIDATION_V09.md` for reproducible test commands and measured fixture.
+- 64/64 JS tests, 28/28 Python tests, JS syntax/build and desktop/mobile source-injected Chromium DOM harness passed. See `docs/VALIDATION_V09.md` for reproducible test commands and measured fixture.
+
+## Additional correctness fixes v0.9.1
+- **Serious defect fixed:** unsupported schools formerly received arbitrary team-ID-based power scores; now all unsupported school-season profiles have neutral strength and an explicit `unranked-synthetic-fallback` coverage label. No fabricated favorites.
+- **Serious defect fixed:** the defender's points-allowed factor was used with the wrong sign; more points allowed now *increase* opposing scoring likelihood. Observed 2025 Indiana/Alabama contrast regression added.
+- Rebalanced illustration-only score and snap-rate parameters after those correctness fixes. Updated 700-game benchmark: **55.034 combined points; 134.989 offensive plays; 26.386 possessions (previous pacing output); 2.717 turnovers**. See `docs/VALIDATION_V09.md` for the exact calculation and limitations.
+- Total Node tests expanded to **64/64**; Python **28/28**. All other device/model caveats unchanged.
 
 ## Model research versus fiction
 - Research baseline: pregame probabilities and score-reference projections from independent historically evaluated pipeline; 2026 previously inspected, not a pristine holdout.
