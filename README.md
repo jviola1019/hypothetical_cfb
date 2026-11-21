@@ -1,9 +1,19 @@
-# GRIDIRON LAB · PRESSBOX NATIONAL OPEN (v1.0.0)
+# GRIDIRON LAB · PRESSBOX NATIONAL OPEN (v1.1.0)
 
 **A free, offline-first college-football game and playoff simulator.** Pick two FBS teams and a venue, then see one replayable generated game: scoring by quarter, gameplay/drive timeline, full team and named-athlete box, player stat threshold frequencies, empirical *research* estimate where available, and readable probability distributions. The **Playoffs** tab builds 2–138-team hypothetical brackets with individual game inspection. The **Model & Validation** tab holds all technical statistics, model diagnostics, source cutoffs and caveats.
 
 **Direct result:** https://jviola1019.github.io/hypothetical_cfb/  
 **Repository:** https://github.com/jviola1019/hypothetical_cfb
+
+## NEW v1.1 — weekly personnel, dated depth charts and bounded usage
+
+- Simulations continue to use the selected school's **2026 roster**. A **weekly personnel desk** now distinguishes dated external replacement/depth-chart evidence from **usage-estimated** and **roster-only** positions. It gives full source links and expires current-week verification at the week's end.
+- Confirmed example sources in the 2026-11-16 through 2026-11-22 bulletin: Ohio State **Luke Fahey** as reported replacement QB, **Jeremiah Smith** as first-team WR, Tennessee **DeSean Bishop** as reported lead RB; Oregon State **Jesse Legree** as **usage-projected**, not independently certified as this week's starter. **Julian Sayin** was reported unavailable for the Ohio State game; that is a dated report, not a perpetual injury designation.
+- Every Monday, and additionally Friday, GitHub Actions can rebuild a compact role sheet for **all 138 FBS schools** based on the latest roster plus recorded usage. **That is 138 roster-verified candidate lineups, not 138 verified starting depth charts.** Without a new audited school source, the old verified designation expires and falls back to estimated provenance. Current-week identity lists and research-model cutoffs are independently displayed.
+- Featured receiver/rusher output now allocates team opportunities using cautiously shrunk 2026 recorded-stat-event means, and anonymous **Other contributors** absorbs production from athletes not represented by a name slot. This preserves targets, catches, pass and rush yards and touchdown totals; a recorded-stat game is **not** a complete appearance or active-roster forecast.
+- Worker and main thread share the same weekly evidence snapshot; a replacement QB cannot silently revert to the prior starter in the Worker. See `docs/ARCHITECTURE_WEEKLY_LINEUPS.md`, `docs/VALIDATION_WEEKLY_LINEUPS.md` and `docs/STATUS.md`.
+
+**Limit:** no free nationwide official depth chart feed covers every FBS starter and game-day change. Source-graded estimates and a scheduled refresh are useful for a fun simulator but do not constitute verified active lineups or calibrated future game player props. A third-party lineup listing is not the same as an official confirmed starter.
 
 ## NEW: 2026-roster National Open (v1.0)
 

@@ -1,3 +1,4 @@
+import {receivingWeights,primaryRusherShare} from './usage.js';
 import {observed,namedPlayer} from './observed.js';
 import {FBS_TEAMS,FCS_REFERENCE} from './catalog.js';
 /* GRIDIRON LAB 0.4 — reproducible, synthetic, drive-level football lab.
@@ -25,7 +26,7 @@ export function teamProfile(id,season=2026){
 }
 export function validateConfig(c){if(!c||!TEAM_MAP[c.a]||!TEAM_MAP[c.b]||c.a===c.b)throw Error('Select two different supported teams');for(const v of ['seasonA','seasonB'])if(!Number.isInteger(+c[v])||+c[v]<2010||+c[v]>2026)throw Error('Invalid demo season');if(!['neutral','a','b'].includes(c.venue))throw Error('Invalid venue');if(!Number.isFinite(+c.seed)||+c.seed<0||+c.seed>4294967295)throw Error('Invalid seed');if(!Number.isFinite(+c.pace)||+c.pace<0.7||+c.pace>1.35)throw Error('Invalid pace');if(!Number.isFinite(+c.shift)||Math.abs(+c.shift)>0.5)throw Error('Invalid strength adjustment');return true;}
 export const DEFAULT_CONFIG={a:'ole-miss',b:'georgia',seasonA:2026,seasonB:2026,venue:'neutral',pace:1,shift:0,seed:20261121};
-function newPlayers(team,season){const p={QB:{id:team+'-QB',label:'QB1 · synthetic',passingAttempts:0,completions:0,passingYards:0,passingTD:0,interceptions:0,rushAttempts:0,rushYards:0,rushingTD:0},RB:{id:team+'-RB',label:'RB1 · synthetic',rushAttempts:0,rushYards:0,rushingTD:0,targets:0,receptions:0,receivingYards:0,receivingTD:0},WR1:{id:team+'-WR1',label:'WR1 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},WR2:{id:team+'-WR2',label:'WR2 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},TE:{id:team+'-TE',label:'TE1 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},K:{id:team+'-K',label:'K1 · synthetic',fieldGoalsAttempted:0,fieldGoalsMade:0,extraPointsAttempted:0,extraPointsMade:0}};for(const [role,player] of Object.entries(p)){const named=namedPlayer(team,role,season);player.label=named?.name||('Unassigned '+role+' · model-only');player.historical=Boolean(named);player.rosterSeason=named?.season||null;player.selectionBasis=named?.selectionBasis||'unassigned';player.roleVerified=false;}return p;}
+function newPlayers(team,season){const p={QB:{id:team+'-QB',label:'QB1 · synthetic',passingAttempts:0,completions:0,passingYards:0,passingTD:0,interceptions:0,rushAttempts:0,rushYards:0,rushingTD:0},RB:{id:team+'-RB',label:'RB1 · synthetic',rushAttempts:0,rushYards:0,rushingTD:0,targets:0,receptions:0,receivingYards:0,receivingTD:0},WR1:{id:team+'-WR1',label:'WR1 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},WR2:{id:team+'-WR2',label:'WR2 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},TE:{id:team+'-TE',label:'TE1 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},OTHER:{id:team+'-OTHER',label:'Other contributors · aggregate',rushAttempts:0,rushYards:0,rushingTD:0,targets:0,receptions:0,receivingYards:0,receivingTD:0},K:{id:team+'-K',label:'K1 · synthetic',fieldGoalsAttempted:0,fieldGoalsMade:0,extraPointsAttempted:0,extraPointsMade:0}};for(const [role,player] of Object.entries(p)){const named=namedPlayer(team,role,season);player.label=role==='OTHER'?'Other contributors · aggregate':(named?.name||('Unassigned '+role+' · model-only'));player.historical=Boolean(named);player.rosterSeason=named?.season||null;player.selectionBasis=named?.selectionBasis||'unassigned';player.roleVerified=Boolean(named?.roleVerified);player.eventGames=named?.eventGames||0;player.observedMean=named?.observedMean??null;player.sourceUrl=named?.sourceUrl||null;player.verifiedOn=named?.verifiedOn||null;}return p;}
 function initStats(team,season){return {team,points:0,passYards:0,rushYards:0,passAttempts:0,completions:0,rushAttempts:0,passingTD:0,rushingTD:0,turnovers:0,fumblesLost:0,drives:0,plays:0,fieldGoals:0,twoPointAttempts:0,twoPointMade:0,overtimePoints:0,byQuarter:[0,0,0,0],players:newPlayers(team,season)};}
 function distribute(r,n,weights){const a=weights.map(()=>0);for(let j=0;j<n;j++)a[choose(r,weights)]++;return a}
 function drive(r,s,opponent,p,opp,opts){const start=opts.ot?75:(Number.isInteger(opts.start)?clamp(opts.start,5,95):randint(r,18,37));const pace=opts.pace;const offense=clamp(p.offense+(opts.shift||0),0.45,1.7);// defense is proportional to POINTS ALLOWED: >1 means weaker defense,
@@ -35,15 +36,24 @@ const plays=outcome==='TD'?clamp(Math.round(gain/15)+randint(r,1,2),3,11):clamp(
 const passAttempts=clamp(Math.round(plays*(0.51+(r()-.5)*.24)),1,plays-1);const rushAttempts=plays-passAttempts;
 let completions=0;for(let i=0;i<passAttempts;i++)if(r()<clamp(.60+0.07*(matchup-1),.48,.72))completions++;
 let passYards=completions?Math.round(gain*clamp(.52+r()*.23,0,1)):0;let rushYards=gain-passYards;
-const qb=s.players.QB,rb=s.players.RB,k=s.players.K;
+const qb=s.players.QB,rb=s.players.RB,others=s.players.OTHER,k=s.players.K;
 qb.passingAttempts+=passAttempts;qb.completions+=completions;qb.passingYards+=passYards;s.passAttempts+=passAttempts;s.completions+=completions;s.passYards+=passYards;
-const qbRush=Math.min(rushAttempts>1?randint(r,0,Math.min(2,rushAttempts-1)):0,rushAttempts);qb.rushAttempts+=qbRush;rb.rushAttempts+=rushAttempts-qbRush;const qbYds=qbRush?Math.round(rushYards*0.15):0;qb.rushYards+=qbYds;rb.rushYards+=rushYards-qbYds;s.rushAttempts+=rushAttempts;s.rushYards+=rushYards;
-const receivers=[s.players.WR1,s.players.WR2,s.players.TE,rb];const targets=distribute(r,passAttempts,[.36,.28,.19,.17]);for(let i=0;i<receivers.length;i++)receivers[i].targets+=targets[i];
+const qbRush=Math.min(rushAttempts>1?randint(r,0,Math.min(2,rushAttempts-1)):0,rushAttempts);qb.rushAttempts+=qbRush;
+ const otherRushAttempts=rushAttempts-qbRush;
+ const firstShare=primaryRusherShare(s.team,p.season);
+ const primaryCarries=distribute(r,otherRushAttempts,[firstShare,1-firstShare])[0];
+ rb.rushAttempts+=primaryCarries;others.rushAttempts+=otherRushAttempts-primaryCarries;
+ const qbYds=qbRush?Math.round(rushYards*0.15):0;
+ const restYds=rushYards-qbYds;
+ const primaryYds=Math.round(restYds*firstShare);
+ qb.rushYards+=qbYds;rb.rushYards+=primaryYds;others.rushYards+=restYds-primaryYds;
+ s.rushAttempts+=rushAttempts;s.rushYards+=rushYards;
+const receivers=[s.players.WR1,s.players.WR2,s.players.TE,rb,others];const targets=distribute(r,passAttempts,receivingWeights(s.team,p.season));for(let i=0;i<receivers.length;i++)receivers[i].targets+=targets[i];
 // Allocate completions without exceeding target capacities.
-let catchSlots=targets.slice(), catches=[0,0,0,0];for(let j=0;j<completions;j++){let i=choose(r,catchSlots);if(!catchSlots[i])i=catchSlots.findIndex(x=>x>0);catchSlots[i]--;catches[i]++}
-for(let i=0;i<receivers.length;i++)receivers[i].receptions+=catches[i];const yardWeights=catches.map(x=>x?x*(0.8+r()*.5):0);const yardSplit=passYards?distribute(r,passYards,yardWeights):[0,0,0,0];for(let i=0;i<receivers.length;i++)receivers[i].receivingYards+=yardSplit[i];
+let catchSlots=targets.slice(), catches=[0,0,0,0,0];for(let j=0;j<completions;j++){let i=choose(r,catchSlots);if(!catchSlots[i])i=catchSlots.findIndex(x=>x>0);catchSlots[i]--;catches[i]++}
+for(let i=0;i<receivers.length;i++)receivers[i].receptions+=catches[i];const yardWeights=catches.map(x=>x?x*(0.8+r()*.5):0);const yardSplit=passYards?distribute(r,passYards,yardWeights):[0,0,0,0,0];for(let i=0;i<receivers.length;i++)receivers[i].receivingYards+=yardSplit[i];
 s.plays+=plays;s.drives++;
-let points=0,conversion='NONE',turnoverKind=null;if(outcome==='TD'){const passTD=completions>0&&r()<clamp(.55+.1*(matchup-1),.42,.7);if(passTD){qb.passingTD++;s.passingTD++;let z=choose(r,catches);if(!catches[z])z=catches.findIndex(x=>x>0);receivers[z].receivingTD++;}else{(qbRush&&r()<.08?qb:rb).rushingTD++;s.rushingTD++;}points=6;if(opts.ot&&opts.q===5){conversion='2PT';s.twoPointAttempts++;if(r()<.46){s.twoPointMade++;points+=2}}else{conversion='XP';k.extraPointsAttempted++;if(r()<.94){k.extraPointsMade++;points++}}}
+let points=0,conversion='NONE',turnoverKind=null;if(outcome==='TD'){const passTD=completions>0&&r()<clamp(.55+.1*(matchup-1),.42,.7);if(passTD){qb.passingTD++;s.passingTD++;let z=choose(r,catches);if(!catches[z])z=catches.findIndex(x=>x>0);receivers[z].receivingTD++;}else{(qbRush&&r()<.08?qb:(r()<primaryRusherShare(s.team,p.season)?rb:others)).rushingTD++;s.rushingTD++;}points=6;if(opts.ot&&opts.q===5){conversion='2PT';s.twoPointAttempts++;if(r()<.46){s.twoPointMade++;points+=2}}else{conversion='XP';k.extraPointsAttempted++;if(r()<.94){k.extraPointsMade++;points++}}}
 else if(outcome==='FG'){k.fieldGoalsAttempted++;if(r()<.89){k.fieldGoalsMade++;points=3;s.fieldGoals++}else outcome='MISSED FG'}else if(outcome==='TO'){s.turnovers++;if(r()<.62){qb.interceptions++;turnoverKind='interception';}else{s.fumblesLost++;turnoverKind='fumble';}}
 const turnoverType=turnoverKind;
 s.points+=points;if(opts.q>=0&&opts.q<=3)s.byQuarter[opts.q]+=points;else s.overtimePoints+=points;return {turnoverType,conversion,offense:s.team,defense:opponent.team,start,gain,plays,outcome,points,passYards,rushYards,passAttempts,completions,quarter:opts.q<4?opts.q+1:`OT${opts.q-3}`,clock:opts.clock,elapsed:opts.elapsed,scoreA:0,scoreB:0};}
@@ -64,7 +74,7 @@ if(stats[0].points===stats[1].points)throw Error('Overtime simulation safety lim
 return {id:`g-${hash32(seed+'|'+config.a+'|'+config.b).toString(16)}`,seed,config:{...config},teams:stats,drives,final:[stats[0].points,stats[1].points],margin:stats[0].points-stats[1].points,total:stats[0].points+stats[1].points,winner:stats[0].points>stats[1].points?config.a:config.b,ot};}
 export function outcomeSummary(games,config){if(!games.length)throw Error('No games');let aw=0,over=0,cover=0,ots=0,sumA=0,sumB=0;let margin=[],total=[],scores=new Map(),running=[];for(let i=0;i<games.length;i++){const g=games[i];sumA+=g.final[0];sumB+=g.final[1];aw+=g.winner===config.a?1:0;ots+=g.ot>0?1:0;const key=g.final.join('-');scores.set(key,(scores.get(key)||0)+1);margin.push(g.margin);total.push(g.total);if((i+1)%Math.max(1,Math.floor(games.length/65))===0)running.push({n:i+1,p:aw/(i+1)});}margin.sort((a,b)=>a-b);total.sort((a,b)=>a-b);const quant=(xs,p)=>xs[Math.min(xs.length-1,Math.floor((xs.length-1)*p))];const prob=aw/games.length;return {n:games.length,meanA:sumA/games.length,meanB:sumB/games.length,pA:prob,pB:1-prob,ot:ots/games.length,marginMean:(sumA-sumB)/games.length,totalMean:(sumA+sumB)/games.length,margin,total,scores:[...scores.entries()].map(([score,count])=>({score,count})),running,marginInterval:[quant(margin,.05),quant(margin,.95)],totalInterval:[quant(total,.05),quant(total,.95)],mcse:Math.sqrt(prob*(1-prob)/games.length),model:ENGINE_VERSION};}
 export function namedPropSummaries(games,config){
-  const choices=[['QB','passingYards',250.5,'Pass yards'],['RB','rushYards',75.5,'Rush yards'],['WR1','receptions',4.5,'Receptions'],['WR2','receivingYards',49.5,'Receive yards'],['TE','receptions',3.5,'Receptions']];
+  const choices=[['QB','passingYards',250.5,'Pass yards'],['RB','rushYards',75.5,'Rush yards'],['WR1','receivingYards',99.5,'Receive yards'],['WR1','receptions',5.5,'Receptions'],['WR2','receivingYards',49.5,'Receive yards'],['TE','receptions',3.5,'Receptions']];
   const out=[];
   for(let teamIndex=0;teamIndex<2;teamIndex++){
     const id=teamIndex===0?config.a:config.b;
@@ -73,10 +83,10 @@ export function namedPropSummaries(games,config){
       const player=namedPlayer(id,role,season);if(!player)continue;
       const values=games.map(g=>g.teams[teamIndex].players[role][stat]||0).sort((a,b)=>a-b);
       const n=values.length;if(!n)continue;
-      out.push({id:id+'-'+role,team:id,role,fullName:player.name,stat,unit,line,
+      out.push({id:id+'-'+role+'-'+stat,team:id,role,fullName:player.name,stat,unit,line,
        mean:values.reduce((a,b)=>a+b,0)/n,median:values[Math.floor(n/2)],p10:values[Math.floor((n-1)*.1)],p90:values[Math.floor((n-1)*.9)],
-       above:values.filter(v=>v>line).length/n,n,values,seasonObservedMean:player.total===null?null:player.total/player.games,
-       observedStat:player.stat});
+       above:values.filter(v=>v>line).length/n,n,values,seasonObservedMean:(player.stat===(stat==='rushYards'?'rushingYards':stat)&&player.observedMean!=null)?player.observedMean:null,
+       observedStat:stat});
     }
   }
   return out;

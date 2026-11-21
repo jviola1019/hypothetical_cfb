@@ -1,3 +1,24 @@
+# GRIDIRON LAB v1.1 — weekly 2026 player-role status (2026-11-21)
+
+## Locally implemented and tested
+
+- 2026 roster **identity** matched for all 138 FBS schools in the previously published GitHub roster snapshot (15,187 player names). Roster entries are not verified starting roles.
+- Dated weekly role contract; human-reviewed examples: Ohio State Luke Fahey reported replacement QB, Jeremiah Smith WR first slot, Bo Jackson lead RB; Tennessee DeSean Bishop lead RB; Oregon State Jesse Legree usage-projected, explicitly **not starter verified**. Reports have URLs, observation dates, grade, and week-ending expiration.
+- Main thread and simulation Worker receive identical weekly snapshot and 2026 player evidence; absent/injured prior starter cannot quietly replace the reported current-week QB.
+- 138-school weekly role **candidate** compiler from roster and derived recorded-usage summaries; weekly Monday/Friday GitHub Actions workflow; stale verified grades expire. This workflow does **not** discover or reverify 138 official depth charts each week.
+- Named-athlete stat allocation applies bounded event-game weighted shares with anonymous OTHER backs/receivers; total QB/team catches, targets, rushing/passing yards and TDs reconcile. User-facing observed-per-event stat mean shown only for a matching stat.
+- Game UI retains three editable options; source/coverage table under an expandable personnel sheet. Generated box/props remain synthetic.
+- Locally executed: JS tests and Python tests, static build, desktop/mobile source-injected Chromium DOM tests; full exact results in `docs/VALIDATION_WEEKLY_LINEUPS.md`.
+
+## Unverified, blocked or incomplete
+
+- **All-school verified current starters:** unavailable. Only a few curated names have dated supporting depth-chart/replacement reports; all other schools have model-selected estimates and clear lower confidence grades. No live school-by-school game-day availability feed is integrated.
+- **Automated weekly update:** source workflow is committed in the repository and can run on GitHub Actions; successful scheduled runs must be independently checked. Each refresh recomputes estimates, not human source verification.
+- **Future player-prop calibration:** not achieved. Conditional 2026 event-game means are descriptive and selection biased. There is no opponent-specific learned snap, targets, carry or replacement quarterback efficiency model.
+- **2026 realism:** a small number of fixture-level league/team/player averages align in seeded sample exercises; no full historical joint calibration and no official NCAA depth-chart licensing for nationwide real-time reproduction.
+- **Devices/security:** no native iOS Safari on physical device, complete WCAG certification, full independent pen test or real-browser Web Worker verification. Node worker test verifies isolate parity.
+- **Source freshness:** school roster/player-event data are at most as fresh as the last successful upstream ingestion; do not display a new week as newly source-verified if the depth chart was not independently updated.
+
 # GRIDIRON LAB 1.0 — as implemented (2026-11-21)
 
 ## New implementation

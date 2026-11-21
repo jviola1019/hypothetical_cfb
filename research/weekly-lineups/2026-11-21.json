@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "season": 2026,
+  "weekStart": "2026-11-16",
+  "weekEnd": "2026-11-22",
+  "reviewedOn": "2026-11-21",
+  "entries": [
+    {"team":"ohio-state","role":"QB","name":"Luke Fahey","basis":"reported-replacement","observedOn":"2026-11-21","sourceUrl":"https://whosstarting.com/team/ohio-state/","note":"Projected QB1 for Ohio State vs Nebraska on November 21; previous starter injured. Projection, not a guaranteed pre-kickoff assignment."},
+    {"team":"ohio-state","role":"WR1","name":"Jeremiah Smith","basis":"depth-chart-listed","observedOn":"2026-11-21","sourceUrl":"https://www.thetwodeep.com/college/ohio-state","note":"Top 2026 WR slot and established high-volume target."},
+    {"team":"ohio-state","role":"RB","name":"Bo Jackson","basis":"depth-chart-listed","observedOn":"2026-11-21","sourceUrl":"https://www.thetwodeep.com/college/ohio-state","note":"Current RB1 position listed in 2026 two-deep."},
+    {"team":"tennessee","role":"RB","name":"DeSean Bishop","basis":"depth-chart-listed","observedOn":"2026-11-21","sourceUrl":"https://utsports.com/sports/football/roster/desean-bishop/22996","note":"Official 2026 Tennessee player profile describes Bishop as the starting running back; current reported usage is substantial."},
+    {"team":"oregon-state","role":"WR1","name":"Jesse Legree","basis":"usage-projected","observedOn":"2026-11-21","sourceUrl":"https://s3.us-east-2.amazonaws.com/sidearm.nextgen.sites/oregonstate.sidearmsports.com/stats/football/2026/pdf/cume.pdf","note":"Official Oregon State 2026 receiving leader; usage evidence, not a sourced current-game depth-chart starter designation."}
+  ],
+  "unavailable": [
+    {"team":"ohio-state","name":"Julian Sayin","status":"out","observedOn":"2026-11-21","sourceUrl":"https://sports.yahoo.com/articles/happened-quarterback-julian-sayin-return-141128394.html","note":"Reported unavailable for Nov 21 Nebraska game; expires after this game week."}
+  ]
+}

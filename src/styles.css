@@ -105,3 +105,28 @@ a{color:inherit;text-underline-offset:4px}a:hover{color:var(--lime)}::selection{
 @media(max-width:900px){.bracket-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.seed-leaders{grid-template-columns:repeat(2,minmax(0,1fr))}.swap-desk{grid-template-columns:1fr}}
 @media(max-width:580px){.seed-intro{display:block}.seed-source-chip{display:inline-block;margin-top:12px}.seed-intro h3{font-size:35px}.seed-row strong{font-size:21px}.seed-row span{font-size:11px}.seed-leaders{gap:0 13px}.swap-controls{grid-template-columns:1fr 1fr}.swap-controls .action{grid-column:1/-1}.bracket-grid{grid-template-columns:1fr}.atlas-topline{display:block}.atlas-topline p{text-align:left;margin-top:12px}.bracket-atlas{padding:14px}.round-switches .action{font-size:9px}.atlas-filters span{width:100%}.atlas-pager .action{padding:12px 8px}.roster-coverage{padding:13px;gap:12px}.roster-coverage p{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.bracket-grid .fixture-bracket.is-final{animation:none}}
+
+/* The personnel sheet has the visual language of a dated scouting report,
+   never a sportsbook's unsupported "confirmed starter" badge. */
+.personnel-desk{border-top:1px solid var(--rule-bright);border-bottom:1px solid var(--rule);background:#17251c;margin:16px 0 30px;color:var(--cream)}
+.personnel-desk summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 22px}
+.personnel-desk summary::-webkit-details-marker{display:none}
+.personnel-desk summary b{display:block;font:800 26px/1 var(--display);text-transform:uppercase;letter-spacing:-.01em;margin:6px 0}
+.personnel-desk summary small{font:500 11px var(--mono);color:var(--sub)}
+.personnel-expander{font:600 10px var(--mono);color:var(--lime)}
+.personnel-sheet{border-top:1px solid var(--rule);padding:20px 22px 22px}
+.personnel-disclosure{color:var(--sub);font-size:12px;max-width:870px;margin:0 0 18px}
+.personnel-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.personnel-team{min-width:0;border-top:2px solid var(--lime)}
+.personnel-team-title{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:13px 0;border-bottom:1px solid var(--rule)}
+.personnel-team-title h3{font:700 24px var(--display);text-transform:uppercase;margin:0}
+.personnel-team-title small{font:500 10px var(--mono);color:var(--faint);text-align:right}
+.personnel-row{display:grid;grid-template-columns:1fr minmax(125px,.9fr);gap:8px;padding:12px 0;border-bottom:1px solid var(--rule);font-size:12px;align-items:center}
+.personnel-row>div{min-width:0}.person-role{font:600 10px var(--mono);color:var(--lime);display:block;margin-bottom:4px}
+.personnel-row strong{display:block;font-weight:700;overflow-wrap:anywhere}
+.person-avg{display:block;color:var(--sub);font:500 10px var(--mono);margin-top:5px}
+.person-proof{text-align:right}.person-proof b{font:700 9px/1.4 var(--mono);color:var(--warm);text-transform:uppercase;letter-spacing:.04em;display:block}
+.person-proof b.verified{color:var(--lime)}.person-proof small{display:block;font-size:10px;color:var(--sub);margin:4px 0}
+.person-proof a{font:600 10px var(--mono);color:var(--cream);text-underline-offset:3px}
+@media(max-width:680px){.personnel-columns{grid-template-columns:1fr}.personnel-desk summary{padding:15px}.personnel-sheet{padding:17px 15px}.personnel-team-title h3{font-size:23px}.personnel-row{grid-template-columns:1fr .9fr}.personnel-desk summary b{font-size:23px}}
+@media(prefers-reduced-motion:reduce){.personnel-desk *{scroll-behavior:auto;transition:none!important}}

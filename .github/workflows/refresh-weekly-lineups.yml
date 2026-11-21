@@ -1,0 +1,64 @@
+name: Refresh 2026 week-scoped player roles
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 11 * * 1'
+    - cron: '17 12 * * 5'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/refresh_weekly_lineups.py'
+      - 'research/weekly-lineups/**'
+      - '.github/workflows/refresh-weekly-lineups.yml'
+permissions:
+  contents: write
+concurrency:
+  group: gridiron-weekly-personnel
+  cancel-in-progress: false
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Compile bounded weekly evidence; never carry stale verified labels forward
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/refresh_weekly_lineups.py \
+            --roster public/data/rosters-2026.json \
+            --players public/data/players-2026 \
+            --curated research/weekly-lineups/2026-11-21.json \
+            --date "$(date -u +%F)" \
+            --out public/data/weekly-lineups-2026.json
+          python - <<'PYCODE'
+          import json
+          out=json.load(open('public/data/weekly-lineups-2026.json'))
+          roster=json.load(open('public/data/rosters-2026.json'))
+          assert out['schools']==138 and set(out['teams'])==set(roster['schools'])
+          for team,doc in out['teams'].items():
+              roster_names={p['name'].casefold() for p in roster['schools'][team]}
+              assert len(doc['roles'])==len({p['name'].casefold() for p in doc['roles'].values()})
+              assert all(p['name'].casefold() in roster_names for p in doc['roles'].values())
+          print('All current 2026 FBS role identities roster matched; starter designation source graded')
+          PYCODE
+      - name: Regression tests
+        run: |
+          node --test tests/weekly_lineup.test.js
+          python -m unittest tests.test_weekly_lineup_import
+      - name: Commit validated weekly snapshot (no raw depth chart redistribution)
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/data/weekly-lineups-2026.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'data: reset 2026 depth-chart provenance and lineup projections for current week'
+            git push
+          fi

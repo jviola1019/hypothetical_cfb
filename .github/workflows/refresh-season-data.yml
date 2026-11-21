@@ -136,6 +136,14 @@ jobs:
               --rosters-json "public/data/rosters-${year}.json" \
               --out-dir "public/data/players-${year}" "${flags[@]}"
           done
+      - name: Rebuild week-scoped lineup interpretations from verified 2026 rosters
+        run: |
+          python scripts/refresh_weekly_lineups.py \
+            --roster public/data/rosters-2026.json \
+            --players public/data/players-2026 \
+            --curated research/weekly-lineups/2026-11-21.json \
+            --date "$(date -u +%F)" \
+            --out public/data/weekly-lineups-2026.json
       - name: Unit and ingestion tests
         run: |
           npm test
@@ -163,6 +171,10 @@ jobs:
           assert score['fitSeason']==2024 and score['fitGames']>=400
           assert score['evaluations']['2026']['n']>=300
           assert 0 <= score['evaluations']['2026']['margin']['interval90Coverage'] <= 1
+          lineup=json.load(open('public/data/weekly-lineups-2026.json'))
+          assert lineup['schools']==138 and lineup['schemaVersion']==1
+          assert set(lineup['teams'])==set(json.load(open('public/data/rosters-2026.json'))['schools'])
+          print('Weekly personnel coverage:',lineup['schools'])
           player_model=json.load(open('public/data/player-model-evaluation-2026.json'))
           assert player_model['trainingSeason']==2025 and player_model['evaluationSeason']==2026
           assert player_model['model']['n'] >= 100 and player_model['model']['n']==player_model['cohortPriorOnlyBaseline']['n']
@@ -179,7 +191,8 @@ jobs:
                   public/data/rosters-2025.json public/data/rosters-2026.json \
                   public/data/research-2026.json public/data/model-compare-2026.json \
                   public/data/score-evaluation-2026.json public/data/player-model-evaluation-2026.json \
-                  public/data/players-2025/ public/data/players-2026/
+                  public/data/players-2025/ public/data/players-2026/ \
+                  public/data/weekly-lineups-2026.json
           if ! git diff --cached --quiet; then
             git commit -m 'data: refresh 2025–2026 observed FBS records and roster snapshots'
             git push

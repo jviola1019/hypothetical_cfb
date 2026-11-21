@@ -67,18 +67,18 @@ export function auditGeneratedGame(game) {
 
     const p = team.players;
     const qb = p.QB, rb = p.RB;
-    const eligible = [p.WR1,p.WR2,p.TE,rb];
+    const eligible = [p.WR1,p.WR2,p.TE,rb,p.OTHER];
     demand(qb.passingAttempts === team.passAttempts && qb.completions === team.completions &&
            qb.passingYards === team.passYards, 'quarterback passing totals');
-    demand(qb.rushAttempts + rb.rushAttempts === team.rushAttempts, 'rushing attempts');
-    demand(qb.rushYards + rb.rushYards === team.rushYards, 'rushing yards');
+    demand(qb.rushAttempts + rb.rushAttempts + p.OTHER.rushAttempts === team.rushAttempts, 'rushing attempts');
+    demand(qb.rushYards + rb.rushYards + p.OTHER.rushYards === team.rushYards, 'rushing yards');
     demand(eligible.reduce((n,v)=>n+v.targets,0) === team.passAttempts, 'receiving targets');
     demand(eligible.reduce((n,v)=>n+v.receptions,0) === team.completions, 'receiving catches');
     demand(eligible.reduce((n,v)=>n+v.receivingYards,0) === team.passYards, 'receiving yards');
     demand(eligible.every(v=>v.receptions<=v.targets), 'catches exceed targets');
     demand(qb.passingTD === team.passingTD, 'quarterback passing TDs');
     demand(eligible.reduce((n,v)=>n+v.receivingTD,0) === team.passingTD, 'receiver passing TDs');
-    demand(qb.rushingTD + rb.rushingTD === team.rushingTD, 'rushing TDs');
+    demand(qb.rushingTD + rb.rushingTD + p.OTHER.rushingTD === team.rushingTD, 'rushing TDs');
     demand(qb.interceptions+team.fumblesLost === team.turnovers, 'turnovers');
     demand(p.K.fieldGoalsMade === team.fieldGoals, 'kicker FG totals');
     demand(p.K.fieldGoalsMade <= p.K.fieldGoalsAttempted, 'made FGs exceed attempted');

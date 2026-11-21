@@ -18,9 +18,9 @@ test('cross-program scoring, clock, and player reconciliation property stress',(
     assert.equal(t.plays,g.drives.filter(d=>d.offense===t.team).reduce((s,d)=>s+d.plays,0));
     assert.equal(t.completions,p.QB.completions);
     assert.equal(t.passYards,p.QB.passingYards);
-    assert.equal(t.passYards,p.RB.receivingYards+p.WR1.receivingYards+p.WR2.receivingYards+p.TE.receivingYards);
+    assert.equal(t.passYards,p.RB.receivingYards+p.WR1.receivingYards+p.WR2.receivingYards+p.TE.receivingYards+p.OTHER.receivingYards);
     assert.ok(t.twoPointMade<=t.twoPointAttempts);
-    assert.ok([p.RB,p.WR1,p.WR2,p.TE].every(x=>x.receptions<=x.targets));
+    assert.ok([p.RB,p.WR1,p.WR2,p.TE,p.OTHER].every(x=>x.receptions<=x.targets));
    }
   }
  }

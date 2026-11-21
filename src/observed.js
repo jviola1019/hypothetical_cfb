@@ -1,5 +1,6 @@
 import {FBS_TEAMS} from './catalog.js';
 import {getPlayerEvidence} from './playerEvidence.js';
+import {installWeeklyLineup,lineupRole,lastReportedUnavailable,personKey,weeklySummary} from './weeklyLineup.js';
 /**
  * Historical reference cards, 2025 completed season only.
  * These are observed full-season statistics, not point-in-time forecast inputs.
@@ -132,29 +133,39 @@ export function observed(id,season=2026){
 const ROLE_PREFERENCE = {
  QB:['QB'], RB:['RB','HB','FB'],WR1:['WR'],WR2:['WR'],TE:['TE'],K:['K','PK']
 };
-export function namedPlayer(id,role,season=2026){
- const n=Number(season),p=seasonRosters.get(n)?.[id];
- if(p){
+export function namedPlayer(id,role,season=2026,day=new Date().toISOString().slice(0,10)){
+ const n=Number(season),people=seasonRosters.get(n)?.[id];
+ if(people){
    const pref=ROLE_PREFERENCE[role]||[];
-   const candidates=p.filter(x=>pref.includes(x.position));
-   // The roster identifies eligible names, NOT starters. When a same-season
-   // derived player-event summary is available, rank roster-matched names by
-   // observed sample count and volume. It is not a projected depth chart.
+   // An official/report-backed weekly assignment takes precedence over old
+   // season-volume rankings. An expired record remains an identity prior ONLY.
+   const direct=n===2026?lineupRole(id,role,day):null;
+   const blocked=(player)=>{
+     const report=n===2026?lastReportedUnavailable(id,player.name,day):null;
+     // Safety-first: continue excluding a previously reported OUT QB until a
+     // fresher lineup explicitly reassigns that name. No claim of current injury.
+     return report?.status==='out' || report?.status==='doubtful';
+   };
+   const candidates=people.filter(x=>pref.includes(x.position)&&!blocked(x));
    const eventDoc=n===2026?getPlayerEvidence(id,2026):null;
-   const expectedStat=role==='QB'?'passingYards':role==='RB'?'rushingYards':role==='K'?'fieldGoalsMade':'receivingYards';
-   const normalize=name=>String(name).normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[\u2018\u2019]/g,"'").replace(/\s+/g,' ').trim().toLowerCase();
-   const evidence=new Map((eventDoc?.players||[]).filter(x=>x.stat===expectedStat).map(x=>[normalize(x.name),x]));
-   candidates.sort((a,b)=>{
-     const x=evidence.get(normalize(a.name)),y=evidence.get(normalize(b.name));
+   const stat=role==='QB'?'passingYards':role==='RB'?'rushingYards':role==='K'?'fieldGoalsMade':'receivingYards';
+   const evidence=new Map((eventDoc?.players||[]).filter(x=>x.stat===stat).map(x=>[personKey(x.name),x]));
+   const otherFirst=n===2026&&role==='WR2'?lineupRole(id,'WR1',day)?.name:null;
+   const available=candidates.filter(x=>!otherFirst||personKey(x.name)!==personKey(otherFirst));
+   available.sort((a,b)=>{
+     const x=evidence.get(personKey(a.name)),y=evidence.get(personKey(b.name));
      return (y?.n||0)-(x?.n||0)||(y?.mean||0)-(x?.mean||0)||a.name.localeCompare(b.name);
    });
-   const index=role==='WR2'?1:0;
-   const selected=candidates[index];
+   const selected=available.find(x=>direct&&personKey(x.name)===personKey(direct.name))||available[role==='WR2'&&!otherFirst?1:0];
    if(selected){
-     const e=evidence.get(normalize(selected.name));
-     return {...selected,stat:null,total:null,games:null,rosterOnly:true,
-       selectionBasis:e?'2026-roster-matched-recorded-events':'2026-roster-position-only',
-       eventGames:e?.n||0};
+     const e=evidence.get(personKey(selected.name));
+     return {...selected,stat:e?.stat??null,total:null,games:null,rosterOnly:true,
+       selectionBasis:direct&&personKey(selected.name)===personKey(direct.name)?direct.displayBasis:
+         e?'2026-roster-matched-recorded-events':'2026-roster-position-only',
+       eventGames:e?.n||0, observedMean:e?.mean??null,
+       roleVerified:Boolean(direct?.verifiedCurrent&&personKey(selected.name)===personKey(direct.name)),
+       sourceUrl:direct&&personKey(selected.name)===personKey(direct.name)?direct.sourceUrl:e?eventDoc.sourceUrl:selected.source,
+       verifiedOn:direct&&personKey(selected.name)===personKey(direct.name)?direct.observedOn:null};
    }
  }
  return n===2025?HISTORICAL[id]?.players?.[role]||null:null;
@@ -182,5 +193,18 @@ export async function loadPublicData(base='./public/data/'){
       }catch(e){/* absent optional dataset never prevents offline simulation */}
     }
   }
+  // Optional weekly lineup is installed AFTER the roster; worker receives the exact
+  // same serialized evidence. No fetch failure can fabricate starter verification.
+  try{
+    const res=await fetch(`${base}weekly-lineups-2026.json`,{cache:'no-cache'});
+    if(res.ok&&Number(res.headers.get('content-length')||0)<400_000){
+      const raw=await res.text();if(raw.length<400_000){
+        const payload=JSON.parse(raw);const count=installWeeklyLineup(payload);
+        loaded.push({year:2026,prefix:'weekly-lineups',count});
+        payloads.push({year:2026,prefix:'weekly-lineups',payload});
+      }
+    }
+  }catch(_){/* empty or stale lineup never blocks historical data */}
+  sourceStatus.weekly=weeklySummary();
   return {loaded,payloads};
 }

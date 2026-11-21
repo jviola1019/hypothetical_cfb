@@ -33,6 +33,9 @@ with sync_playwright() as p:
   assert page.locator('.research-snapshot').count()==1
   assert page.locator('.snapshot-lead').count()==1, 'fixture research should show empirical with mocked data'
   assert page.locator('.player-desk').count()==1
+  assert page.locator('.personnel-desk').count()==1
+  page.locator('.personnel-desk summary').click()
+  assert page.locator('.personnel-columns').count()==1
   assert page.evaluate('document.documentElement.scrollWidth<=window.innerWidth+2'),f'overflow {width}'
   page.screenshot(path=f'/mnt/data/gridiron-v09-{width}.png',full_page=False,animations='disabled')
   oldscore=page.locator('.fixture-score-number').inner_text()
