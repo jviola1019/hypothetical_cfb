@@ -1,32 +1,34 @@
-# Status — 2026-11-20 / v0.3.0
+# Implementation status — November 21, 2026 / v0.4.0
 
 ## Implemented and tested
 
-- Offline two-tab static website; runs from a local HTTP server.
-- Seeded synthetic game generator with regulation/limited overtime and drive logs.
-- Team/pass/receiving/rushing and kicking aggregate stat reconciliation.
-- Simulated single-game score, synthetic role player props in both game tab and playoff game inspector, custom spread/total lines, sample score/margin/total diagrams, running win-frequency chart.
-- 13 labeled tournament presets, seed mapping (including official FBS 12/24 first-round geometry), bracket seed editing/swapping and byes, manual match simulation, full round and tournament simulation, individual game inspector, synthetic championship frequency from full tournament Monte Carlo.
-- Node test and syntax suites, measured local benchmarks, dependency-free static build, Chromium DOM smoke tests at desktop and iPhone width with a verified no-horizontal-overflow assertion, GitHub Pages workflow source.
+- Completely redesigned responsive, two-tab sports-editorial interface. Game controls are restricted to two teams and home/neutral field. Original CSS design uses Barlow Condensed, DM Sans and IBM Plex Mono when loaded, plus offline fallbacks. Mobile no-overflow and game/playoff DOM controls tested in Chromium source-injected harness.
+- 2025 observed full-season team PPG, PPG conceded, records and manually checked athlete identities for **Ole Miss, Georgia, Alabama and Indiana**; limited sourced head-to-head results, including postseason played in January 2026. Sources in `src/observed.js` and `DATA_PROVENANCE.md`.
+- Seeded synthetic engine, player/team stat reconciliation, 2025 full-name slot labeling for verified players only; unsupported player props suppressed.
+- Read-only prop distributions with fixed labeled thresholds, empirical means, sampled frequencies and descriptive observed season means where the measurement matches. Playoff game inspector includes player and team stat tables and synthetic prop samples.
+- Interactive outcome atlas, margin/total histograms, convergence, drive paths, final-score illustration, factual reference table and playoff title-advancement table.
+- 13 bracket formats, reliable N−1 generated games, score/round report, repeatable tournament Monte Carlo.
+- Optional NCAA CC0 roster+stats importer validated on **two offline fixtures**; independent import workflow staged and documented; zero upstream files downloaded by the tests.
+- Node test suite **16/16** and Python ingestion **2/2**; static build and source syntax checks. See `VALIDATION.md`.
 
-## Implemented but not independently verified
+## Implemented but not end-to-end verified
 
-- Native ES module and Web Worker execution in actual browser URL navigation (sandbox blocked navigation); module worker cancellation, progressive UI updating, published GitHub Pages runtime.
-- Shareable fragment-link and JSON download interactions under native browser API.
+- Real Web Worker and native module resolution under GitHub Pages runtime; actual iPhone Safari performance, axe/WCAG automated audit, and Google Fonts web loading.
+- `.github/workflows/refresh-roster.yml` full upstream ingestion and commit (requires workflow dispatch, GitHub network and permission; not executed).
+- GitHub Pages deployment job and hosted website response. Source commit publication is separate from deployment verification.
 
-## Partially implemented / experimental
+## Experimental / partial
 
-- **Statistical model:** coherent but completely synthetic/untuned drive-level generator; no observed-data baseline, fitted parameters or holdout calibration.
-- **Players:** synthetic roles, not historical athletes; only selected QB/RB/WR/TE/K stats; no defensive players.
-- **Official playoffs:** initial bracket geometry, byes and FBS host labels implemented; qualifying selection, all bowls, regional FCS mapping and committee ranking not reproduced.
-- **NCAA gameplay:** simplified possession events and scoring; no down/distance, punts/touchbacks as exact rule mechanics, penalties, NCAA 2-point conversion box stats, substitutions or clock stoppages.
-- **Visuals:** functional score atlas, margin/total histograms, scoreboard, convergence and advancement bars; full 17-chart wish list not completed.
-- **Security:** static threat triage + boundary validation and unit tests, not exhaustive pen test.
+- 2025 full-season efficiency proxy only for four audited teams, plus synthetic values for all others. This proxy is **retrospective and in-sample** and leaks the selected season’s completed outcomes; cannot be used as point-in-time backtest predictor. No historical forecast accuracy claim.
+- Player props use actual historical names but **synthetic role allocations**, not individual playing-time/usage fitted projections. Full names are suppressed for unverified schools/positions.
+- Static bracket topology approximates official 12-team and announced 24-team FBS initial pairings; no committee qualification, precise host logistics, or region-aware FCS seeding.
+- Simplified drive-level football, coarse overtime and no actual down-by-down plays. Scoring clock events are generated, not official match events.
+- Applicable 92-threat security matrix is an architectural classification, not 92 exploit tests.
 
-## Not implemented
+## Not implemented / blocked
 
-- Real historic game/drive/roster/athlete data or CFBD integration, calibrated pregame model, model-fitting Python pipeline, longitudinal data feature store and audit, opponent-adjusted EPA, real player markets, model-versus-market holdout evaluation, injury/weather/rest carryover, advanced playoff conditional analysis, win-probability live model, realistic down-by-down football, model ranking/auto-bid selection, accessible bracket tables independent of cards, import workflow, custom tournament rules designer, visual animations beyond basic transition, rigorous WebKit/physical mobile/axe verification, Figma/design image asset production, actual server-backed enterprise security.
+- A licensed data warehouse with chronological cutoff, real play-by-play opponent adjustments, held-out season calibration, game-level player usage/participation, verifiable player prop probabilities for all schools, actual 2026 live feed, official full CFP selection and authentic defensive player props.
+- Automatic free authenticated CFBD ingestion; free CFBD key not available and static public bundle must not expose one.
+- Complete official future bracket logic, risk-factor-driven injury/weather/rest effects, realistic play-level engine, comprehensive multi-browser accessibility audits, independent pen test.
 
-## Deployment status
-
-Local archive and static build generated. GitHub publication and Actions/Pages deployment must be confirmed independently; a committed workflow alone does not prove public hosting.
+**Evidence rule:** Source file or CI workflow existence is never evidence its real provider refresh or production deployment succeeded.

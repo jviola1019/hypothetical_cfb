@@ -1,12 +1,19 @@
 {
-  "version": "0.3.0-demo",
-  "retrieved": "2026-11-20",
-  "model": "synthetic-drive-generator",
-  "calibration": "not-trained",
-  "observed_game_rows": 0,
-  "real_player_rows": 0,
-  "team_names": "display identifiers only",
-  "season_options": {"min": 2010, "max": 2026, "synthetic": true},
-  "data_license": "no third party dataset included",
-  "source_notes": ["docs/DATA_PROVENANCE.md", "docs/MODEL_CARD.md"]
+  "version": "0.4.0",
+  "releaseDate": "2026-11-21",
+  "model": "synthetic-drive-generator-with-retrospective-2025-context",
+  "calibration": "not-trained-not-validated",
+  "coreHistoricalSeason": 2025,
+  "observedTeamSeasonRows": 4,
+  "verifiedHistoricalFixtureRows": 5,
+  "namedPlayerSlotRows": 17,
+  "expectedOptionalRostersDataset": "data/rosters-2025.json (not shipped, staged manual refresh only)",
+  "fittedPlayerPropModels": 0,
+  "fittedGameModels": 0,
+  "mixedRealityWarning": "Historical season identity/context and generated game/player outcomes are separate. Season-end statistics are not valid real-time forecast inputs.",
+  "sourceNotes": [
+    "docs/DATA_PROVENANCE.md",
+    "docs/MODEL_CARD.md",
+    "docs/STATUS.md"
+  ]
 }

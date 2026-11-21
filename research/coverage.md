@@ -1,7 +1,7 @@
-# Feasibility research / November 20, 2026
+# Season and data coverage, v0.4.0
 
-Current CFBD endpoint metadata confirms game/team/player and analytics API exists, but requires a secret key: https://api.collegefootballdata.com/getting-started. No API credential was provided, and no reproducible dataset snapshot or license for bundled redistribution was obtained. Hence no historical data are embedded, and no validation results are invented.
+**2025 completed season:** four schools with manually sourced season averages, records, limited player names/stat categories, five recorded matchups. No other observed seasons. All actual projected outcomes synthetic/unfitted.
 
-CFP official announcements: 2026–27 is still 12 teams. Starting 2027–28, 24 teams, 8 opening byes, first- and second-round campus hosts. Source: https://collegefootballplayoff.com/sports/2026/11/9/24-team-format. FCS remains separate.
+**Optional external expansion, NOT EXECUTED:** 2025–26 CC0 NCAA roster collection. See `scripts/import_ncaa_roster.py` and `docs/DATA_PROVENANCE.md`. 2026 live APIs remain non-integrated.
 
-The node code should be treated as an educational demonstration, not a betting or coaching model.
+**2010–2026 internal season selectors:** simulation IDs only, not evidence of historical datasets or team performance. 2025 season is fixed in current readable UI to eliminate misleading year options.

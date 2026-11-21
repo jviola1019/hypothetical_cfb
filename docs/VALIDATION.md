@@ -1,19 +1,17 @@
-# Local validation record — 2026-11-20
+# Validation record — November 21, 2026 / v0.4.0
 
-Node v22.16.0, npm v10.9.2, Python v3.13.5, Linux x86_64 container. No network npm dependencies.
+## Executed in the local environment
 
-## Commands actually executed
+- `npm run check`: **PASS** for `src/observed.js`, `app.js`, `engine.js`, `tournament.js`, `worker.js`, `charts.js`.
+- `npm test`: **16/16 PASS**, zero failures. Includes RNG, malformed inputs, reproduction, 300 simulation/game property fixtures, player catch/yard reconciliation, complementary probability, win-frequency sampling error, 13 tournament formats and N−1 games, bye assignment, historic-name coverage restrictions and prop-empirical frequency equality.
+- `python3 -m unittest discover -s tests -p 'test_*.py'`: **2/2 PASS** on small fabricated CSV fixtures. It tests the ingestion code, **not the authentic upstream 72k-row roster dataset**.
+- `npm run build`: independently run for release artifacts. See command logs captured during this turn.
+- Chromium DOM smoke checks: source injection at responsive viewport, synthetic result, source-derived full names, team change, bracket completion and game inspection, no horizontal overflow at 390px. This harness mocks the scheduling portion of the Worker and cannot validate real module execution, Web Workers or hosted HTTPS.
 
-- `npm run check` — PASS: five JavaScript source files parsed.
-- `npm test` — PASS: 12/12 Node tests, 0 failures (includes 300 synthetic game integrity property fixtures across seeds, every bracket format N−1, 20 deterministic fixtures, MC symmetry and prop allocation).
-- `npm run benchmark` — PASS measured: single game 1.9 ms; 1,000 games + aggregation 183.4 ms; 12-team tournament 1.9 ms; 24-team 2.1 ms; 64-team 6.2 ms; 128-team 13.3 ms; 50 12-team tournaments 58.7 ms. These are environment-specific, not phone guarantees.
-- `npm run build` — PASS: static `dist/` produced.
-- `python tests/browser_smoke.py` — PASS: Chromium DOM harness at 1365×860 and 390×844, synthetic game, bracket completion, 11 reports, zero horizontal document overflow at 390 px, no page JS exceptions. Browser navigation to `http://127.0.0.1:4173/` and `file://` was explicitly rejected with `ERR_BLOCKED_BY_ADMINISTRATOR`. To make DOM checks possible, this harness inlines the actual application module source and substitutes a synchronous-scheduler Worker stub: **the real ES-module loader, Worker spawning, live DOM worker cancellation and GitHub Pages deployment were not verified in the browser.**
+## Statistical baseline/holdout results
 
-## Historical statistics
+No real-game historical holdout backtest was run. Train seasons 0; test seasons 0. Brier, log loss, CRPS, calibration plots, player out-of-sample errors, and real-game spread accuracy are not available. The displayed model percentages cannot be advertised as forecasting skill.
 
-Chronological holdouts: NOT RUN. Training seasons: 0. Validation games: 0. Empirical baseline: NOT RUN. Brier/log loss/RMSE/CRPS: NOT AVAILABLE. No claims of calibration or performance superiority are made.
+## Unverified
 
-## Remaining security/browser tests
-
-Firefox, WebKit, physical iPhone Safari, screen-reader testing, high-load Web Worker cancellation, load Lighthouse, dependency/CodeQL GitHub CI, host HSTS/CSP headers and published Pages link require downstream verification. Full 92-entry applicability assessment is recorded in `THREAT_MODEL.md`, not 92 individually executed exploit tests.
+Firefox, WebKit, iPhone physical browser, screen reader, live Google Fonts loading, hosting HTTP response security headers, external NCAA roster refresh workflow, GitHub Pages Action completion and public URL response, 92-threat dynamic pen test, large-data memory profiling. See `STATUS.md` and `THREAT_MODEL.md`.

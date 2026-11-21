@@ -4,8 +4,9 @@ The implementation uses zero runtime third-party dependencies. HTML5, modern ES 
 
 ```mermaid
 flowchart LR
-  A[Team labels and demo season inputs] --> B[Strict scenario validator]
+  A[Team A, Team B and venue selection] --> B[Strict scenario validator]
   B --> C[Deterministic team profile generator]
+  N[2025 completed-season observed context / 4 schools] --> C
   C --> D[Drive-level synthetic game engine]
   D --> E[Joint team and positional player statistics]
   D --> F[Outcome samples]
@@ -22,10 +23,12 @@ flowchart LR
 
 ## Components
 
-- `src/engine.js`: seeded Mulberry32-like RNG, explicit synthetic team strength profiles, drive outcomes, restrained football score mechanics, consistency-preserving player allocations, game aggregation and statistical summaries.
+- `src/engine.js`: seeded Mulberry32-like RNG, synthetic ratings and retrospective 2025 descriptive strength proxies for four verified schools, drive outcomes, restrained football score mechanics, consistency-preserving player allocations, game aggregation and statistical summaries.
 - `src/tournament.js`: bracket size/seed ordering, pre-set definitions, bye handling, individual games, stage transitions, champion identification, full-bracket Monte Carlo.
 - `src/worker.js`: chunked asynchronous simulation with progress and worker termination, no Web Worker network access.
-- `src/charts.js`: outcome heatmap, margin/total histograms, running game-win frequency, and realized scoreboard plot.
+- `src/charts.js`: outcome atlas, two histograms, convergence, generated score timeline, possession atlas and prop histogram.
+- `src/observed.js`: manually curated real 2025 athlete identities, school season averages and limited actual matchups; contains no real point-in-time predictive features.
+- `scripts/import_ncaa_roster.py`: optional strict CC0 historical dataset ingestion; output remains outside production use until full source validation and a deliberate data refresh.
 - `src/app.js`: state machine and accessible UI event delegation; validated fields, selective deep linking, HTML-escaped dynamic strings; no unsafe URL navigation.
 - `src/styles.css`: mobile-first two-tab UI with asymmetric editorial layout; reduced-motion rule; accessible focus cues.
 
@@ -57,4 +60,4 @@ All application computations are performed in the end user's browser. Browser in
 
 ## Data contracts
 
-`Team {id:string,name:string,short:string}`. `GameConfig {a,b,seasonA,seasonB,venue,pace,shift,seed}`. `Game {id,seed,config,teams:TeamBox[2],drives:Drive[],final:[number,number],margin,total,winner,ot}`. `Tournament {formatId,participants:string[],seed,slots:(string|null)[],stage,rounds,played,champion,version}`. `TournamentSample {n,counts,probabilities,gamesPlayed,finalMatchups}`. All schemas are validated by code and tested at boundaries; dedicated JSON Schema and DB entity tables have not been implemented.
+`Team {id:string,name:string,short:string}`. `GameConfig {a,b,seasonA,seasonB,venue,pace,shift,seed} (public UI edits only a, b, venue; others fixed internally)`. `Game {id,seed,config,teams:TeamBox[2],drives:Drive[],final:[number,number],margin,total,winner,ot}`. `Tournament {formatId,participants:string[],seed,slots:(string|null)[],stage,rounds,played,champion,version}`. `TournamentSample {n,counts,probabilities,gamesPlayed,finalMatchups}`. All schemas are validated by code and tested at boundaries; dedicated JSON Schema and DB entity tables have not been implemented.

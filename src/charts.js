@@ -1,22 +1,52 @@
-const el=(x)=>Number.isFinite(x)?x:0;
-const fmt=(x,d=1)=>el(x).toFixed(d);
-const line=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="chartgrid"/>`;
+/* Presentation-only SVGs: marks represent input observations or generated game records. */
+const num=x=>Number.isFinite(+x)?+x:0;
+const n1=x=>num(x).toFixed(1);
+const C={ink:'#17252A',steel:'#869696',jade:'#205A55',mint:'#90BAA5',red:'#D74E35',cream:'#F4F3EE',grid:'#CED4CD'};
+const esc=s=>String(s).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+const line=(x1,y1,x2,y2,cls='gridline')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${cls}"/>`;
+const axis=(x,y,value,anchor='middle')=>`<text x="${x}" y="${y}" text-anchor="${anchor}" class="svg-text">${esc(value)}</text>`;
 export function histogram(values,threshold,kind='margin'){
- if(!values?.length)return '<p class="fine">Run Monte Carlo to populate this distribution.</p>';
- const lo=Math.floor(Math.min(...values)/7)*7,hi=Math.ceil(Math.max(...values)/7)*7+7,nb=Math.max(1,Math.round((hi-lo)/7)),bins=Array(nb).fill(0);for(const v of values)bins[Math.min(nb-1,Math.max(0,Math.floor((v-lo)/7)))]++;
- const max=Math.max(...bins,1),w=640,h=248,left=45,right=18,top=24,bottom=44,pw=w-left-right,ph=h-top-bottom,bw=pw/nb;
- const rect=bins.map((n,i)=>`<rect x="${left+i*bw+.8}" y="${top+ph-n/max*ph}" width="${Math.max(.5,bw-1.6)}" height="${n/max*ph}" fill="${kind==='total'?'#7daca1':'#d99c48'}"><title>${lo+i*7}–${lo+(i+1)*7-1} points: ${fmt(n/values.length*100,1)}%</title></rect>`).join('');
- const axis=[0,.25,.5,.75,1].map(i=>line(left,top+ph*i,left+pw,top+ph*i)+`<text x="${left-8}" y="${top+ph*i+4}" text-anchor="end" class="axislabel">${fmt((1-i)*max/values.length*100,0)}%</text>`).join('');const xy=v=>left+clamp2((v-lo)/(hi-lo),0,1)*pw;
- const marker=Number.isFinite(threshold)?`<line x1="${xy(threshold)}" x2="${xy(threshold)}" y1="${top}" y2="${top+ph}" stroke="#f3f0e8" stroke-width="2" stroke-dasharray="6 4"/><text x="${Math.min(w-60,Math.max(60,xy(threshold)))}" y="15" text-anchor="middle" class="axislabel">LINE ${threshold}</text>`:'';
- return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Histogram of ${kind} from ${values.length} independent synthetic simulations; ${nb} bins of seven points"><title>${kind} outcomes</title>${axis}${rect}${marker}<text x="${left}" y="${h-9}" class="axislabel">${lo}</text><text x="${left+pw/2}" y="${h-9}" class="axislabel" text-anchor="middle">${kind==='total'?'TOTAL POINTS':'A MINUS B · POINTS'}</text><text x="${left+pw}" y="${h-9}" class="axislabel" text-anchor="end">${hi}</text></svg>`;
+ if(!values?.length)return `<div class="emptygraph">Results appear after the simulation.</div>`;
+ const step=kind==='total'?7:6,min=Math.floor(Math.min(...values)/step)*step,max=Math.ceil(Math.max(...values)/step)*step+step;
+ const bins=Array(Math.ceil((max-min)/step)).fill(0);
+ values.forEach(v=>bins[Math.min(bins.length-1,Math.floor((v-min)/step))]++);
+ const w=690,h=260,L=49,R=14,T=26,B=44,pw=w-L-R,ph=h-T-B,peak=Math.max(1,...bins),bw=pw/bins.length;
+ const y=n=>T+ph-(n/peak)*ph, x=i=>L+i*bw;
+ const bars=bins.map((v,i)=>`<rect class="outcome-bar" x="${x(i)+1}" y="${y(v)}" width="${Math.max(1,bw-2)}" height="${T+ph-y(v)}" fill="${kind==='total'?C.jade:C.red}"><title>${min+i*step}–${min+(i+1)*step-1} points: ${(v/values.length*100).toFixed(1)}% of simulations</title></rect>`).join('');
+ const horizontal=[0,.5,1].map(p=>line(L,y(peak*p),w-R,y(peak*p))+axis(L-7,y(peak*p)+4,(peak*p/values.length*100).toFixed(0)+'%','end')).join('');
+ const mx=L+(threshold-min)/(max-min)*pw;
+ const cut=Number.isFinite(threshold)&&mx>=L&&mx<=w-R?`<line x1="${mx}" x2="${mx}" y1="${T-5}" y2="${T+ph}" stroke="${C.ink}" stroke-width="1.8" stroke-dasharray="5 5"/>${axis(Math.min(w-40,Math.max(40,mx)),15,'LINE '+n1(threshold))}`:'';
+ return `<svg class="viz" viewBox="0 0 ${w} ${h}" role="img" aria-label="Sampled ${kind} histogram with ${values.length} synthetic simulations"><title>Simulated ${kind} distribution</title>${horizontal}${bars}${cut}${axis(L,h-13,min,'start')}${axis(w-R,h-13,max,'end')}${axis(w/2,h-13,kind==='total'?'TOTAL POINTS':'MARGIN — TEAM A MINUS B')}</svg>`;
 }
-const clamp2=(x,l,h)=>Math.max(l,Math.min(h,x));
-export function atlas(scores,n){if(!scores?.length)return '<p class="fine">No probability landscape available.</p>';const bins=new Map();for(const {score,count} of scores){const [a,b]=score.split('-').map(Number),x=Math.floor(a/7),y=Math.floor(b/7),key=`${x}:${y}`;bins.set(key,(bins.get(key)||0)+count)}const keys=[...bins.keys()].map(x=>x.split(':').map(Number));let maxX=Math.max(...keys.map(x=>x[0]),2),maxY=Math.max(...keys.map(x=>x[1]),2),max=Math.max(...bins.values(),1),sq=20,w=(maxX+1)*sq+60,h=(maxY+1)*sq+40;
- const rect=[...bins].map(([key,count])=>{const [x,y]=key.split(':').map(Number),shade=.18+.82*count/max;return `<rect x="${46+x*sq}" y="${10+(maxY-y)*sq}" width="${sq-2}" height="${sq-2}" fill="#d99c48" opacity="${shade.toFixed(2)}"><title>A: ${x*7}–${x*7+6}, B: ${y*7}–${y*7+6} · ${(count/n*100).toFixed(2)}% of sampled games</title></rect>`}).join('');
- return `<div style="overflow-x:auto"><svg viewBox="0 0 ${w} ${h}" style="min-width:420px;max-height:360px" role="img" aria-label="Two-dimensional binned sample final-score probability map; each tile represents a seven-point by seven-point cell"><title>Score outcome atlas</title>${rect}<text class="axislabel" x="${w/2}" y="${h-4}" text-anchor="middle">TEAM A SCORE → 7-POINT BINS</text><text class="axislabel" x="12" y="${h/2}" transform="rotate(-90 12 ${h/2})" text-anchor="middle">TEAM B SCORE</text></svg></div>`;
+export function atlas(scores,n){
+ if(!scores?.length)return `<div class="emptygraph">No score distribution yet.</div>`;
+ const step=7,bins=new Map();for(const {score,count} of scores){const [a,b]=score.split('-').map(Number);const key=Math.floor(a/step)+','+Math.floor(b/step);bins.set(key,(bins.get(key)||0)+count)}
+ const coords=[...bins].map(([key,count])=>{const [x,y]=key.split(',').map(Number);return {x,y,count}});
+ const mx=Math.max(...coords.map(x=>x.x),6),my=Math.max(...coords.map(x=>x.y),6),cell=Math.min(40,Math.max(23,530/(Math.max(mx,my)+1))),L=52,T=18,R=15,B=46,w=L+(mx+1)*cell+R,h=T+(my+1)*cell+B,top=Math.max(...coords.map(x=>x.count));
+ const tiles=coords.map(({x,y,count})=>{const op=(.12+.88*count/top).toFixed(2);return `<rect x="${L+x*cell}" y="${T+(my-y)*cell}" width="${cell-2}" height="${cell-2}" fill="${C.jade}" opacity="${op}"><title>A ${x*7}–${x*7+6} / B ${y*7}–${y*7+6}: ${(count/n*100).toFixed(2)}%</title></rect>`}).join('');
+ return `<div class="heatmap-scroll"><svg class="viz heatmap" viewBox="0 0 ${w} ${h}" role="img" aria-label="Joint simulated final score heatmap with seven point score bins"><title>Score outcome atlas</title>${tiles}${axis(w/2,h-8,'TEAM A · POINTS')}${axis(13,h/2,'TEAM B', 'start')}${axis(L,T+(my+1)*cell+13,'0','start')}${axis(w-R,T+(my+1)*cell+13,(mx+1)*7,'end')}${axis(L-9,T+(my+.5)*cell,'0','end')}${axis(L-9,T+cell/2,(my+1)*7,'end')}</svg></div>`;
 }
-export function convergence(points,finalP){if(!points?.length)return '';const w=620,h=195,left=45,top=19,bottom=36,pw=550,ph=h-top-bottom;const maxN=points.at(-1).n,x=n=>left+(n/maxN)*pw,y=v=>top+(1-v)*ph;const path=points.map((p,i)=>`${i?'L':'M'}${fmt(x(p.n),1)},${fmt(y(p.p),1)}`).join(' ');let grid=[0,.25,.5,.75,1].map(v=>line(left,y(v),w-18,y(v))+`<text class="axislabel" x="${left-8}" y="${y(v)+4}" text-anchor="end">${Math.round(v*100)}%</text>`).join('');return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Running simulation win frequency by iteration count; final estimated probability ${Math.round(finalP*100)} percent">${grid}<path d="${path}" fill="none" stroke="#d99c48" stroke-width="2.7"/><circle cx="${x(maxN)}" cy="${y(finalP)}" r="4" fill="#f3f0e8"/><text class="axislabel" x="${left}" y="${h-8}">0</text><text class="axislabel" x="${w-18}" y="${h-8}" text-anchor="end">${maxN.toLocaleString()} RUNS</text></svg>`;}
-export function scoreboardCurve(game){if(!game)return '';const a=game.drives.map(d=>d.scoreA),b=game.drives.map(d=>d.scoreB),high=Math.max(7,game.final[0],game.final[1]),w=640,h=200,L=37,R=12,T=20,B=30,pw=w-L-R,ph=h-T-B;
- const path=(pts)=>'M'+`${L},${T+ph} `+pts.map((p,i)=>`L${L+pw*(i+1)/pts.length},${T+ph-p/high*ph}`).join(' ');
- return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Cumulative scoreboard after each generated drive; no observed football plays">${[0,high/2,high].map(x=>line(L,T+ph-x/high*ph,w-R,T+ph-x/high*ph)+`<text x="${L-7}" y="${T+ph-x/high*ph+4}" text-anchor="end" class="axislabel">${Math.round(x)}</text>`).join('')}<path d="${path(a)}" fill="none" stroke="#d99c48" stroke-width="3"/><path d="${path(b)}" fill="none" stroke="#a1c6ae" stroke-width="3"/><text class="axislabel" x="${L}" y="${h-7}">START</text><text class="axislabel" x="${w-R}" y="${h-7}" text-anchor="end">${game.drives.length} DRIVES / OT EVENTS</text></svg><div class="fine"><span style="color:#d99c48">━</span> Team A &nbsp;&nbsp; <span style="color:#a1c6ae">━</span> Team B</div>`;
+export function scoreboardCurve(g){
+ if(!g?.drives.length)return '';
+ const w=700,h=236,L=43,T=17,R=18,B=39,pw=w-L-R,ph=h-T-B,max=Math.max(7,...g.final);let a=0,b=0;
+ const path=(idx)=>{let cur=0;return 'M'+L+','+(T+ph)+' '+g.drives.map((d,i)=>{cur=idx===0?d.scoreA:d.scoreB;const x=L+(i+1)/g.drives.length*pw,y=T+ph-cur/max*ph;return 'H'+x+' V'+y}).join(' ')};
+ const rules=[0,.5,1].map(q=>line(L,T+ph*(1-q),w-R,T+ph*(1-q))+axis(L-8,T+ph*(1-q)+4,Math.round(max*q),'end')).join('');
+ const blocks=g.drives.map((d,i)=>d.points>0?`<circle cx="${L+(i+1)/g.drives.length*pw}" cy="${T+ph-(d.offense===g.config.a?d.scoreA:d.scoreB)/max*ph}" r="3.5" fill="${d.offense===g.config.a?C.red:C.jade}"><title>Drive ${i+1}: ${d.offense} ${d.outcome}, ${d.points} points</title></circle>`:'').join('');
+ return `<svg class="viz" viewBox="0 0 ${w} ${h}" role="img" aria-label="Cumulative synthetic scoreboard by simulated drive"><title>Drive-by-drive scores</title>${rules}<path d="${path(0)}" fill="none" stroke="${C.red}" stroke-width="3" stroke-linejoin="round"/><path d="${path(1)}" fill="none" stroke="${C.jade}" stroke-width="3" stroke-linejoin="round"/>${blocks}${axis(L,h-8,'KICKOFF','start')}${axis(w-R,h-8,g.drives.length+' POSSESSIONS','end')}</svg>`;
+}
+export function convergence(points,p){if(!points?.length)return '';
+ const w=690,h=210,L=43,T=15,R=17,B=38,pw=w-L-R,ph=h-T-B, mx=points.at(-1).n;
+ const xx=n=>L+pw*n/mx,yy=p=>T+ph*(1-p);
+ const pointsPath=points.map((v,i)=>(i?'L':'M')+xx(v.n).toFixed(1)+','+yy(v.p).toFixed(1)).join(' ');
+ return `<svg class="viz" viewBox="0 0 ${w} ${h}" role="img" aria-label="Cumulative share of simulated games won by team A"><title>Monte Carlo convergence</title>${[0,.25,.5,.75,1].map(v=>line(L,yy(v),w-R,yy(v))+axis(L-8,yy(v)+3,(v*100).toFixed(0)+'%','end')).join('')}<path d="${pointsPath}" fill="none" stroke="${C.red}" stroke-width="2.7"/>${axis(L,h-8,'0 RUNS','start')}${axis(w-R,h-8,mx.toLocaleString()+' RUNS','end')}</svg>`;
+}
+export function driveStrip(g){if(!g)return '';
+ const n=g.drives.length;
+ return `<div class="drive-strip" role="img" aria-label="${n} simulated drives; bars show outcome and yards gained">${g.drives.map((d,i)=>{const type=d.points?'score':d.outcome==='TO'?'turnover':'stop';const height=Math.max(12,Math.min(100,d.gain||5));return `<div class="drive-slot ${type}" title="${esc(d.offense)}: ${esc(d.outcome)} · ${d.gain} yards · ${d.points} points"><span style="height:${height}%"></span></div>`}).join('')}</div><div class="mini-legend"><span><i class="legend-swatch score"></i>Scoring drive</span><span><i class="legend-swatch stop"></i>No score</span><span><i class="legend-swatch turnover"></i>Turnover</span></div>`;
+}
+export function propBars(values,line){if(!values?.length)return '';const sorted=[...values].sort((a,b)=>a-b),top=Math.max(1,sorted[Math.floor(sorted.length*.99)],line)*1.12;
+ const N=30,bins=Array(N).fill(0);for(const v of values)bins[Math.min(N-1,Math.floor(v/top*N))]++;
+ const peak=Math.max(1,...bins),w=680,h=180,L=20,T=14,R=10,B=32,pw=w-L-R,ph=h-T-B;
+ const rectangles=bins.map((n,i)=>{const x=L+i/N*pw,y=T+ph-n/peak*ph;return `<rect x="${x+1}" y="${y}" width="${pw/N-2}" height="${T+ph-y}" fill="${i/N*top>line?C.red:C.jade}" opacity=".9"><title>Bin ${(i/N*top).toFixed(0)}–${((i+1)/N*top).toFixed(0)}: ${n} games</title></rect>`}).join('');
+ const lx=L+Math.min(1,line/top)*pw;return `<svg class="viz" viewBox="0 0 ${w} ${h}" role="img" aria-label="Simulated player statistic distribution and line ${line}"><title>Player prop probability distribution</title>${rectangles}<line x1="${lx}" x2="${lx}" y1="${T}" y2="${T+ph}" stroke="${C.ink}" stroke-dasharray="4 4" stroke-width="2"/>${axis(lx,12,'LINE '+line)}${axis(L,h-6,'0','start')}${axis(w-R,h-6,top.toFixed(0),'end')}</svg>`;
 }

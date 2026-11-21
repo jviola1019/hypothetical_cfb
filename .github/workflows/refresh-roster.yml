@@ -1,0 +1,35 @@
+name: Refresh optional 2025 NCAA roster reference
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Fetch public-domain roster CSVs
+        run: |
+          mkdir -p /tmp/gridiron-roster
+          curl --fail --location --retry 2 --max-time 60 --proto '=https' --tlsv1.2 \
+            'https://raw.githubusercontent.com/Dharit13/NCAA_2025-26-Season-Dataset/main/by_sport/football/all.csv' -o /tmp/gridiron-roster/all.csv
+          curl --fail --location --retry 2 --max-time 60 --proto '=https' --tlsv1.2 \
+            'https://raw.githubusercontent.com/Dharit13/NCAA_2025-26-Season-Dataset/main/by_sport/football/stats.csv' -o /tmp/gridiron-roster/stats.csv
+      - name: Validate and transform
+        run: |
+          python -m unittest discover -s tests -p 'test_import_ncaa_roster.py'
+          python scripts/import_ncaa_roster.py --roster /tmp/gridiron-roster/all.csv \
+            --stats /tmp/gridiron-roster/stats.csv --out public/data/rosters-2025.json
+      - name: Publish new dataset if changes exist
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/data/rosters-2025.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'data: refresh optional observed 2025 roster reference'
+            git push
+          fi
