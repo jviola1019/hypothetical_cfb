@@ -1,9 +1,9 @@
 {
   "name": "gridiron-lab",
   "private": true,
-  "version": "0.8.0",
+  "version": "0.9.0",
   "type": "module",
-  "description": "Offline-first synthetic college-football simulation laboratory; statistical forecasts unvalidated.",
+  "description": "Offline-first football game and bracket sandbox with separate evaluated research; generated outcomes and player props remain uncalibrated.",
   "license": "MIT",
   "scripts": {
     "dev": "python3 -m http.server 4173",

@@ -1,8 +1,8 @@
 {
-  "version": "0.5.0",
+  "version": "0.9.0",
   "releaseDate": "2026-11-21",
-  "model": "synthetic-drive-generator-with-observed-season-snapshot",
-  "calibration": "not-trained-not-validated",
+  "model": "empirical-pregame-research-plus-aggregate-aligned-but-uncalibrated-generative-game",
+  "calibration": "game-generator-not-calibrated-player-props-not-calibrated",
   "primarySeason": 2026,
   "historicalSeason": 2025,
   "verified2026FbsProgramCatalog": 138,
@@ -17,8 +17,8 @@
   "rosterUpstreamWeeklyRelease": "2026-11-16",
   "sourceRefreshStatus": "Verified on GitHub Actions 44878009382; 2026 138/138 roster schools, 15187 names (101 quality-vetted weekly, 37 CFBD); 2025 136/136 schools, 15415 names; source scores current through 2026-11-15.",
   "fittedPlayerPropModels": 0,
-  "fittedGameModels": 0,
-  "notice": "Official results and school-reported roster identity facts must not be confused with synthetic generated player performances or calibrated forecasts.",
+  "fittedGameModels": 1,
+  "notice": "Historical reference data and independently evaluated pregame models are distinct from fictional replay scores, drives and named-player props. Game aggregate scoring/play pacing aligned to published 2025 scales only; no proof of individual game or drive calibration.",
   "sources": [
     "docs/DATA_PROVENANCE.md",
     "docs/MODEL_CARD.md",
@@ -30,5 +30,16 @@
   "verifiedRoster2025Names": 15415,
   "refreshWorkflowRunUrl": "https://github.com/jviola1019/hypothetical_cfb/actions/runs/44878009382",
   "verifiedRoster2026WeeklySchools": 101,
-  "verifiedRoster2026PrimarySchools": 37
+  "verifiedRoster2026PrimarySchools": 37,
+  "researchStatus": "Independent pregame research and reliability panels documented in model card; 2026 evaluated previously, not pristine.",
+  "appUserFlows": [
+    "Game",
+    "Playoffs",
+    "Model & Validation"
+  ],
+  "gameControls": [
+    "teamA",
+    "teamB",
+    "venue"
+  ]
 }

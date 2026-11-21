@@ -1,3 +1,33 @@
+# GRIDIRON LAB v0.9 — release status (2026-11-21)
+
+## Implemented and tested locally
+- Three prominent destinations: **Game | Playoffs | Model & Validation**. Game edits only Team A, Team B and venue; clear result and replay, quarter scoreboard, drive/field diagram, player box/prop threshold tables, empirical forecast labels where available, tournament bracket and match inspector.
+- New responsive PRESSBOX / NIGHT SHIFT design, mineral ink + stadium green + signal chartreuse, original CSS/SVG field graphics, purposeful motion with reduced-motion fallback and 390px/1370px DOM browser tests.
+- No arbitrary betting-line inputs, seed/pace/strength editor or fictitious research probabilities.
+- Engine clock/score/player reconciliation remains covered by previous regression suites. Pacing and play-count heuristic adjusted for two unconditional 2025 college-football scale moments (about 55 combined points and 134 plays); **not a calibrated possession model**.
+- 2026 school catalog 138/138; 2025 136/136. Optional derived player summaries and researcher evaluation remain available from original source-data pipeline; loading absence is explicit. Historic roster identity is not a depth chart.
+- 62/62 JS tests, 28/28 Python tests, JS syntax/build and desktop/mobile source-injected Chromium DOM harness passed. See `docs/VALIDATION_V09.md` for reproducible test commands and measured fixture.
+
+## Model research versus fiction
+- Research baseline: pregame probabilities and score-reference projections from independent historically evaluated pipeline; 2026 previously inspected, not a pristine holdout.
+- Game result, drive-by-drive animation, scores, role-allocated athlete box/props: **fictional** and uncalibrated; seed-repeatable only.
+- Historical athlete-event frequencies are conditional on record observation and selection biased; not next-game prop forecasts.
+- Player names are source-matched where possible; when not verified, labeled unassigned; no invented athletes or guaranteed starters.
+- Game play/points first moments were manually aligned against 2025 college-wide scales; no team/opponent-specific holdout or joint distribution calibration.
+
+## Not verified / incomplete
+- Native Web Workers and iPhone Safari; source-injected Chromium DOM harness cannot substitute for those tests.
+- Physical-device performance/cancellation, full security penetration suite and independent WCAG audit.
+- Official CFP field selection without committee rankings, actual injury/roster availability, 2026 events after the 2026-11-15 source cutoff.
+- Calibrated player props and empirical drive model, professionally audited sports forecast model and future pristine season holdout.
+
+## Scope and deployment evidence
+- Original pre-change GitHub baseline: `396fb377ec7af19cfa8c57c0844b8ef6d600ad01`.
+- `docs/ARCHITECTURE_V09.md` written before edits; tests and measured limitations in `docs/VALIDATION_V09.md`.
+- The previous v0.8 status follows for traceability.
+
+---
+
 # GRIDIRON LAB v0.8 — live implementation status (2026-11-21)
 
 **Base:** `d69345a109b2ee39662ef66080947f51ff997d2d`; written implementation plan: `docs/ARCHITECTURE_V08.md`.

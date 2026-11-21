@@ -41,3 +41,13 @@ Initial dependency-free static synthetic football simulator with two tabs, 13 to
 - Add data-backed empirical score chart and read-only event-conditioned athlete audit; no extra matchup controls.
 - Harden CSP Google Font allowlist, retain same-origin scripts and build-time library-free static deployment.
 - Run Node/Python/browser-harness tests and publish architecture plus second-pass audit records.
+
+
+## v0.9.0 — November 21, 2026: PRESSBOX NIGHT SHIFT
+
+- Full rebuild of user journey and visual identity: dark stadium green/mineral white/signal chartreuse, grid/editorial typography, original field+drive graphics, selective animation and reduced-motion support. Three nav destinations: Game, Playoffs, Model & Validation.
+- Game: only two team selectors plus venue; instant example, replay, honest independent forecast vs synthetic scores, full team/quarter/drive/player report with read-only threshold distributions and joint-score plots.
+- Playoffs: simplified round progression and inspection, mobile scrollable bracket, read-only championship MC; technical audit moved to third tab.
+- Fixed aggregate realism defects: initial simulated score ~40 vs 2025 reference ~55; isolated pace repair gave ~247 plays vs reported ~134. After two constrained adjustments, 700 seeded simulated games yielded 55.34 points and 134.48 offensive plays. **Not fitted per-drive or per-player calibration**.
+- Added `tests/pressbox_contract.test.js`, `tests/aggregate_scale.test.js`, `tests/pressbox_browser.py`. 62/62 JS and 28/28 Python tests; desktop/mobile injected-DOM harness pass; native browser workers remain unverified.
+- Prepared original design and model separation architecture before code edits in `docs/ARCHITECTURE_V09.md`; verification `docs/VALIDATION_V09.md`. No new client secrets, sportsbook markets or unverified official playoff entrants.

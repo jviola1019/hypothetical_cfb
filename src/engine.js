@@ -2,7 +2,7 @@ import {observed,namedPlayer} from './observed.js';
 import {FBS_TEAMS,FCS_REFERENCE} from './catalog.js';
 /* GRIDIRON LAB 0.4 — reproducible, synthetic, drive-level football lab.
    THESE PARAMETERS ARE NOT FITTED TO HISTORICAL RESULTS. */
-export const ENGINE_VERSION='0.8.0-audited-synthetic';
+export const ENGINE_VERSION='0.9.0-aggregate-score-aligned-synthetic';
 export const TEAMS = [...FBS_TEAMS,...FCS_REFERENCE];
 export const TEAM_MAP=Object.fromEntries(TEAMS.map(t=>[t.id,t]));
 export function hash32(x){let h=2166136261;for(const c of String(x)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
@@ -27,7 +27,7 @@ function newPlayers(team,season){const p={QB:{id:team+'-QB',label:'QB1 · synthe
 function initStats(team,season){return {team,points:0,passYards:0,rushYards:0,passAttempts:0,completions:0,rushAttempts:0,passingTD:0,rushingTD:0,turnovers:0,fumblesLost:0,drives:0,plays:0,fieldGoals:0,twoPointAttempts:0,twoPointMade:0,overtimePoints:0,byQuarter:[0,0,0,0],players:newPlayers(team,season)};}
 function distribute(r,n,weights){const a=weights.map(()=>0);for(let j=0;j<n;j++)a[choose(r,weights)]++;return a}
 function drive(r,s,opponent,p,opp,opts){const start=opts.ot?75:(Number.isInteger(opts.start)?clamp(opts.start,5,95):randint(r,18,37));const pace=opts.pace;const offense=clamp(p.offense+(opts.shift||0),0.45,1.7);const matchup=clamp(offense/opp.defense,0.50,1.65);const fieldBonus=opts.ot?0.20:0;const tdChance=clamp(0.275*matchup+fieldBonus+(opts.home?0.012:0),0.10,0.72);const fgChance=clamp(0.165*matchup+(opts.ot?0.05:0),0.05,0.29);const turnoverChance=clamp(0.105/matchup,0.03,0.20);let z=r(),outcome=z<tdChance?'TD':z<tdChance+fgChance?'FG':z<tdChance+fgChance+turnoverChance?'TO':'PUNT';const yardToGoal=100-start;const gain=outcome==='TD'?yardToGoal:outcome==='FG'?Math.max(0,yardToGoal-randint(r,15,33)):randint(r,0,Math.max(1,Math.min(yardToGoal-1,57)));
-const plays=outcome==='TD'?clamp(Math.round(gain/6.5)+randint(r,1,3),4,17):clamp(Math.round(gain/6.5)+randint(r,2,4),3,15);
+const plays=outcome==='TD'?clamp(Math.round(gain/15)+randint(r,1,2),3,11):clamp(Math.round(gain/13)+randint(r,1,3),3,10);
 const passAttempts=clamp(Math.round(plays*(0.51+(r()-.5)*.24)),1,plays-1);const rushAttempts=plays-passAttempts;
 let completions=0;for(let i=0;i<passAttempts;i++)if(r()<clamp(.60+0.07*(matchup-1),.48,.72))completions++;
 let passYards=completions?Math.round(gain*clamp(.52+r()*.23,0,1)):0;let rushYards=gain-passYards;
@@ -44,7 +44,7 @@ else if(outcome==='FG'){k.fieldGoalsAttempted++;if(r()<.89){k.fieldGoalsMade++;p
 const turnoverType=turnoverKind;
 s.points+=points;if(opts.q>=0&&opts.q<=3)s.byQuarter[opts.q]+=points;else s.overtimePoints+=points;return {turnoverType,conversion,offense:s.team,defense:opponent.team,start,gain,plays,outcome,points,passYards,rushYards,passAttempts,completions,quarter:opts.q<4?opts.q+1:`OT${opts.q-3}`,clock:opts.clock,elapsed:opts.elapsed,scoreA:0,scoreB:0};}
 export function simulateGame(config,seed=config.seed){validateConfig(config);const r=rng(hash32(String(seed)+'|'+config.a+'|'+config.b));const profiles=[teamProfile(config.a,config.seasonA),teamProfile(config.b,config.seasonB)];const stats=[initStats(config.a,config.seasonA),initStats(config.b,config.seasonB)];const drives=[];let secs=3600,poss=r()<.5?0:1,nextStart=randint(r,20,35);
-while(secs>0){let dsec=clamp(Math.round((128+Math.abs(normal(r))*80)/config.pace),45,320);dsec=Math.min(secs,dsec);let q=Math.min(3,Math.floor((3600-(secs-dsec)-1)/900));const d=drive(r,stats[poss],stats[1-poss],profiles[poss],profiles[1-poss],{pace:config.pace,shift:poss===0?+config.shift:-config.shift,home:config.venue===(poss===0?'a':'b'),start:nextStart,q,clock:secs,elapsed:dsec});secs-=dsec;d.scoreA=stats[0].points;d.scoreB=stats[1].points;drives.push(d);
+while(secs>0){let dsec=clamp(Math.round((100+Math.abs(normal(r))*50)/config.pace),45,320);dsec=Math.min(secs,dsec);let q=Math.min(3,Math.floor((3600-(secs-dsec)-1)/900));const d=drive(r,stats[poss],stats[1-poss],profiles[poss],profiles[1-poss],{pace:config.pace,shift:poss===0?+config.shift:-config.shift,home:config.venue===(poss===0?'a':'b'),start:nextStart,q,clock:secs,elapsed:dsec});secs-=dsec;d.scoreA=stats[0].points;d.scoreB=stats[1].points;drives.push(d);
  // Field position transfers through the previous drive. Kickoff position is a
  // documented approximation, not an observed special-teams or fourth-down model.
  if(d.outcome==='TO'||d.outcome==='MISSED FG'){
