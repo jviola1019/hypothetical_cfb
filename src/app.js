@@ -80,8 +80,8 @@ function personnelDesk(){
  const hasWeek=!!week;const today=new Date().toISOString().slice(0,10);
  const rows=teams.map(id=>{const picks=roles.map(role=>{
   const p=namedPlayer(id,role,2026);if(!p)return null;
-  const e=lineupRole(id,role),grade=p.roleVerified?'SOURCE-REFERENCED':p.selectionBasis==='historical-role-not-reverified'?'LAST KNOWN / NOT REVERIFIED':p.eventGames?'USAGE PROJECTED':'ROSTER ONLY';
-  const note=p.roleVerified?'Current-week depth-chart or published starter evidence':p.selectionBasis==='historical-role-not-reverified'?'Last reported role retained, verification expired':p.eventGames?'Current 2026 recorded-stat workload, not a confirmed starter':'Roster-listed position, no verified usage';
+  const e=lineupRole(id,role),grade=p.roleVerified?'SOURCE-REFERENCED':p.selectionBasis==='depth-chart-projected'?'DEPTH CHART / PROJECTED':p.selectionBasis==='historical-role-not-reverified'?'LAST KNOWN / NOT REVERIFIED':p.eventGames?'USAGE PROJECTED':'ROSTER ONLY';
+  const note=p.roleVerified?'Current-week depth-chart or published starter evidence':p.selectionBasis==='depth-chart-projected'?'Third-party projected role, not a confirmed kickoff starter':p.selectionBasis==='historical-role-not-reverified'?'Last reported role retained, verification expired':p.eventGames?'Current 2026 recorded-stat workload, not a confirmed starter':'Roster-listed position, no verified usage';
   const link=p.sourceUrl?`<a href="${esc(p.sourceUrl)}" rel="noopener noreferrer" target="_blank">Source ↗</a>`:'';
   const avg=p.observedMean!==null&&p.observedMean!==undefined?`<span class="person-avg">${fmt(p.observedMean)} ${role==='QB'?'pass':role==='RB'?'rush':'receiving'} yds per recorded-stat game</span>`:'';
   return `<div class="personnel-row"><div><small class="person-role">${esc(role)}</small><strong>${esc(p.name)}</strong>${avg}</div><div class="person-proof"><b class="${p.roleVerified?'verified':''}">${grade}</b><small>${esc(note)}</small>${link}</div></div>`;

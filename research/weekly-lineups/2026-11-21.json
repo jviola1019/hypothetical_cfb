@@ -5,13 +5,290 @@
   "weekEnd": "2026-11-22",
   "reviewedOn": "2026-11-21",
   "entries": [
-    {"team":"ohio-state","role":"QB","name":"Luke Fahey","basis":"reported-replacement","observedOn":"2026-11-21","sourceUrl":"https://whosstarting.com/team/ohio-state/","note":"Projected QB1 for Ohio State vs Nebraska on November 21; previous starter injured. Projection, not a guaranteed pre-kickoff assignment."},
-    {"team":"ohio-state","role":"WR1","name":"Jeremiah Smith","basis":"depth-chart-listed","observedOn":"2026-11-21","sourceUrl":"https://www.thetwodeep.com/college/ohio-state","note":"Top 2026 WR slot and established high-volume target."},
-    {"team":"ohio-state","role":"RB","name":"Bo Jackson","basis":"depth-chart-listed","observedOn":"2026-11-21","sourceUrl":"https://www.thetwodeep.com/college/ohio-state","note":"Current RB1 position listed in 2026 two-deep."},
-    {"team":"tennessee","role":"RB","name":"DeSean Bishop","basis":"depth-chart-listed","observedOn":"2026-11-21","sourceUrl":"https://utsports.com/sports/football/roster/desean-bishop/22996","note":"Official 2026 Tennessee player profile describes Bishop as the starting running back; current reported usage is substantial."},
-    {"team":"oregon-state","role":"WR1","name":"Jesse Legree","basis":"usage-projected","observedOn":"2026-11-21","sourceUrl":"https://s3.us-east-2.amazonaws.com/sidearm.nextgen.sites/oregonstate.sidearmsports.com/stats/football/2026/pdf/cume.pdf","note":"Official Oregon State 2026 receiving leader; usage evidence, not a sourced current-game depth-chart starter designation."}
+    {
+      "team": "ohio-state",
+      "role": "QB",
+      "name": "Luke Fahey",
+      "basis": "reported-replacement",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/ohio-state/",
+      "note": "Projected QB1 for Ohio State vs Nebraska on November 21; previous starter injured. Projection, not a guaranteed pre-kickoff assignment."
+    },
+    {
+      "team": "ohio-state",
+      "role": "WR1",
+      "name": "Jeremiah Smith",
+      "basis": "depth-chart-listed",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://www.thetwodeep.com/college/ohio-state",
+      "note": "Top 2026 WR slot and established high-volume target."
+    },
+    {
+      "team": "ohio-state",
+      "role": "RB",
+      "name": "Bo Jackson",
+      "basis": "depth-chart-listed",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://www.thetwodeep.com/college/ohio-state",
+      "note": "Current RB1 position listed in 2026 two-deep."
+    },
+    {
+      "team": "tennessee",
+      "role": "RB",
+      "name": "DeSean Bishop",
+      "basis": "depth-chart-listed",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://utsports.com/sports/football/roster/desean-bishop/22996",
+      "note": "Official 2026 Tennessee player profile describes Bishop as the starting running back; current reported usage is substantial."
+    },
+    {
+      "team": "oregon-state",
+      "role": "WR1",
+      "name": "Jesse Legree",
+      "basis": "usage-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://s3.us-east-2.amazonaws.com/sidearm.nextgen.sites/oregonstate.sidearmsports.com/stats/football/2026/pdf/cume.pdf",
+      "note": "Official Oregon State 2026 receiving leader; usage evidence, not a sourced current-game depth-chart starter designation."
+    },
+    {
+      "team": "michigan",
+      "role": "QB",
+      "name": "Bryce Underwood",
+      "basis": "reported-replacement",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://www.reuters.com/sports/reports-michigan-starting-qb-bryce-underwood-vs-no-4-ucla--flm-2026-11-21/",
+      "note": "Game-day report returning to start vs UCLA; more recent than Tommy Carr projection."
+    },
+    {
+      "team": "tennessee",
+      "role": "QB",
+      "name": "Faizon Brandon",
+      "basis": "reported-replacement",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://www.saturdaydownsouth.com/news/college-football/tennessee-makes-decision-on-starting-quarterback-vs-lsu/",
+      "note": "Reported game-day starter vs LSU amid George MacIntyre injury."
+    },
+    {
+      "team": "houston",
+      "role": "QB",
+      "name": "Keisean Henderson",
+      "basis": "reported-replacement",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://www.chron.com/sports/college/article/keisean-henderson-uh-cougars-first-start-22543263.php",
+      "note": "Reported first career start vs West Virginia, Conner Weigman out."
+    },
+    {
+      "team": "tcu",
+      "role": "QB",
+      "name": "Adam Schobel",
+      "basis": "reported-replacement",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://theprecedentmedia.com/the-precedent-daily-2026-11-21/",
+      "note": "Expected first career start vs Utah; Jaden Craig doubtful; not post-kickoff confirmed."
+    },
+    {
+      "team": "alabama",
+      "role": "QB",
+      "name": "Keelon Russell",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/alabama/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "alabama",
+      "role": "RB",
+      "name": "Daniel Hill",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/alabama/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "alabama",
+      "role": "WR1",
+      "name": "Ryan Coleman-Williams",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/alabama/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "alabama",
+      "role": "TE",
+      "name": "Kaleb Edwards",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/alabama/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "georgia",
+      "role": "QB",
+      "name": "Gunner Stockton",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/georgia/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "georgia",
+      "role": "RB",
+      "name": "Nate Frazier",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/georgia/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "georgia",
+      "role": "WR1",
+      "name": "Isiah Canion",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/georgia/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "georgia",
+      "role": "TE",
+      "name": "Lawson Luckie",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/georgia/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "ole-miss",
+      "role": "QB",
+      "name": "Trinidad Chambliss",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/ole-miss/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "ole-miss",
+      "role": "RB",
+      "name": "Makhi Frazier",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/ole-miss/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "ole-miss",
+      "role": "WR1",
+      "name": "Horatio Fields",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/ole-miss/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "ole-miss",
+      "role": "TE",
+      "name": "Luke Hasz",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/ole-miss/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "lsu",
+      "role": "QB",
+      "name": "Sam Leavitt",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/lsu/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "lsu",
+      "role": "RB",
+      "name": "Dilin Jones",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/lsu/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "lsu",
+      "role": "WR1",
+      "name": "Eugene Wilson III",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/lsu/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "lsu",
+      "role": "TE",
+      "name": "Trey'Dez Green",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/lsu/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "tennessee",
+      "role": "WR1",
+      "name": "Radarious Jackson",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/tennessee/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "tennessee",
+      "role": "TE",
+      "name": "DaSaahn Brame",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://whosstarting.com/team/tennessee/",
+      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    }
   ],
   "unavailable": [
-    {"team":"ohio-state","name":"Julian Sayin","status":"out","observedOn":"2026-11-21","sourceUrl":"https://sports.yahoo.com/articles/happened-quarterback-julian-sayin-return-141128394.html","note":"Reported unavailable for Nov 21 Nebraska game; expires after this game week."}
+    {
+      "team": "ohio-state",
+      "name": "Julian Sayin",
+      "status": "out",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://sports.yahoo.com/articles/happened-quarterback-julian-sayin-return-141128394.html",
+      "note": "Reported unavailable for Nov 21 Nebraska game; expires after this game week."
+    },
+    {
+      "team": "houston",
+      "name": "Conner Weigman",
+      "status": "out",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://www.chron.com/sports/college/article/keisean-henderson-uh-cougars-first-start-22543263.php",
+      "note": "Dated game-week report; expires after this week."
+    },
+    {
+      "team": "tcu",
+      "name": "Jaden Craig",
+      "status": "doubtful",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://theprecedentmedia.com/the-precedent-daily-2026-11-21/",
+      "note": "Dated game-week report; expires after this week."
+    },
+    {
+      "team": "lsu",
+      "name": "Winston Watkins Jr.",
+      "status": "out",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://theprecedentmedia.com/the-precedent-daily-2026-11-21/",
+      "note": "Dated game-week report; expires after this week."
+    },
+    {
+      "team": "lsu",
+      "name": "Jackson Harris",
+      "status": "questionable",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://theprecedentmedia.com/the-precedent-daily-2026-11-21/",
+      "note": "Dated game-week report; expires after this week."
+    }
   ]
 }

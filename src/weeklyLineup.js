@@ -2,7 +2,7 @@
 import {FBS_TEAMS} from './catalog.js';
 const ids=new Set(FBS_TEAMS.map(x=>x.id));
 const allowedRoles=new Set(['QB','RB','WR1','WR2','TE','K']);
-const allowedBasis=new Set(['depth-chart-listed','reported-replacement','usage-projected','last-reported-replacement','roster-only']);
+const allowedBasis=new Set(['depth-chart-listed','depth-chart-projected','reported-replacement','usage-projected','last-reported-replacement','roster-only']);
 let weekly=null;
 const dateOk=s=>typeof s==='string'&&/^20\d{2}-(0[1-9]|1[0-2])-([0-2]\d|3[01])$/.test(s)&&!Number.isNaN(Date.parse(s+'T00:00:00Z'));
 export const personKey=n=>String(n||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[\u2018\u2019]/g,"'").replace(/\s+/g,' ').trim().toLowerCase();
@@ -43,7 +43,8 @@ export function currentLineup(team,day=new Date().toISOString().slice(0,10)){
 export function lineupRole(team,role,day=new Date().toISOString().slice(0,10)){
  const q=currentLineup(team,day),e=q?.roles?.[role];if(!e)return null;
  const verified=q.current&&['depth-chart-listed','reported-replacement'].includes(e.basis);
- return {...e,verifiedCurrent:verified,displayBasis:verified?e.basis:(e.basis==='usage-projected'?'usage-projected':'historical-role-not-reverified'),weekStart:q.weekStart,weekEnd:q.weekEnd};
+ const projected=q.current&&e.basis==='depth-chart-projected';
+ return {...e,verifiedCurrent:verified,displayBasis:verified?e.basis:projected?'depth-chart-projected':(e.basis==='usage-projected'?'usage-projected':'historical-role-not-reverified'),weekStart:q.weekStart,weekEnd:q.weekEnd};
 }
 export function lastReportedUnavailable(team,name,day=new Date().toISOString().slice(0,10)){
  const q=currentLineup(team,day);if(!q)return null;

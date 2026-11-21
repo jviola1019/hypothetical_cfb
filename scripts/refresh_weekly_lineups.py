@@ -9,6 +9,12 @@ import argparse, datetime as dt, json, re
 from pathlib import Path
 
 ROLES={'QB':('QB', 'passingYards'),'RB':('RB','rushingYards'),'WR1':('WR','receivingYards'),'WR2':('WR','receivingYards'),'TE':('TE','receivingYards'),'K':('K','fieldGoalsMade')}
+SOURCED_BASIS={'depth-chart-listed','reported-replacement','depth-chart-projected'}
+def usage_score(p):
+    """Shrink event-game means by sample size, not validated starter projections."""
+    n=max(0,int(p.get('n',0)))
+    return max(0,float(p.get('mean',0)))*n/(n+3)
+
 
 
 def key(name: str) -> str:
@@ -21,10 +27,11 @@ def build(roster, summaries, curated, today):
     begin_s,end_s=begin.isoformat(),end.isoformat(); cur={};stale={}
     for e in curated.get('entries',[]):
         if e.get('role') not in ROLES:continue
+        if e.get('basis') not in SOURCED_BASIS and e.get('basis')!='usage-projected':raise ValueError('Unsupported weekly evidence basis')
         if not e.get('sourceUrl','').startswith('https://'):raise ValueError('Bad evidence link')
         if e.get('observedOn','')>=begin_s and e.get('observedOn','')<=today.isoformat():
             cur[(e['team'],e['role'])]=e
-        elif e.get('observedOn','')<begin_s:
+        elif e.get('basis')=='reported-replacement' and e.get('observedOn','')<begin_s and (today-dt.date.fromisoformat(e['observedOn'])).days<=21:
             # Carry forward the last documented replacement as a *candidate*,
             # never as current-week verified starter. This prevents blindly
             # restoring an earlier, injured season-volume QB.
@@ -51,7 +58,7 @@ def build(roster, summaries, curated, today):
                     roles[role]['note']='Last documented 2026 role; NOT verified for the current week. Review a fresh depth chart before relying on this athlete.'
                 already.add(nm);continue
             candidates=[p for p in valid if p.get('stat')==stat and key(p['name']) not in already and key(p['name']) not in bad and names[key(p['name'])]['position'] in ({'K','PK'} if position=='K' else ({'RB','HB','FB'} if position=='RB' else {position}))]
-            candidates.sort(key=lambda p:(-p.get('n',0),-p.get('mean',0),p['name']))
+            candidates.sort(key=lambda p:(-usage_score(p),-p.get('n',0),p['name']))
             if candidates:
                 p=candidates[0];roles[role]={"name":names[key(p['name'])]['name'],"basis":"usage-projected","observedOn":summaries[team].get('lastRecordedGame',today.isoformat()),"sourceUrl":summaries[team].get('sourceUrl','https://github.com/sportsdataverse/cfbfastR-data'),"note":"Inferred position from season-to-date recorded stat events; NOT a verified starter or participation forecast."};already.add(key(p['name']))
             else:

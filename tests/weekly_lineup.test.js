@@ -53,3 +53,14 @@ test('high-volume featured 2026 receiver receives more opportunity without break
  assert.ok(weights[0]>.36&&weights[0]<.48,`WR1 expected to be featured, got ${weights[0]}`);
  assert.ok(weights.every(x=>x>0&&x<1));
 });
+
+test('third-party projected starter is NOT presented as verified game-day report',()=>{
+ installRosterSnapshot(roster);
+ const projection=structuredClone(doc);projection.teams['ohio-state'].roles.QB.basis='depth-chart-projected';
+ installWeeklyLineup(projection);
+ const result=lineupRole('ohio-state','QB','2026-11-21');
+ assert.equal(result.verifiedCurrent,false);
+ assert.equal(result.displayBasis,'depth-chart-projected');
+ assert.equal(namedPlayer('ohio-state','QB',2026,'2026-11-21').roleVerified,false);
+ installWeeklyLineup(doc);
+});

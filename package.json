@@ -1,9 +1,9 @@
 {
   "name": "gridiron-lab",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
-  "description": "Weekly 2026 roster-linked college football simulation with source-graded roles and age-bounded depth-chart evidence",
+  "description": "2026 FBS roster-linked simulator with nationwide role integrity checks and dated starter-source grading",
   "license": "MIT",
   "scripts": {
     "dev": "python3 -m http.server 4173",
