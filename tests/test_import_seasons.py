@@ -11,6 +11,7 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from import_season_schedules import team_id,build as build_scores
 from import_2026_rosters import cfbd_roster,newer_archive,build as build_roster
+from import_2025_rosters import build as build_rosters_2025
 
 class PipelineTests(unittest.TestCase):
   def test_aliases_and_scores_validate(self):
@@ -35,6 +36,13 @@ class PipelineTests(unittest.TestCase):
       p.write_text('team,position,first_name,last_name\nOle Miss,QB,Example,Quarterback\nTexas A&M,WR,Example,Receiver\nOle Miss,WR,<script>,Bad\n')
       rows=cfbd_roster(p,{'ole-miss','texas-am'})
       self.assertEqual(rows['ole-miss'],[{'name':'Example Quarterback','position':'QB'}]);self.assertEqual(rows['texas-am'][0]['name'],'Example Receiver')
+
+  def test_2025_rosters_cannot_be_imported_as_2026(self):
+    with tempfile.TemporaryDirectory() as folder:
+      p=Path(folder)
+      source=p/'roster.csv';source.write_text('team,position,first_name,last_name\nOle Miss,QB,Past,Quarterback\n')
+      bad=p/'schedule.json';bad.write_text(json.dumps({'schemaVersion':1,'season':2026,'teams':[{'id':'ole-miss'}]}))
+      with self.assertRaisesRegex(ValueError,'Invalid 2025'):build_rosters_2025(bad,source)
 
   def test_weekly_roster_archive_is_sandboxed(self):
     with tempfile.TemporaryDirectory() as d:

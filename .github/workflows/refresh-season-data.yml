@@ -6,6 +6,7 @@ on:
       - '.github/workflows/refresh-season-data.yml'
       - 'scripts/import_2026_rosters.py'
       - 'scripts/import_season_schedules.py'
+      - 'scripts/import_2025_rosters.py'
       - 'scripts/trim_2025_rosters.py'
   schedule:
     - cron: '27 13 * * 1'
@@ -67,8 +68,15 @@ jobs:
             -o /tmp/gridiron-ingest/ncaa-2025-stats.csv
           python scripts/import_ncaa_roster.py --roster /tmp/gridiron-ingest/ncaa-2025-all.csv \
             --stats /tmp/gridiron-ingest/ncaa-2025-stats.csv --out /tmp/gridiron-ingest/ncaa-2025-raw.json
-          python scripts/trim_2025_rosters.py --raw /tmp/gridiron-ingest/ncaa-2025-raw.json \
-            --schedule public/data/season-2025.json --out public/data/rosters-2025.json
+          # This 2025 source uses the same season as the roster: never carry a
+          # historical 2025 player forward into the default 2026 season.
+          curl --fail --location --retry 3 --max-time 90 --proto '=https' --tlsv1.2 \
+            'https://raw.githubusercontent.com/sportsdataverse/cfbfastR-data/main/rosters/csv/cfb_rosters_2025.csv' \
+            -o /tmp/gridiron-ingest/cfbd-rosters-2025.csv
+          python scripts/import_2025_rosters.py \
+            --schedule public/data/season-2025.json \
+            --csv /tmp/gridiron-ingest/cfbd-rosters-2025.csv \
+            --out public/data/rosters-2025.json
       - name: Unit and ingestion tests
         run: |
           npm test
@@ -79,7 +87,9 @@ jobs:
               o=json.load(open(f'public/data/season-{y}.json'))
               assert o['allFbsSchoolsIdentified']>=min_count, o['allFbsSchoolsIdentified']
           o=json.load(open('public/data/rosters-2026.json'))
-          assert o['schoolsCount']>=70, o['schoolsCount']
+          assert o['schoolsCount']==138, o['schoolsCount']
+          old=json.load(open('public/data/rosters-2025.json'))
+          assert old['schoolsCount']>=100, old['schoolsCount']
           print('Release data validation passed')
           PY
       - name: Commit validated observed data only
