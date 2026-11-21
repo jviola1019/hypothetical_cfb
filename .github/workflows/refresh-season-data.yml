@@ -197,7 +197,18 @@ jobs:
             git commit -m 'data: refresh 2025–2026 observed FBS records and roster snapshots'
             # Safely incorporate weekly updates that arrived during the lengthy fetch.
             # Never force-push over a newer live data snapshot.
-            git fetch origin main
-            git rebase origin/main
-            git push origin HEAD:main
+            # A concurrent developer commit may arrive between fetch and push.
+            # Retry safely without ever force-overwriting newer source or data.
+            for attempt in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase origin/main
+              if git push origin HEAD:main; then
+                break
+              fi
+              if [[ "$attempt" == 5 ]]; then
+                echo 'Data publication blocked by repeated concurrent updates' >&2
+                exit 1
+              fi
+              sleep "$((attempt * 2))"
+            done
           fi
