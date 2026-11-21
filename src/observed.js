@@ -142,9 +142,8 @@ export function namedPlayer(id,role,season=2026,day=new Date().toISOString().sli
    const direct=n===2026?lineupRole(id,role,day):null;
    const blocked=(player)=>{
      const report=n===2026?lastReportedUnavailable(id,player.name,day):null;
-     // Safety-first: continue excluding a previously reported OUT QB until a
-     // fresher lineup explicitly reassigns that name. No claim of current injury.
-     return report?.status==='out' || report?.status==='doubtful';
+     // Availability is tied to the source's game week, never a permanent exclusion.
+     return Boolean(report?.current && ['out','doubtful'].includes(report.status));
    };
    const candidates=people.filter(x=>pref.includes(x.position)&&!blocked(x));
    const eventDoc=n===2026?getPlayerEvidence(id,2026):null;

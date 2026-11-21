@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {installRosterSnapshot,namedPlayer} from '../src/observed.js';
-import {installWeeklyLineup,lineupRole,currentLineup} from '../src/weeklyLineup.js';
+import {installWeeklyLineup,lineupRole,currentLineup,lastReportedUnavailable} from '../src/weeklyLineup.js';
 import {receivingWeights} from '../src/usage.js';
 import {installPlayerEvidence} from '../src/playerEvidence.js';
 
@@ -29,6 +29,7 @@ test('weekly verified designation expires, identity priority remains a dated can
  assert.equal(stale.verifiedCurrent,false);
  assert.equal(stale.displayBasis,'historical-role-not-reverified');
  assert.equal(currentLineup('ohio-state','2026-12-02').current,false);
+ assert.equal(lastReportedUnavailable('ohio-state','Julian Sayin','2026-12-02').current,false,'old injury report must expire');
 });
 
 test('malicious or duplicated depth-chart rows are rejected before roster assignment',()=>{
