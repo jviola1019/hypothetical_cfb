@@ -1,10 +1,9 @@
 import {observed,namedPlayer} from './observed.js';
+import {FBS_TEAMS,FCS_REFERENCE} from './catalog.js';
 /* GRIDIRON LAB 0.4 — reproducible, synthetic, drive-level football lab.
    THESE PARAMETERS ARE NOT FITTED TO HISTORICAL RESULTS. */
-export const ENGINE_VERSION='0.4.0-observed-reference';
-export const TEAMS=[
-['alabama','Alabama','ALA'],['indiana','Indiana','IND'],['georgia','Georgia','UGA'],['ohio-state','Ohio State','OSU'],['michigan','Michigan','MICH'],['texas','Texas','TEX'],['oregon','Oregon','ORE'],['ole-miss','Ole Miss','MISS'],['tennessee','Tennessee','TENN'],['lsu','LSU','LSU'],['notre-dame','Notre Dame','ND'],['penn-state','Penn State','PSU'],['clemson','Clemson','CLEM'],['florida-state','Florida State','FSU'],['miami','Miami','MIA'],['usc','USC','USC'],['washington','Washington','WASH'],['florida','Florida','FLA'],['auburn','Auburn','AUB'],['texas-am','Texas A&M','TAMU'],['oklahoma','Oklahoma','OU'],['missouri','Missouri','MIZ'],['kentucky','Kentucky','UK'],['arkansas','Arkansas','ARK'],['south-carolina','South Carolina','SC'],['iowa','Iowa','IOWA'],['wisconsin','Wisconsin','WISC'],['nebraska','Nebraska','NEB'],['illinois','Illinois','ILL'],['boise-state','Boise State','BOIS'],['arizona-state','Arizona State','ASU'],['utah','Utah','UTAH'],['byu','BYU','BYU'],['colorado','Colorado','COLO'],['tcu','TCU','TCU'],['baylor','Baylor','BAY'],['kansas-state','Kansas State','KSU'],['smu','SMU','SMU'],['tulane','Tulane','TUL'],['memphis','Memphis','MEM'],['army','Army','ARMY'],['navy','Navy','NAVY'],['liberty','Liberty','LIB'],['jacksonville-state','Jacksonville State','JSU'],['james-madison','James Madison','JMU'],['app-state','Appalachian State','APP'],['north-dakota-state','North Dakota State','NDSU'],['south-dakota-state','South Dakota State','SDSU'],['montana','Montana','MONT'],['montana-state','Montana State','MTST'],['uc-davis','UC Davis','UCD'],['idaho','Idaho','IDAH']
- ].map(([id,name,short])=>({id,name,short})).concat(Array.from({length:136},(_,i)=>({id:`lab-${String(i+1).padStart(3,'0')}`,name:`Lab Team ${String(i+1).padStart(3,'0')}`,short:`L${i+1}`}))).concat(Array.from({length:32},(_,i)=>({id:`fcs-lab-${String(i+1).padStart(2,'0')}`,name:`FCS Lab ${String(i+1).padStart(2,'0')}`,short:`F${i+1}`})));
+export const ENGINE_VERSION='0.5.0-season-snapshot-demo';
+export const TEAMS = [...FBS_TEAMS,...FCS_REFERENCE];
 export const TEAM_MAP=Object.fromEntries(TEAMS.map(t=>[t.id,t]));
 export function hash32(x){let h=2166136261;for(const c of String(x)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 export function rng(seed){let a=(Number(seed)>>>0)||0x9e3779b9;return ()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}}
@@ -12,18 +11,18 @@ export const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const randint=(r,min,max)=>min+Math.floor(r()*(max-min+1));
 const normal=(r)=>Math.sqrt(-2*Math.log(Math.max(1e-12,r())))*Math.cos(2*Math.PI*r());
 const choose=(r,weights)=>{let q=r()*weights.reduce((a,b)=>a+b,0);for(let i=0;i<weights.length;i++){q-=weights[i];if(q<=0)return i}return weights.length-1};
-export function teamProfile(id,season=2025){
+export function teamProfile(id,season=2026){
   if(!TEAM_MAP[id])throw Error('Unknown team');
   const historical=observed(id,season);
   if(historical){
     // Deliberately simple *retrospective* proxy: full-season PPG is not pregame-safe.
-    return {id,season,offense:clamp(0.55+0.45*historical.pointsFor/28,0.5,1.6),defense:clamp(0.55+0.45*historical.pointsAgainst/28,0.5,1.6),tempo:1,coverage:'2025-full-season-descriptive'};
+    return {id,season,offense:clamp(0.55+0.45*historical.pointsFor/28,0.5,1.6),defense:clamp(0.55+0.45*historical.pointsAgainst/28,0.5,1.6),tempo:1,coverage:`${season}-snapshot-descriptive`};
   }
   const r=rng(hash32(id+'|'+season+'|SYNTHETIC'));
   return {id,season,offense:0.85+r()*0.33,defense:0.85+r()*0.33,tempo:0.85+r()*0.30,coverage:'synthetic'};
 }
 export function validateConfig(c){if(!c||!TEAM_MAP[c.a]||!TEAM_MAP[c.b]||c.a===c.b)throw Error('Select two different supported teams');for(const v of ['seasonA','seasonB'])if(!Number.isInteger(+c[v])||+c[v]<2010||+c[v]>2026)throw Error('Invalid demo season');if(!['neutral','a','b'].includes(c.venue))throw Error('Invalid venue');if(!Number.isFinite(+c.seed)||+c.seed<0||+c.seed>4294967295)throw Error('Invalid seed');if(!Number.isFinite(+c.pace)||+c.pace<0.7||+c.pace>1.35)throw Error('Invalid pace');if(!Number.isFinite(+c.shift)||Math.abs(+c.shift)>0.5)throw Error('Invalid strength adjustment');return true;}
-export const DEFAULT_CONFIG={a:'ole-miss',b:'georgia',seasonA:2025,seasonB:2025,venue:'neutral',pace:1,shift:0,seed:20261120};
+export const DEFAULT_CONFIG={a:'ole-miss',b:'georgia',seasonA:2026,seasonB:2026,venue:'neutral',pace:1,shift:0,seed:20261121};
 function newPlayers(team,season){const p={QB:{id:team+'-QB',label:'QB1 · synthetic',passingAttempts:0,completions:0,passingYards:0,passingTD:0,interceptions:0,rushAttempts:0,rushYards:0,rushingTD:0},RB:{id:team+'-RB',label:'RB1 · synthetic',rushAttempts:0,rushYards:0,rushingTD:0,targets:0,receptions:0,receivingYards:0,receivingTD:0},WR1:{id:team+'-WR1',label:'WR1 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},WR2:{id:team+'-WR2',label:'WR2 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},TE:{id:team+'-TE',label:'TE1 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},K:{id:team+'-K',label:'K1 · synthetic',fieldGoalsAttempted:0,fieldGoalsMade:0,extraPointsAttempted:0,extraPointsMade:0}};for(const [role,player] of Object.entries(p)){const named=namedPlayer(team,role,season);player.label=named?.name||('Unassigned '+role+' · model-only');player.historical=Boolean(named)}return p;}
 function initStats(team,season){return {team,points:0,passYards:0,rushYards:0,passAttempts:0,completions:0,rushAttempts:0,passingTD:0,rushingTD:0,turnovers:0,drives:0,plays:0,fieldGoals:0,byQuarter:[0,0,0,0],players:newPlayers(team,season)};}
 function distribute(r,n,weights){const a=weights.map(()=>0);for(let j=0;j<n;j++)a[choose(r,weights)]++;return a}

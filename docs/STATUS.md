@@ -1,38 +1,31 @@
-# Implementation status — November 21, 2026 / v0.4.0
+# GRIDIRON LAB v0.5.0 — status / 2026-11-21
 
-## Implemented and tested
+## Implemented and verified locally
 
-- Completely redesigned responsive, two-tab sports-editorial interface. Game controls are restricted to two teams and home/neutral field. Original CSS design uses Barlow Condensed, DM Sans and IBM Plex Mono when loaded, plus offline fallbacks. Mobile no-overflow and game/playoff DOM controls tested in Chromium source-injected harness.
-- 2025 observed full-season team PPG, PPG conceded, records and manually checked athlete identities for **Ole Miss, Georgia, Alabama and Indiana**; limited sourced head-to-head results, including postseason played in January 2026. Sources in `src/observed.js` and `DATA_PROVENANCE.md`.
-- Seeded synthetic engine, player/team stat reconciliation, 2025 full-name slot labeling for verified players only; unsupported player props suppressed.
-- Read-only prop distributions with fixed labeled thresholds, empirical means, sampled frequencies and descriptive observed season means where the measurement matches. Playoff game inspector includes player and team stat tables and synthetic prop samples.
-- Interactive outcome atlas, margin/total histograms, convergence, drive paths, final-score illustration, factual reference table and playoff title-advancement table.
-- 13 bracket formats, reliable N−1 generated games, score/round report, repeatable tournament Monte Carlo.
-- Optional NCAA CC0 roster+stats importer validated on **two offline fixtures**; independent import workflow staged and documented; zero upstream files downloaded by the tests.
-- Node test suite **16/16** and Python ingestion **2/2**; static build and source syntax checks. See `VALIDATION.md`.
+- Dark **Night Edition** design: Archivo Narrow display, Public Sans text, IBM Plex Mono numerals; navy-black panels, copper highlights, asymmetric header/score typography, field graphic, comprehensive data tables and SVG chart contrast. Two primary tabs retained; game controls only team A, team B, home/away/neutral. Reduced-motion CSS.
+- Verified 2026 138 FBS **program names** extracted from the 2026 season schedule and 2025 136 distinct FBS program names; unique slug tests (including Texas A&M, Miami (OH), Hawai'i).
+- Historical `2026` and `2025` team-record adapters with source cutoff and per-school reference panels, and roster adapters for source-backed 2026 names/positions. **Full upstream roster imports are not considered complete until workflow success.**
+- Source-validated school/season IDs; malformed snapshot, duplicate record, forged HTML-like names, excess file size, incorrect school names, and incomplete schedules handled by guards or safe fallback.
+- Seeded simulation with generated score distribution, possession report, player box reconciliation, threshold player props and Monte Carlo tournaments; **none calibrated against real outcomes**.
+- 13 tournament formats and inspectable games; large formats render horizontally. Only FBS-specific 12/24 rules are diagrammatic; qualification and officially seeded brackets not reconstructed.
+- Executed locally: `npm run check`, `npm test` (**20/20**), `python -m unittest discover -s tests -p 'test_*.py'` (**5/5**), `npm run build`. Browser Chromium harness at 390 and 1370 viewport passed game controls, 138-team picker, simulated named-prop sheet using explicitly fabricated TEST fixtures, 12/24 team bracket and game-inspector, with no horizontal overflow. Browser harness mocks worker and optional network fixtures, so it does not validate live Pages or physical Safari.
 
-## Implemented but not end-to-end verified
+## Implemented but deployment/source execution not yet independently verified
 
-- Real Web Worker and native module resolution under GitHub Pages runtime; actual iPhone Safari performance, axe/WCAG automated audit, and Google Fonts web loading.
-- `.github/workflows/refresh-roster.yml` full upstream ingestion and commit (requires workflow dispatch, GitHub network and permission; not executed).
-- Direct HTTPS response from the public Pages URL remains unverified by this container. The deployment action itself succeeded on commit `bae3cc71c65c224d85b34a6e96f919b20390569d`.
+- `.github/workflows/refresh-season-data.yml` scheduled/manual 2025+2026 game ingestion and 2026 roster plus 2025 CC0 roster, commits only schema-valid data and rebuilds Pages after success. This is a staged pipeline until a real upstream download + action run succeeds.
+- External-free 2026 roster refresh may cover many FBS programs. Exact school/athlete count must be measured, not guessed. Names are roster identities, not official depth charts or athlete availability.
+- Native browser ES modules, actual Web Workers and iPhone Safari remain unverified beyond DOM harness. Documented benchmark refers to CPU environment, not physical iPhone.
 
-## Experimental / partial
+## Partial / experimental
 
-- 2025 full-season efficiency proxy only for four audited teams, plus synthetic values for all others. This proxy is **retrospective and in-sample** and leaks the selected season’s completed outcomes; cannot be used as point-in-time backtest predictor. No historical forecast accuracy claim.
-- Player props use actual historical names but **synthetic role allocations**, not individual playing-time/usage fitted projections. Full names are suppressed for unverified schools/positions.
-- Static bracket topology approximates official 12-team and announced 24-team FBS initial pairings; no committee qualification, precise host logistics, or region-aware FCS seeding.
-- Simplified drive-level football, coarse overtime and no actual down-by-down plays. Scoring clock events are generated, not official match events.
-- Applicable 92-threat security matrix is an architectural classification, not 92 exploit tests.
+- Team strength model uses source-backed retrospective scoring as a simple uncalibrated profile proxy where available, synthetic hashed fallback where absent. No out-of-sample validation, opponent adjustment, or predictive research evidence.
+- The named player sheet associates verified roster-listed names with illustrative QB/RB/WR/TE slots in sorted position order; starter assignment is **not verified**. Generated stats are not projected performance for those individuals.
+- FCS24 option only demonstrates tournament shape and currently mixes five named FCS school references with FBS entries; it is **not an authentic FCS participant field**. Official campus and reseeding rules are incomplete.
+- Some detailed play-by-play and true player usages are not represented by this coarse drive model. A 92-threat architecture applicability matrix exists, but not a complete pen test.
 
 ## Not implemented / blocked
 
-- A licensed data warehouse with chronological cutoff, real play-by-play opponent adjustments, held-out season calibration, game-level player usage/participation, verifiable player prop probabilities for all schools, actual 2026 live feed, official full CFP selection and authentic defensive player props.
-- Automatic free authenticated CFBD ingestion; free CFBD key not available and static public bundle must not expose one.
-- Complete official future bracket logic, risk-factor-driven injury/weather/rest effects, realistic play-level engine, comprehensive multi-browser accessibility audits, independent pen test.
+- Verified full 2026 athlete participation or real-time injuries, official 2026 depth charts, full 2026 per-player actual prop training data, true opponent-adjusted 2026 forecast model, chronological backtest, Brier/log loss, real sportsbook lines, a reliable keyless live 2026 API, complete NCAA rules enforcement, per-play play-by-play simulator.
+- Comprehensive Firefox/WebKit/physical iPhone accessibility and performance QA.
 
-**Evidence rule:** Source file or CI workflow existence is never evidence its real provider refresh or production deployment succeeded.
-
-## Publication verification
-
-Remote source commit `bae3cc71c65c224d85b34a6e96f919b20390569d` verified via GitHub connector. GitHub Actions **Verify** run 44875923917 completed **success**; **Deploy GitHub Pages** run 44875923915 completed **success**, including `actions/deploy-pages@v4`. A direct fetch to `https://jviola1019.github.io/hypothetical_cfb/` was blocked by the browsing environment; live page HTTP rendering and Safari runtime are not independently verified.
+**Strict rule:** school lists, imported observations, and model-generated outputs must remain independently and visibly labeled. No numeric synthetic score or prop frequency is represented as a validated betting probability.

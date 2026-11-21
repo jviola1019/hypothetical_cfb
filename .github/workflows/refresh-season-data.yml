@@ -1,0 +1,96 @@
+name: Refresh FBS 2025 + 2026 season data and 2026 rosters
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/refresh-season-data.yml'
+      - 'scripts/import_2026_rosters.py'
+      - 'scripts/import_season_schedules.py'
+      - 'scripts/trim_2025_rosters.py'
+  schedule:
+    - cron: '27 13 * * 1'
+permissions:
+  contents: write
+concurrency:
+  group: gridiron-data-refresh
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Fetch public historical and 2026 FBS reference snapshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gridiron-ingest
+          for year in 2025 2026; do
+            curl --fail --location --retry 3 --max-time 75 --proto '=https' --tlsv1.2 \
+              "https://raw.githubusercontent.com/sportsdataverse/cfbfastR-data/main/schedules/csv/cfb_schedules_${year}.csv" \
+              -o "/tmp/gridiron-ingest/schedules-${year}.csv"
+            python scripts/import_season_schedules.py --season "$year" \
+              --csv "/tmp/gridiron-ingest/schedules-${year}.csv" \
+              --out "public/data/season-${year}.json"
+          done
+      - name: Fetch 2026 roster snapshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --max-time 90 --proto '=https' --tlsv1.2 \
+            'https://raw.githubusercontent.com/sportsdataverse/cfbfastR-data/main/rosters/csv/cfb_rosters_2026.csv' \
+            -o /tmp/gridiron-ingest/cfbd-rosters-2026.csv
+          # Weekly school roster release is a newer optional supplement. A failed
+          # download does not invalidate the separately verified CFBD roster.
+          curl --fail --location --retry 1 --max-time 130 --proto '=https' --tlsv1.2 \
+            'https://github.com/fakhar-ud-din/ncaapyscraper/releases/latest/download/ncaapyscraper-data.zip' \
+            -o /tmp/gridiron-ingest/ncaapyscraper-weekly.zip || rm -f /tmp/gridiron-ingest/ncaapyscraper-weekly.zip
+          python scripts/import_2026_rosters.py \
+            --schedule public/data/season-2026.json \
+            --cfbd-roster /tmp/gridiron-ingest/cfbd-rosters-2026.csv \
+            --weekly-zip /tmp/gridiron-ingest/ncaapyscraper-weekly.zip \
+            --out public/data/rosters-2026.json
+      - name: Validate and refresh 2025 CC0 roster archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 2 --max-time 90 --proto '=https' --tlsv1.2 \
+            'https://raw.githubusercontent.com/Dharit13/NCAA_2025-26-Season-Dataset/main/by_sport/football/all.csv' \
+            -o /tmp/gridiron-ingest/ncaa-2025-all.csv
+          curl --fail --location --retry 2 --max-time 90 --proto '=https' --tlsv1.2 \
+            'https://raw.githubusercontent.com/Dharit13/NCAA_2025-26-Season-Dataset/main/by_sport/football/stats.csv' \
+            -o /tmp/gridiron-ingest/ncaa-2025-stats.csv
+          python scripts/import_ncaa_roster.py --roster /tmp/gridiron-ingest/ncaa-2025-all.csv \
+            --stats /tmp/gridiron-ingest/ncaa-2025-stats.csv --out /tmp/gridiron-ingest/ncaa-2025-raw.json
+          python scripts/trim_2025_rosters.py --raw /tmp/gridiron-ingest/ncaa-2025-raw.json \
+            --schedule public/data/season-2025.json --out public/data/rosters-2025.json
+      - name: Unit and ingestion tests
+        run: |
+          npm test
+          python -m unittest discover -s tests -p 'test_*.py'
+          python - <<'PY'
+          import json
+          for y,min_count in [(2025,136),(2026,138)]:
+              o=json.load(open(f'public/data/season-{y}.json'))
+              assert o['allFbsSchoolsIdentified']>=min_count, o['allFbsSchoolsIdentified']
+          o=json.load(open('public/data/rosters-2026.json'))
+          assert o['schoolsCount']>=70, o['schoolsCount']
+          print('Release data validation passed')
+          PY
+      - name: Commit validated observed data only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/data/season-2025.json public/data/season-2026.json \
+                  public/data/rosters-2025.json public/data/rosters-2026.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'data: refresh 2025–2026 observed FBS records and roster snapshots'
+            git push
+          fi

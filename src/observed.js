@@ -6,6 +6,9 @@
  * Scope deliberately limited until a licensed, machine-verifiable full data feed is integrated.
  */
 export const OBSERVED_SEASON = 2025;
+const seasonSnapshots = new Map();
+const seasonRosters = new Map();
+export const sourceStatus = {seasons:{},rosters:{}};
 export const HISTORICAL = Object.freeze({
   'ole-miss': {
     school:'Ole Miss', games:15, record:'13–2', pointsFor:36.93, pointsAgainst:21.07,
@@ -64,9 +67,92 @@ export const SOURCE_INDEX = [
  {name:'2025 Alabama official season statistics',url:HISTORICAL.alabama.source},
  {name:'2025 Indiana official season statistics',url:HISTORICAL.indiana.source},
  {name:'NCAA 2025–26 roster collection (CC0; future ingestion candidate)',url:'https://github.com/Dharit13/NCAA_2025-26-Season-Dataset'},
- {name:'SportsDataverse cfbfastR (free historical loaders; validate source-specific rights)',url:'https://github.com/sportsdataverse/cfbfastR'},
+ {name:'SportsDataverse 2026 FBS schedule/results (138 programs, last scored 2026-11-15)',url:'https://github.com/sportsdataverse/cfbfastR-data/blob/main/schedules/csv/cfb_schedules_2026.csv'},
+ {name:'SportsDataverse 2025 FBS schedule/results (136 programs)',url:'https://github.com/sportsdataverse/cfbfastR-data/blob/main/schedules/csv/cfb_schedules_2025.csv'},
+ {name:'SportsDataverse 2026 rosters (CFBD-derived public player identity data)',url:'https://github.com/sportsdataverse/cfbfastR-data/blob/main/rosters/csv/cfb_rosters_2026.csv'},
+ {name:'Optional weekly school roster release, 2026-11-16',url:'https://github.com/fakhar-ud-din/ncaapyscraper/releases/latest'},
  {name:'CollegeFootballData free-key API (optional server-side ingestion)',url:'https://collegefootballdata.com/'}
 ];
-export function observed(id,season=2025){return Number(season)===OBSERVED_SEASON?HISTORICAL[id]||null:null;}
-export function namedPlayer(id,role,season=2025){return observed(id,season)?.players?.[role]||null;}
+/** Install only fully schema-checked, season-scoped public snapshot data. */
+export function installSeasonSnapshot(payload) {
+  if(!payload || ![2025,2026].includes(payload.season) || payload.schemaVersion!==1 ||
+      !Array.isArray(payload.teams) || payload.teams.length<100 || payload.teams.length>170 ||
+      typeof payload.sourceUrl!=='string' || !payload.sourceUrl.startsWith('https://')) throw Error('Invalid season snapshot');
+  const out = {};
+  for(const row of payload.teams){
+    if(!row || !/^[a-z0-9-]{2,60}$/.test(row.id) || Object.hasOwn(out,row.id) ||
+       !Number.isInteger(row.games) || row.games<1 || row.games>18 ||
+       !Number.isInteger(row.wins) || !Number.isInteger(row.losses) || row.wins+row.losses>row.games ||
+       !Number.isFinite(row.pointsFor) || row.pointsFor<0 || row.pointsFor>100 ||
+       !Number.isFinite(row.pointsAgainst) || row.pointsAgainst<0 || row.pointsAgainst>100) throw Error('Invalid team record');
+    out[row.id]={school:row.school||row.id, season:payload.season, games:row.games, wins:row.wins, losses:row.losses,
+      record:`${row.wins}–${row.losses}`,pointsFor:row.pointsFor,pointsAgainst:row.pointsAgainst,
+      conference:row.conference||'',source:payload.sourceUrl,asOf:payload.lastCompletedGame,
+      coverage:'season-to-date-retrospective'};
+  }
+  seasonSnapshots.set(payload.season,Object.freeze(out));
+  sourceStatus.seasons[payload.season]={schools:Object.keys(out).length,asOf:payload.lastCompletedGame,source:payload.sourceUrl};
+  return Object.keys(out).length;
+}
+export function installRosterSnapshot(payload){
+  if(!payload || payload.schemaVersion!==1 || ![2025,2026].includes(payload.season) ||
+    !payload.schools || typeof payload.schools!=='object' || Array.isArray(payload.schools) ||
+    typeof payload.sourceUrl!=='string' || !payload.sourceUrl.startsWith('https://'))throw Error('Invalid roster snapshot');
+  let schools=0,players=0;const teams={};
+  for(const [id,people] of Object.entries(payload.schools)){
+    if(!/^[a-z0-9-]{2,60}$/.test(id) || !Array.isArray(people)||people.length>260)throw Error('Invalid roster team');
+    const seen=new Set(),out=[];
+    for(const person of people){
+      if(typeof person.name!=='string'||person.name.length<3||person.name.length>100|| !/^[a-zA-Z0-9-]{1,6}$/.test(person.position||''))continue;
+      if(/[<>\x00-\x1f]/.test(person.name)||seen.has(person.name))continue;
+      seen.add(person.name);
+      out.push(Object.freeze({name:person.name,position:person.position,source:payload.sourceUrl,
+        season:payload.season,verifiedRoster:true,roleIsVerified:false,year:payload.season}));
+    }
+    if(out.length){teams[id]=out;schools++;players+=out.length;}
+  }
+  seasonRosters.set(payload.season,Object.freeze(teams));
+  sourceStatus.rosters[payload.season]={schools,players,asOf:payload.published||'unknown',source:payload.sourceUrl};
+  return schools;
+}
+export function observed(id,season=2026){
+  const n=Number(season);
+  return seasonSnapshots.get(n)?.[id] || (n===2025?HISTORICAL[id]||null:null);
+}
+const ROLE_PREFERENCE = {
+ QB:['QB'], RB:['RB','HB','FB'],WR1:['WR'],WR2:['WR'],TE:['TE'],K:['K','PK']
+};
+export function namedPlayer(id,role,season=2026){
+ const n=Number(season),p=seasonRosters.get(n)?.[id];
+ if(p){
+   const pref=ROLE_PREFERENCE[role]||[];
+   const candidates=p.filter(x=>pref.includes(x.position));
+   const index=role==='WR2'?1:0;
+   const selected=candidates[index];
+   if(selected)return {...selected,stat:null,total:null,games:null,rosterOnly:true};
+ }
+ return n===2025?HISTORICAL[id]?.players?.[role]||null:null;
+}
+export function rosterForTeam(id,season=2026){return seasonRosters.get(Number(season))?.[id]||[];}
 export function headToHead(a,b){return VERIFIED_RESULTS.filter(x=>[x.home,x.away].includes(a)&&[x.home,x.away].includes(b));}
+export async function loadPublicData(base='./public/data/'){
+  const loaded=[];const payloads=[];
+  for(const year of [2026,2025]){
+    for(const [prefix,install] of [['season',installSeasonSnapshot],['rosters',installRosterSnapshot]]){
+      try{
+        const controller=new AbortController();
+        const timeout=setTimeout(()=>controller.abort(),6500);
+        let response;
+        try{response=await fetch(`${base}${prefix}-${year}.json`,{cache:'no-cache',signal:controller.signal})}
+        finally{clearTimeout(timeout)}
+        if(!response.ok)continue;
+        const length=+(response.headers.get('Content-Length')||0);
+        if(length>3_500_000)continue;
+        const value=await response.text();
+        if(value.length>3_500_000)continue;
+        const parsed=JSON.parse(value);const count=install(parsed);loaded.push({year,prefix,count});payloads.push({year,prefix,payload:parsed});
+      }catch(e){/* absent optional dataset never prevents offline simulation */}
+    }
+  }
+  return {loaded,payloads};
+}

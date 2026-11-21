@@ -1,33 +1,28 @@
-# Data provenance, rights and actual coverage — November 21, 2026
+# Data provenance and source coverage — 2026-11-21
 
-The only actual football observations packaged in the 0.4.0 core are short manually audited 2025 school season excerpts and selected 2025 head-to-head fixtures. **No complete official games, plays, rosters or player games were downloaded into the published core build.**
+The source bundle is independently verifiable against the URLs below. **The `public/data/*.json` snapshots are created only after the upstream importer runs and passes.** Never infer their existence from this documentation. Availability appears in the website's data-status banner.
 
-| Data source | URL | What is included | Rights/limitations |
+| Scope | Source | Observed coverage from inspected source | Limitations |
 |---|---|---|---|
-| Ole Miss athletics | https://olemisssports.com/sports/football/stats/2025 | 2025 season record, scores/game, conceded/game and five real athlete names with selected season cumulative stats | Factual reference excerpts only; check reuse/attribution policy; full season is NOT pregame-safe |
-| Georgia athletics | https://georgiadogs.com/sports/football/stats/2025 | 2025 season reference and four real names | Same limitations |
-| Alabama athletics | https://rolltide.com/sports/football/stats/2025 | 2025 season reference and four real names | Same limitations |
-| Indiana athletics | https://iuhoosiers.com/sports/football/stats/2025 | 2025 season reference and four real names (not every name has numeric stats) | Same limitations |
-| NCAA CC0 2025–26 roster compilation | https://github.com/Dharit13/NCAA_2025-26-Season-Dataset | **Not yet imported**. Optional Github Actions ingestion pipeline is staged: joins `all.csv` and `stats.csv` on unique 2025 athlete ID | Released data CC0 1.0; separate names, likeness and NIL rights; identity and seasonal stats do not establish player availability |
-| SportsDataverse cfbfastR | https://github.com/sportsdataverse/cfbfastR | Candidate only; nothing imported | Review original content rights and data-source quality before use |
-| CollegeFootballData | https://collegefootballdata.com/ | Candidate only; nothing imported | API key required (free tier availability/rate limits subject to change); keep credentials server side |
-| CFP 12 and future 24 format | https://collegefootballplayoff.com/sports/2024/5/29/12-team-format ; https://collegefootballplayoff.com/sports/2026/11/9/24-team-format | Bracket geometry and byes, not official qualification | Effective dates differ; hosted locations not all reproduced |
+| 2026 FBS programs and game results | https://github.com/sportsdataverse/cfbfastR-data/blob/main/schedules/csv/cfb_schedules_2026.csv | 138 distinct FBS team names; 888 schedule records, 752 scored; latest completed score `2026-11-15T18:00:00Z`, **not current through Nov 21** | Scores are descriptive season-to-date; no play-by-play opponent adjustments; many 2026 future games unplayed |
+| 2025 FBS programs and game results | https://github.com/sportsdataverse/cfbfastR-data/blob/main/schedules/csv/cfb_schedules_2025.csv | 136 distinct FBS team names; 3,831 records, 3,829 scored (includes non-FBS opposition); completed season | Retrospective only; cross-season roster membership differs |
+| Current 2026 FBS names/positions | https://github.com/sportsdataverse/cfbfastR-data/blob/main/rosters/csv/cfb_rosters_2026.csv | Public CSV is ~5.1 MB; exact valid FBS player identity counts **not yet established until import** | Source-reported position does not establish participation, depth chart, availability or usage; review underlying reuse terms |
+| Supplemental 2026 school roster | https://github.com/fakhar-ud-din/ncaapyscraper/releases/latest | Most recent seen release `2026-11-16`; school JSON reports athletics rosters; pipeline uses it only when >=25 recognized people at a school | Schools update at different times; absence/injuries not verified; MIT source code license is not blanket player likeness rights |
+| 2025 athlete identities / historical seasonal totals | https://github.com/Dharit13/NCAA_2025-26-Season-Dataset | ~72,512 published football roster records per source codebook; actual import may vary | CC0 compilation; no permission for athlete images, endorsement or NIL; individual games not reconstructed |
+| Manually audited 2025 school references | https://olemisssports.com/sports/football/stats/2025, https://georgiadogs.com/sports/football/stats/2025, https://rolltide.com/sports/football/stats/2025, https://iuhoosiers.com/sports/football/stats/2025 | Ole Miss, Georgia, Alabama, Indiana only, available as site fallback | Historical only; not carried forward to 2026 |
 
-## Actual coverage
+A *program catalog* is not the same as a *validated roster*, and a *roster* is not a *calibrated individual-stat model*.
 
-| Category | 2025 reference | Other seasons |
-|---|---|---|
-| Selectable team names | ~50 curated true school names; fictitious fillers for large brackets | Season IDs used for internal synthetic sim only |
-| Observed team record and points/game | Ole Miss, Georgia, Alabama, Indiana | None |
-| Selected verified historical fixtures | 5 2025-season matchups | None |
-| Named athlete identities | Selected QB, RB, WR and TE slots for 4 schools; 17 player name entries | None |
-| Athlete measured full-season stat | Selected categories only, with missing values left null | None |
-| Genuine fitted player prop probabilities | **0** | **0** |
-| Genuine fitted win/margin/total probabilities | **0** | **0** |
-| Verified injuries/weather | **0** | **0** |
+## Pipeline and data contracts
 
-## Optional ingestion
+The `scripts/import_season_schedules.py` importer accepts CSV games with unique `game_id`, season/date, FBS division, valid non-tied scores, and source team identifier. Records after the execution cutoff are excluded; futures are never treated as played. It emits per-school games/wins/losses and scored/conceded points per game, with `lastCompletedGame` and full source URL. `public/data/season-{2025,2026}.json` records are read-only and validated again in-browser.
 
-`python scripts/import_ncaa_roster.py --roster all.csv --stats stats.csv --out public/data/rosters-2025.json` uses a strict allowlist of fields, per-file size and row limits, unique valid IDs, CSV-formula-safe names, nonnegative counting stats, null-aware numeric parsing, sorted deterministic JSON and source metadata. The full upstream dataset **has not been fetched or validated in this workspace**. `workflow_dispatch` in `.github/workflows/refresh-roster.yml` is a separate human-authorized step; it requires GitHub to fetch and commit a new file.
+The `scripts/import_2026_rosters.py` importer accepts 2026 roster CSV, plus an optional ZIP release. It only extracts a minimal first/last/full name and allowed football position labels, reads ZIP members in memory with entry/size limits (never extracts files), rejects HTML-like names, deduplicates and creates `public/data/rosters-2026.json`. School keys are normalized with bounded explicit aliases. A weekly roster replaces, rather than merges with, a previous roster for an individual program if it supplies >=25 usable names. `2026` names are **never inferred from the 2025 roster**. No photographs are distributed.
 
-Import data is supplementary descriptive historical information. It does **not** auto-train or amend the player's simulated statistical forecast; such a change needs a leakage-safe, independently backtested model.
+The `scripts/import_ncaa_roster.py` and `scripts/trim_2025_rosters.py` pair converts the 2025 CC0 data to the historical `rosters-2025.json`, limited to schedule-listed FBS schools. Raw source files aren't retained in the static site. Duplicate games or invalid file fields fail the refresh instead of silently contaminating a forecast.
+
+## Caveats
+
+No free no-key live roster/availability API with universal accuracy is established. CollegeFootballData offers a free-key authenticated service; an API key belongs in a separate secure backend, not GitHub Pages. Sourced season-ending averages are not point-in-time model features and cannot substantiate a valid pregame backtest. No sourced 2026 athlete stat model currently exists; all player props are **illustrative synthetic outcomes** with verified names only when a roster snapshot is loaded.
+
+Retrieval/inspection date: **November 21, 2026**. Upstream rows may be modified; the publish pipeline must update data metadata and run validation on each refresh.

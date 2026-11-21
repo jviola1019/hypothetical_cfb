@@ -1,54 +1,55 @@
 # GRIDIRON LAB / The Football Outcome Engine
 
-**v0.4.0 · editorial redesign · offline-first static website**
+**v0.5.0 · night edition · 2026-first FBS reference · static GitHub Pages**
 
-A two-tab, mobile-friendly college football simulation laboratory. Choose **Team A**, **Team B** and **home field**—the full matchup report updates automatically. In the Playoff tab, choose a bracket format and optionally change participating teams, then simulate a full tournament and inspect any completed game.
+GRIDIRON LAB is a dark, responsive, dependency-free football simulation laboratory. Under **Game simulation**, the only editable inputs are **Team A, Team B, and location (home/away/neutral)**. It generates a scoreboard, 2026-versus-2025 source-backed comparison, four score-distribution studies, a drive ledger, full-name roster-based illustrative player props where verified identities exist, and an FBS coverage explorer. The **Playoff simulation** tab retains optional format and participant selection to build a bracket, run championship studies, and inspect individual games.
 
-**Important:** model-generated scores, win percentages and athlete prop outcomes are synthetic demonstrations, **not calibrated predictions or betting recommendations**. This is a research prototype, not a production forecasting model. Distinct text labels separate factual 2025 season observations from generated samples.
+> **Statistical warning:** Scores, player lines, matchup margins, and win frequencies are draws from an uncalibrated synthetic football engine. Observed 2026/2025 records and verified player *roster membership* are real-world descriptive data, **not validated future-game forecasts, starting lineups, confirmed availability, or sportsbook markets**.
 
-## Experience
+## Actual historical coverage and date limitations
 
-- **Game Simulation:** two team pickers and a home/neutral venue picker. Oversized editorial scoreboard, estimated margin/total, score probability atlas, margin and total histograms, convergence chart, animated drive ledger, final-score breakdown, actual limited-coverage 2025 context and a sourced full-name player sheet.
-- **Playoff Simulation:** 13 seeded bracket presets (2–128 teams), graphically browsable bracket, editable team composition, single-tournament simulation, inspectable generated games and 400-tournament championship frequency study. All historical-looking bracket inputs are hypothetical unless explicitly verified.
-- **Player props:** full names for **2025 Ole Miss, Georgia, Alabama and Indiana only**. Names are real historical 2025 identities; future game stat lines are **generated**, and simulated player roles are not trained on actual individual usage. Unsupported teams do not receive invented athlete identities. Athlete tables show observed season averages only when the precise underlying stat is verified.
-- **Historical record:** selected observed team season averages and limited verified 2025 head-to-head outcomes; no current-season/live feed.
+- **2026 FBS team catalog:** 138 distinct FBS programs extracted from SportsDataverse's published 2026 FBS schedule, inspected **November 21, 2026**. The source's latest completed score on inspection was **November 15, 2026**. Historical score updates are **not live**; some later games may be absent until the next upstream refresh.
+- **2025 FBS team catalog:** 136 distinct FBS programs from the published completed-season schedule. The four previously manually checked school historical reports remain as a fallback if the full archive is unavailable.
+- **2026 current rosters:** the optional GitHub Actions ingestion accepts SportsDataverse's public 2026 roster CSV and selectively replaces a school's rows with its more recent weekly `ncaapyscraper` release *only when at least 25 roster names are present*. Full-name identities and position labels are source-backed; starter and injury status are **not**. **Do not claim 138 verified rosters until the refresh workflow actually passes and its snapshot is checked.**
+- **2025 historical rosters:** an independent CC0 2025–26 NCAA roster dataset and joined seasonal-stat archive. Identifiers are season-specific and never rolled forward silently to 2026.
+- **All 138 FBS programs can be selected** for synthetic simulation. Coverage is disclosed per team; a team-selector entry is not a promise of validated individual player props. No API key or paid API is needed to use the static simulator.
 
-## Appearance
+Sources: [2026 games](https://github.com/sportsdataverse/cfbfastR-data/blob/main/schedules/csv/cfb_schedules_2026.csv) · [2025 games](https://github.com/sportsdataverse/cfbfastR-data/blob/main/schedules/csv/cfb_schedules_2025.csv) · [2026 rosters](https://github.com/sportsdataverse/cfbfastR-data/blob/main/rosters/csv/cfb_rosters_2026.csv) · [weekly school rosters](https://github.com/fakhar-ud-din/ncaapyscraper/releases/latest) · [2025 CC0 archive](https://github.com/Dharit13/NCAA_2025-26-Season-Dataset).
 
-Custom restrained sports-editorial interface (chalk-white paper, midnight pine, vermilion accents), typography using **Barlow Condensed**, **DM Sans** and **IBM Plex Mono**, flat print-desk tables, field geometry, responsive charts and reduced-motion support. Google Fonts load when online; installed/system font fallbacks work offline. No generated logo assets, third-party tracking scripts or paid UI dependencies.
+## Design
 
-## Run and test
+The v0.5 **Night Edition** uses charcoal-blue broadcast surfaces, restrained copper signals, thin technical dividers, legible data tables, yard-line illustrations and meaningful distribution charts. Type hierarchy uses **Archivo Narrow** display, **Public Sans** body, and **IBM Plex Mono** stats. Fonts load over Google Fonts online with system fallback offline. All backgrounds, field graphics and analytical SVG charts are original code, not copied logos. Reduced-motion CSS is supported.
+
+## Run locally
 
 ```bash
-python3 -m http.server 4173    # open http://localhost:4173
-npm run check                  # syntax checks
-npm test                       # 16 Node tests
-python3 -m unittest discover -s tests -p 'test_*.py'
-npm run build                  # copies static site into dist/
+python3 -m http.server 4173     # visit http://localhost:4173
+npm run check                    # syntax
+npm test                         # deterministic simulation, FBS catalog, roster and tournament invariants
+python3 -m unittest discover -s tests -p 'test_*.py'  # offline importer fixtures
+npm run build                    # generate dist/ for Pages
+python3 tests/season_browser.py --mobile  # optional locally installed Playwright/Chromium
+python3 tests/season_browser.py           # 1370px desktop harness
 ```
 
-No `npm install`, API key, commercial service, login or backend is needed for the core demo. `npm run benchmark` reports environment-dependent CPU times. `tests/redesign_browser.py` contains source-injected DOM checks for environments where localhost loading is blocked; it does **not** verify native ES modules or real Web Workers.
+No npm runtime dependency is needed. Browser smoke harness tests source in an inline DOM with a mocked Web Worker; it **does not** establish that a physical Safari device or the deployed site has passed.
 
-## Data expansion
+## Automated free-data refresh
 
-The reproducible optional ingestion stage uses the **CC0 2025–26 NCAA rosters and seasonal statistics dataset** at https://github.com/Dharit13/NCAA_2025-26-Season-Dataset. To refresh, dispatch `.github/workflows/refresh-roster.yml` manually. It fetches public data and applies row, identifier, schema, value, duplicate and safety validation with `scripts/import_ncaa_roster.py`, then writes `public/data/rosters-2025.json`. **The full dataset download and successful refresh remain unverified in this execution environment; it is not necessary for normal site use, and the site does not yet use it to forecast players.** Facts about historical athletes are not permissions to use their likenesses or imply endorsement. The optional workflow will attempt to commit transformed data and may require GitHub workflow write privileges.
+Workflow: `.github/workflows/refresh-season-data.yml`. Trigger with **Actions → Refresh FBS 2025 + 2026 season data and 2026 rosters → Run workflow**, or let its weekly schedule run. It downloads 2025/2026 SportsDataverse schedules, the 2026 roster CSV and optionally the newer released school roster ZIP, then the 2025 CC0 NCAA roster/stats tables. It rejects malformed schemas, duplicate fixtures, conflicting IDs and implausible values; records source information and last completed game. The workflow publishes only validated `public/data/season-2026.json`, `public/data/rosters-2026.json`, `public/data/season-2025.json`, `public/data/rosters-2025.json` artifacts and commits them to `main`. A downstream Pages workflow rebuilds on successful refresh. **A workflow source file is not evidence that upstream ingestion ran.** See `docs/DATA_PROVENANCE.md`.
 
-CollegeFootballData (https://collegefootballdata.com/) and SportsDataverse (https://github.com/sportsdataverse/cfbfastR) are future pipeline candidates. CFBD requires a free API key; never ship that key to the browser. See `docs/DATA_PROVENANCE.md`, `docs/MODEL_CARD.md`, and `docs/STATUS.md` for all restrictions.
+If a dataset is absent or rejected, the simulator still runs offline, labels its fallback, and does not invent names. Historical completeness is displayed in the site.
 
-## Deploy on GitHub Pages
+## Publishing
 
-Repository: https://github.com/jviola1019/hypothetical_cfb
+GitHub: https://github.com/jviola1019/hypothetical_cfb
 
-1. Settings → Pages → source: **GitHub Actions**.
-2. Push to `main`; `.github/workflows/deploy-pages.yml` checks, tests, builds and deploys the `dist` directory.
-3. Verify Actions is green before trusting `https://jviola1019.github.io/hypothetical_cfb/`.
+GitHub Pages: https://jviola1019.github.io/hypothetical_cfb/
 
-The GitHub connector independently confirmed that CI and the Pages deploy workflow succeeded on the redesign commit. A direct browser fetch and native Web Worker behavior on the public URL still require device-level verification.
+Set **Settings → Pages → Build and deployment → Source: GitHub Actions**. The `Deploy GitHub Pages` workflow runs tests, builds and publishes `dist/`. Verify run status and actual page load before assuming publication succeeded. For offline hosting, use `npm run build` and serve the `dist/` folder.
 
-## Engineering and known limitations
+## What is not scientifically verified
 
-Source is dependency-free JavaScript/ES modules, CSS and SVG. Simulation occurs in a local Web Worker where browser policy permits, with a fallback; results are deterministic for the same engine version, inputs and seed. All 13 formats satisfy single-elimination structural rules under tests; classification of published championship formats is noted in `docs/RULEBOOK.md`.
+No chronological model fitting, opponent-adjusted efficiencies, calibrated margin/total/win probabilities, confirmed 2026 depth charts, possession-level player usage, injuries, or betting market comparisons. Whole-season scoring means are retrospective and **must not** be used for historical point-in-time validation. Simplified football drives and playoffs have deterministic structural tests but are not an official NCAA competition prediction engine. See `docs/MODEL_CARD.md`, `docs/STATUS.md`, `docs/RULEBOOK.md` and `docs/THREAT_MODEL.md`.
 
-**Not implemented:** authentic opponent-adjusted EPA, point-in-time historical modeling, calibrated spreads/totals, complete official rankings and selection rules, independent per-player historical forecasting, live scores/rosters/injuries, real market prop lines, production sports data API proxy, fully physically verified iPhone Safari, or a production threat/penetration audit. Do not infer such features from polished visuals.
-
-License: MIT for application code. Externally sourced data retains its own rights and attribution obligations.
+License: MIT for original application code. Upstream data and athlete name/likeness rights remain with their respective sources and people.

@@ -12,7 +12,7 @@ test('2025 historical reference limited to four explicitly sourced schools', () 
   }
   assert.equal(observed('tennessee', 2025), null);
   assert.equal(teamProfile('tennessee', 2025).coverage, 'synthetic');
-  assert.equal(teamProfile('ole-miss', 2025).coverage, '2025-full-season-descriptive');
+  assert.equal(teamProfile('ole-miss', 2025).coverage, '2025-snapshot-descriptive');
 });
 
 test('player identity names are only supplied from observed 2025 references', () => {
@@ -24,7 +24,7 @@ test('player identity names are only supplied from observed 2025 references', ()
 });
 
 test('named prop frequencies come from same simulated game samples and remain bounded', () => {
-  const config = {...DEFAULT_CONFIG, a:'ole-miss', b:'indiana'};
+  const config = {...DEFAULT_CONFIG, a:'ole-miss', b:'indiana', seasonA:2025, seasonB:2025};
   const summary = simulateBatch(config, 32, 91);
   assert.ok(summary.props.length > 0);
   for (const prop of summary.props) {
