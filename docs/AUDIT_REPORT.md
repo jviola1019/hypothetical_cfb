@@ -61,13 +61,21 @@ The drive engine is not a real NCAA play-by-play emulator: no authentic fourth-d
 4. Calibrate a conditional drive-level generator against held-out game/drive frequencies and ensure expected score/total/win distribution coherence with the research model.
 5. Verify real Chromium/WebKit/iOS offline workers and benchmark in physical devices; expand accessibility audit.
 
-## Full-source chronological benchmark — executed November 21, 2026
+## v0.7 audit addendum — 2026-11-21
 
-- GitHub Actions refresh run 44879469184: success. Generated public/data/research-2026.json (inspected in GitHub).
-- Training: 808 completed FBS-vs-FBS games in 2025; chronological holdout: 629 games in 2026, through November 15, 2026. Model: chronological-elo-slope-0.1.0.
-- Brier: fitted Elo 0.210914; raw Elo 0.217346; constant 50/50 baseline 0.250000. Log loss: fitted Elo 0.610867; 50/50 baseline 0.693147.
-- Mean absolute error: point margin 14.5939; game total 13.1911. RMSE: margin 18.6669; game total 16.3861.
-- Home teams won 0.60095 of the holdout; constant 50/50 is a weak baseline. An alternative home-rate baseline must be fitted from training data, not the holdout.
-- Exploratory 1500-resample week-cluster bootstrap: Brier difference (fitted Elo minus 50/50) 95% range [-0.057239, -0.023354] from 11 weeks. Sparse clusters and dependent outcomes limit inference.
-- Calibration remains imperfect: in the 0.50–0.60 predicted bin, mean predicted 0.55355 vs observed frequency 0.44737 (n=114). Do not label the model perfectly calibrated.
-- Neither historical winner accuracy nor scoring-error measurements establish player-prop validity, sportsbook edge, injury/roster usage accuracy or simulation realism.
+| ID | Severity | Finding | Fix/evidence | Status |
+|--|--|--|--|--|
+| V07-01 | High | Drive starts were independent of previous turnover/punt/failed FG state | `src/engine.js` next-start transitions, `tests/game_field_audit.test.js` | Fixed / local tested |
+| V07-02 | High | 2026 roster order might be mistaken for validated quarterback/receiver availability and props | Separate `src/playerEvidence.js` derived retrospective athlete summaries, missing-data suppression; user-visible evidence labels | Partial; future player model not fitted |
+| V07-03 | High | Public per-player game-ledger plan would approximate bulk redistribution of CFBD data | Changed pipeline to publish at most 12 **derived** player aggregates/team, no raw per-game records; private intermediates disposed | Fixed prospectively; legacy dataset rights still require review |
+| V07-04 | Medium | Prior fitted Elo vs coin-only lacked strong competitors | 2024 fitted / 2025 selected six models, 2026 previously inspected forward; reliability bins, Wilson intervals, week bootstrap | Implemented; full-source Actions pending |
+| V07-05 | Medium | CFP bracket lacked explicit year-effective site and bid definitions | Versioned 2026–27 and 2027–28 metadata; site-kind generated for each game | Geometry implemented; committee qualification missing |
+| V07-06 | Medium | Historic browser harnesses broke when new modules added | Source modules isolated by lexical scope; two viewport tests and no raw-data scenarios | Fixed / locally tested |
+| V07-07 | High | Raw past-game player stats may falsely imply future probability calibration | UI calls them retrospective stat-recorded-game shares, requires at least 3 games, with explicit cutoff and quantiles | Fixed descriptive labeling; independent prop forecast still not implemented |
+
+### Remaining security and reliability risks
+
+- Client-side scores are user-tamperable by design and should never be used as server-authoritative bets; forged winner/margin checked before bracket advancement, but local browser source is not cryptographically trusted.
+- The source repository's historical team/roster snapshots derive partly from upstream services with redistribution conditions; current metadata alone does not grant unrestricted data republication. Reassess existing snapshots and permissions separately.
+- CI relies on pinned GitHub Actions major tags, without commit-SHA pinning, SBOM or artifact signing. This is an open CI supply-chain risk.
+- Browser test harness is not native WebKit/Safari, so first-run workers and offline caching must be separately tested.

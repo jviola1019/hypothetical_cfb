@@ -16,3 +16,9 @@ Sources:
 - https://collegefootballplayoff.com/sports/2026/8/9/bracket-place-holder
 - https://collegefootballplayoff.com/sports/2026/11/9/24-team-format
 - https://collegefootballplayoff.com/news/2026/11/9/24-team-expansion
+
+## CFP year-aware metadata v0.7
+
+- 2026–27 FBS: 12-team field, four byes, first-round hosted higher seeds, next quarters/semifinals at CFP bowl sites, championship neutral. Source: https://collegefootballplayoff.com/sports/2024/5/29/12-team-format
+- 2027–28 FBS: 24-team field, eight byes, seeds 9–16 host opening round and seeds 1–8 host second round, later CFP bowls/championship. Source: https://collegefootballplayoff.com/sports/2026/11/9/24-team-format
+- Actual committee selection/bids, team eligibility, exemptions, exact campus/bowl and neutral fallback mapping are **not** automatically reconstructed; tournament entrants are selected by the user and explicitly hypothetical. FCS-inspired option mixes divisions and is not an NCAA 2026 FCS field.

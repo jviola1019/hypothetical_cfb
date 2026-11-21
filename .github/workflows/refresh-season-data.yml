@@ -1,4 +1,4 @@
-name: Refresh FBS 2025 + 2026 season data and 2026 rosters
+name: Refresh FBS 2023–26 forecasts, 2025–26 player events and rosters
 on:
   workflow_dispatch:
   push:
@@ -9,6 +9,8 @@ on:
       - 'scripts/evaluate_rolling_model.py'
       - 'scripts/import_2025_rosters.py'
       - 'scripts/trim_2025_rosters.py'
+      - 'scripts/import_player_games.py'
+      - 'scripts/evaluate_multiyear.py'
   schedule:
     - cron: '27 13 * * 1'
 permissions:
@@ -19,7 +21,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 14
+    timeout-minutes: 23
     steps:
       - uses: actions/checkout@v4
         with:
@@ -86,6 +88,36 @@ jobs:
             --train-csv /tmp/gridiron-ingest/schedules-2025.csv \
             --holdout-csv /tmp/gridiron-ingest/schedules-2026.csv \
             --out public/data/research-2026.json
+      - name: Evaluate four historical seasons without 2026 parameter tuning
+        shell: bash
+        run: |
+          set -euo pipefail
+          for year in 2023 2024; do
+            curl --fail --location --retry 3 --max-time 90 --proto '=https' --tlsv1.2 \
+              "https://raw.githubusercontent.com/sportsdataverse/cfbfastR-data/main/schedules/csv/cfb_schedules_${year}.csv" \
+              -o "/tmp/gridiron-ingest/schedules-${year}.csv"
+          done
+          python scripts/evaluate_multiyear.py \
+            --schedule-2023 /tmp/gridiron-ingest/schedules-2023.csv \
+            --schedule-2024 /tmp/gridiron-ingest/schedules-2024.csv \
+            --schedule-2025 /tmp/gridiron-ingest/schedules-2025.csv \
+            --schedule-2026 /tmp/gridiron-ingest/schedules-2026.csv \
+            --out public/data/model-compare-2026.json
+      - name: Ingest play-level 2025 and 2026 player game events
+        shell: bash
+        run: |
+          set -euo pipefail
+          for year in 2025 2026; do
+            curl --fail --location --retry 2 --max-time 180 --proto '=https' --tlsv1.2 \
+              "https://raw.githubusercontent.com/sportsdataverse/cfbfastR-data/main/player_stats/csv/player_stats_${year}.csv" \
+              -o "/tmp/gridiron-ingest/player-stats-${year}.csv"
+            python scripts/import_player_games.py --season "$year" \
+              --csv "/tmp/gridiron-ingest/player-stats-${year}.csv" \
+              --schedule-csv "/tmp/gridiron-ingest/schedules-${year}.csv" \
+              --teams-json "public/data/season-${year}.json" \
+              --rosters-json "public/data/rosters-${year}.json" \
+              --out-dir "public/data/players-${year}"
+          done
       - name: Unit and ingestion tests
         run: |
           npm test
@@ -104,7 +136,12 @@ jobs:
           assert o['schoolsCount']==138, o['schoolsCount']
           old=json.load(open('public/data/rosters-2025.json'))
           assert old['schoolsCount']>=100, old['schoolsCount']
-          print('Release data validation passed')
+          compare=json.load(open('public/data/model-compare-2026.json'))
+          assert compare['gamesBySeason']['2026']>=300
+          for year,schools in [(2025,136),(2026,138)]:
+              player=json.load(open(f'public/data/players-{year}/manifest.json'))
+              assert player['schoolFiles']>=schools and player['athletesWithRecordedEvents']>400
+          print('Release data validation passed with observed per-game player events and multi-year benchmark')
           PY
       - name: Commit validated observed data only
         shell: bash
@@ -114,7 +151,8 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add public/data/season-2025.json public/data/season-2026.json \
                   public/data/rosters-2025.json public/data/rosters-2026.json \
-                  public/data/research-2026.json
+                  public/data/research-2026.json public/data/model-compare-2026.json \
+                  public/data/players-2025/ public/data/players-2026/
           if ! git diff --cached --quiet; then
             git commit -m 'data: refresh 2025–2026 observed FBS records and roster snapshots'
             git push

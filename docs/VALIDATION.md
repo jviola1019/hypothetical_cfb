@@ -1,20 +1,17 @@
-# GRIDIRON LAB v0.6 — executed tests and evidence
+# v0.7 verification evidence — 2026-11-21
 
-Baseline (pre-modification): Node 20/20; Python 7/7; static build passes.
+## Locally executed
 
-Revised: Node **31/31**; Python **11/11** (including four new pregame-leakage tests); static syntax checks and build pass. Browser inline-source Chromium run at 390px and 1370px passed team selection, full 138-school picker, research panel under test-fixture data, named test players, 12/24 bracket play and game inspector with no overflow or page exceptions.
+- JavaScript Node unit/property tests: **39/39 passed** (`npm test`). Includes all 13 tournament formats, CFP sites and tamper rejection, field position, scoring, seeded repeatability, boundary checks, and derived-player-schema validation.
+- Python ingestion and modeling tests: **19/19 passed** (`python -m unittest discover -s tests -p 'test_*.py'`). Includes duplicate event idempotency, source-team fencing, minimum observed-game counts, output contains no raw game logs, chronological separation, and 2026 label inversion cannot change fitted parameters.
+- JS syntax: `npm run check` passed. Static site: `npm run build` passed.
+- Chromium inlined DOM harness at 390×844 and 1370×850: source mocked FBS names and derived player records, team change, two tabs, bracket play, match inspection, no horizontal overflow or JavaScript exceptions. `tests/season_browser.py --mobile`, `tests/season_browser.py`, `tests/redesign_browser.py 390`, `tests/redesign_browser.py 1370` passed. **This is not a real server/ES-module/worker or physical Safari test.**
+- Monte Carlo benchmark: local CPU-specific, not validated iPhone performance. Run `npm run benchmark` for the specific container and record its numbers.
 
-Seven specifically reproduced defects and regression fixtures are enumerated in `AUDIT_REPORT.md`. Browser localhost navigation was attempted and blocked by administrator; native workers remain unverified. Full-source historical refresh has completed successfully; the 2025-trained/2026-heldout results are recorded below. Local browser fixtures remain synthetic.
+## Pending external workflow
 
-Commands: `npm run check`; `npm test`; `python -m unittest discover -s tests -p 'test_*.py'`; `npm run build`; `python tests/season_browser.py --mobile`; `python tests/season_browser.py`; `npm run benchmark`.
+`.github/workflows/refresh-season-data.yml` downloads full 2023–26 schedule data, computes model candidate tables (2025 validation vs previously inspected 2026 forward reference), and optionally builds 2025/26 private intermediate athlete game logs into small derived player-summary snapshots. It must pass source schemas and minimum coverage; if not, files remain missing. No fabricated model evaluation result should be substituted.
 
-## Full-source chronological benchmark — executed November 21, 2026
+## Methodological boundaries
 
-- GitHub Actions refresh run 44879469184: success. Generated public/data/research-2026.json (inspected in GitHub).
-- Training: 808 completed FBS-vs-FBS games in 2025; chronological holdout: 629 games in 2026, through November 15, 2026. Model: chronological-elo-slope-0.1.0.
-- Brier: fitted Elo 0.210914; raw Elo 0.217346; constant 50/50 baseline 0.250000. Log loss: fitted Elo 0.610867; 50/50 baseline 0.693147.
-- Mean absolute error: point margin 14.5939; game total 13.1911. RMSE: margin 18.6669; game total 16.3861.
-- Home teams won 0.60095 of the holdout; constant 50/50 is a weak baseline. An alternative home-rate baseline must be fitted from training data, not the holdout.
-- Exploratory 1500-resample week-cluster bootstrap: Brier difference (fitted Elo minus 50/50) 95% range [-0.057239, -0.023354] from 11 weeks. Sparse clusters and dependent outcomes limit inference.
-- Calibration remains imperfect: in the 0.50–0.60 predicted bin, mean predicted 0.55355 vs observed frequency 0.44737 (n=114). Do not label the model perfectly calibrated.
-- Neither historical winner accuracy nor scoring-error measurements establish player-prop validity, sportsbook edge, injury/roster usage accuracy or simulation realism.
+Historical data are source-defined, not refreshed live. Brier score requires matchup-level pregame probabilities; win frequency in a synthetic game simulator is not calibration. Model improvement is descriptive unless paired comparisons and their dependence limitations are reported. Wilson reliability bands and exploratory weekly block bootstrap are included in the research artifact; week grouping does not eliminate opponent dependence.

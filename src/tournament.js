@@ -6,6 +6,25 @@ export const FORMATS=[
 ...([2,4,8,16,32,48,64,68,96,128].map(n=>({id:'custom'+n,label:`${n} teams · hypothetical`,size:n,kind:'hypothetical',byes:null,season:'custom'})))
 ];
 export const FORMAT_MAP=Object.fromEntries(FORMATS.map(x=>[x.id,x]));
+// Official field-qualification policy is not inferred from model ranking: users
+// supply hypothetical participants in committee-style bracket lanes.
+export const CFP_RULES=Object.freeze({
+ fbs12:Object.freeze({effective:'2026-27',type:'CFP bracket geometry only',automaticBids:5,atLarge:7,
+  conferenceChampionBids:4,highestRankedOtherConferenceChampion:1,notreDameTop12Exception:true,
+  byes:4,openingHosts:'seeds 5-8',siteRounds:['campus','CFP bowl','CFP bowl','championship host'],reseeding:false,
+  url:'https://collegefootballplayoff.com/sports/2024/5/29/12-team-format'}),
+ fbs24:Object.freeze({effective:'2027-28',type:'CFP bracket geometry only',automaticBids:5,atLarge:19,
+  conferenceChampionBids:4,highestRankedOtherConferenceChampion:1,
+  byes:8,openingHosts:'seeds 9-16',secondRoundHosts:'seeds 1-8',
+  siteRounds:['campus','campus','CFP bowl','CFP bowl','championship host'],reseeding:false,
+  url:'https://collegefootballplayoff.com/sports/2026/11/9/24-team-format'})
+});
+export const roundSite=(formatId,stage)=>CFP_RULES[formatId]?.siteRounds[stage]||'hypothetical neutral site';
+function validSimulatedWinner(game,a,b){return !!game&&game.config?.a===a&&game.config?.b===b&&
+ Array.isArray(game.final)&&game.final.length===2&&game.final.every(n=>Number.isSafeInteger(n)&&n>=0&&n<200)&&
+ game.final[0]!==game.final[1]&&game.winner===(game.final[0]>game.final[1]?a:b)&&
+ game.total===game.final[0]+game.final[1]&&game.margin===game.final[0]-game.final[1];}
+
 export function seedOrder(n){if(n<2||(n&(n-1))!==0)throw Error('Power-of-two bracket required');let a=[1,2];for(let m=4;m<=n;m*=2)a=a.flatMap(v=>[v,m+1-v]);return a;}
 export function rulesOrder(format){let n=1;while(n<format.size)n*=2;let order=seedOrder(n);if(format.id==='fbs24')order=[1,32,16,17,8,25,9,24,5,28,12,21,4,29,13,20,6,27,11,22,3,30,14,19,7,26,10,23,2,31,15,18];if(format.id==='fbs12')order=[1,16,8,9,4,13,5,12,2,15,7,10,3,14,6,11];return order;}
 export function validateParticipants(ids,formatId){const f=FORMAT_MAP[formatId];if(!f)throw Error('Unsupported bracket format');if(!Array.isArray(ids)||ids.length!==f.size)throw Error(`Expected ${f.size} participants`);if(new Set(ids).size!==ids.length)throw Error('Duplicate participant');if(ids.some(x=>!TEAM_MAP[x]))throw Error('Unknown team');return true;}
@@ -25,11 +44,11 @@ export const roundName=(f,stage)=>{
   const fieldSize=Math.pow(2,remaining);
   return fieldSize===32?'Round of 32':fieldSize===16?'Round of 16':`Round ${stage+1}`;
 };
-function gameConfig(a,b,base,stage,seed,formatId){const sa=Number(base?.seasonA??2026),sb=Number(base?.seasonB??2026);return {...DEFAULT_CONFIG,a,b,seasonA:sa,seasonB:sb,venue:formatId==='fbs12'&&stage===0?'a':formatId==='fbs24'&&stage<=1?'a':'neutral',pace:Number(base?.pace??1),shift:0,seed};}
+function gameConfig(a,b,base,stage,seed,formatId){const sa=Number(base?.seasonA??2026),sb=Number(base?.seasonB??2026);return {...DEFAULT_CONFIG,a,b,seasonA:sa,seasonB:sb,venue:formatId==='fbs12'&&stage===0?'a':formatId==='fbs24'&&stage<=1?'a':'neutral',pace:Number(base?.pace??1),shift:0,seed,siteKind:roundSite(formatId,stage)};}
 function readSlots(t){return t.slots.length/2}
 export function playablePairs(t){if(t.champion)return [];const result=[];for(let j=0;j<readSlots(t);j++){const a=t.slots[2*j],b=t.slots[2*j+1];if(a&&b)result.push({index:j,a,b,game:t.played[j]||null});}return result;}
 export function simulatePair(t,index,base){if(t.champion)throw Error('Tournament complete');if(!Number.isInteger(index)||index<0||index>=readSlots(t))throw Error('Invalid match index');const a=t.slots[index*2],b=t.slots[index*2+1];if(!a||!b)throw Error('Bye cannot be played');if(t.played[index])return t;const seed=hash32(`${t.seed}|round:${t.stage}|pair:${index}`),config=gameConfig(a,b,base,t.stage,seed,t.formatId);const game=simulateGame(config,seed);return {...t,played:{...t.played,[index]:game}};}
-export function finalizeRound(t){if(t.champion)return t;const next=[],matches=[];for(let i=0;i<readSlots(t);i++){const a=t.slots[2*i],b=t.slots[2*i+1],game=t.played[i]||null;if(a&&b&&!game)throw Error('Unplayed matchup');const adv=game?.winner||a||b||null;matches.push({id:`r${t.stage}-m${i}`,a,b,game,winner:adv,bye:Boolean((a&&!b)||(!a&&b))});next.push(adv)}const rounds=[...t.rounds,{name:roundName(FORMAT_MAP[t.formatId],t.stage),matches}];return {...t,slots:next,stage:t.stage+1,played:{},rounds,champion:next.length===1?next[0]:null};}
+export function finalizeRound(t){if(t.champion)return t;const next=[],matches=[];for(let i=0;i<readSlots(t);i++){const a=t.slots[2*i],b=t.slots[2*i+1],game=t.played[i]||null;if(a&&b&&!game)throw Error('Unplayed matchup');if(game&&!validSimulatedWinner(game,a,b))throw Error('Tournament game result failed validation');const adv=game?.winner||a||b||null;matches.push({id:`r${t.stage}-m${i}`,a,b,game,winner:adv,bye:Boolean((a&&!b)||(!a&&b))});next.push(adv)}const rounds=[...t.rounds,{name:roundName(FORMAT_MAP[t.formatId],t.stage),matches}];return {...t,slots:next,stage:t.stage+1,played:{},rounds,champion:next.length===1?next[0]:null};}
 export function simulateRound(t,base){let n=t;for(const p of playablePairs(n))if(!p.game)n=simulatePair(n,p.index,base);return finalizeRound(n);}
 export function simulateTournament(t,base){let n=t;while(!n.champion)n=simulateRound(n,base);return n;}
 export function monteCarloTournament(t,n,base,progress){if(!Number.isInteger(n)||n<1||n>5000)throw Error('Invalid tournament count');const counts=Object.fromEntries(t.participants.map(id=>[id,0]));const reached=Object.fromEntries(t.participants.map(id=>[id,[]]));const finalMatchups=new Map(),gamesPlayed=Object.fromEntries(t.participants.map(id=>[id,0]));for(let i=0;i<n;i++){let s=createTournament(t.formatId,t.participants,hash32(String(t.seed)+':MC:'+i));s=simulateTournament(s,base);counts[s.champion]++;for(const rr of s.rounds){for(const m of rr.matches){if(m.game){gamesPlayed[m.a]++;gamesPlayed[m.b]++;reached[m.winner][Number(m.id.match(/^r(\d+)/)[1])]=(reached[m.winner][Number(m.id.match(/^r(\d+)/)[1])]||0)+1;}}}const final=s.rounds.at(-1).matches[0];const key=[final.a,final.b].sort().join('|');finalMatchups.set(key,(finalMatchups.get(key)||0)+1);if(progress&&((i+1)%50===0||i===n-1))progress(i+1,n)}return {n,counts,probabilities:Object.fromEntries(t.participants.map(id=>[id,counts[id]/n])),gamesPlayed:Object.fromEntries(t.participants.map(id=>[id,gamesPlayed[id]/n])),reached,finalMatchups:[...finalMatchups].sort((a,b)=>b[1]-a[1]).slice(0,10),model:ENGINE_VERSION};}

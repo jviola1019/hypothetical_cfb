@@ -175,3 +175,26 @@ table tbody tr{border-color:#283947}table tbody tr:hover{background:rgba(93,130,
 .research-fallback strong{display:block;color:#f5e0c4}.research-fallback p{font-size:13px;margin:5px 0 0}
 @media(max-width:760px){.research-panel{grid-template-columns:minmax(0,1fr)}.research-aside{border-left:0;border-top:1px solid #32424d}.research-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.research-metric{padding:0 8px}.research-metric small{font-size:9px}}
 @media(max-width:390px){.research-metrics{grid-template-columns:1fr;gap:12px}.research-metric,.research-metric:first-child{padding:0 0 8px;border-right:0;border-bottom:1px solid #344750}.research-metric:last-child{border-bottom:0}}
+/* 0.7 — observed player game-event ledger; clearly separate from scenarios */
+.player-evidence{margin-top:76px}
+.player-evidence .evidence-status{display:flex;flex-wrap:wrap;gap:12px;background:#101e2b;border:1px solid #3a4b5c;border-left:3px solid #e9ac62;padding:14px 18px;margin-bottom:14px}
+.player-evidence .evidence-status>span{flex:1 1 230px;color:#b5c6d4;font:12px/1.6 var(--font-body)}
+.player-evidence .evidence-status strong{color:#f0e6d5;display:block;font-size:14px}
+.player-evidence .player-table{min-width:640px}
+.evidence-muted{color:#adc1cf}
+.evidence-spark{display:flex;gap:3px;height:38px;align-items:flex-end;min-width:100px;width:130px;border-bottom:1px solid #5e788a;padding-bottom:1px}
+.evidence-spark span{flex:1;background:#dca763;min-height:2px;opacity:.85;transition:opacity .17s ease}
+.evidence-spark span:hover{opacity:1;background:#ffe3b0}
+.player-evidence .table-caption{padding-top:9px;line-height:1.65}
+@media(max-width:680px){.player-evidence{margin-top:48px}.player-evidence .evidence-status{padding:12px}.player-evidence .table-frame{overflow-x:auto}}
+@media(prefers-reduced-motion:reduce){.evidence-spark span{transition:none}}
+/* Auditable quantitative benchmark — table, not a decorative signal chart */
+.model-benchmark{margin:28px 0 50px}
+.model-benchmark .table-frame{overflow-x:auto}
+.model-benchmark table{min-width:640px}
+.model-benchmark .audited-selected{background:rgba(219,160,87,.075)}
+.model-benchmark th small{display:block;margin-top:3px;color:#ecb778;font:10px var(--font-data)}
+.brier-meter{display:block;min-width:95px;max-width:170px;background:#283d4c;height:8px}
+.brier-meter span{display:block;height:100%;background:#e9ac62}
+/* Data rights: percentile range is an aggregate, not a redraw of raw game logs. */
+.evidence-range{font:600 13px var(--font-data);color:#e6bc82;white-space:nowrap}
