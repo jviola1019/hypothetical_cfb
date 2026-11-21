@@ -10,7 +10,7 @@ from datetime import date
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from import_season_schedules import team_id,build as build_scores
-from import_2026_rosters import cfbd_roster,newer_archive,build as build_roster
+from import_2026_rosters import cfbd_roster,newer_archive,build as build_roster,choose_roster
 from import_2025_rosters import build as build_rosters_2025
 
 class PipelineTests(unittest.TestCase):
@@ -29,6 +29,15 @@ class PipelineTests(unittest.TestCase):
       o=build_scores(2026,csvfile,date(2026,11,21));self.assertEqual(o['allFbsSchoolsIdentified'],138);self.assertEqual(o['withCompletedGames'],138)
       s=csvfile.read_text();csvfile.write_text(s+s.splitlines()[-1]+'\n')
       with self.assertRaisesRegex(ValueError,'Duplicate game ID'):build_scores(2026,csvfile,date(2026,11,21))
+
+  def test_partial_newer_roster_does_not_overwrite_complete_2026_roster(self):
+    primary=[{'name':f'Old Player {i}','position':(['QB','RB','WR','TE','DL','LB','CB','S'][i%8])} for i in range(120)]
+    partial=[{'name':f'New Player {i}','position':'QB'} for i in range(45)]
+    chosen,source=choose_roster(primary,partial)
+    self.assertEqual(source,'cfbd');self.assertEqual(len(chosen),120)
+    full=[{'name':f'New Player {i}','position':(['QB','RB','WR','TE','DL','LB','CB','S'][i%8])} for i in range(106)]
+    chosen,source=choose_roster(primary,full)
+    self.assertEqual(source,'weekly');self.assertEqual(len(chosen),106)
 
   def test_current_roster_from_cfbd_csv(self):
     with tempfile.TemporaryDirectory() as d:

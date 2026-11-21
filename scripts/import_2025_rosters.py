@@ -32,7 +32,7 @@ def build(schedule_path,csv_path):
             'published':datetime.now(timezone.utc).isoformat(timespec='seconds'),
             'kind':'source-reported-historical-2025-roster-names-and-positions-only',
             'schoolsCount':len(out),'totalPlayers':sum(len(v) for v in out.values()),
-            'schools':out,'notice':'These athletes appeared in the 2025 roster archive; it says nothing about their 2026 team, status, injury, starting role, or playing time. Player props are synthetic.'}
+            'schoolSources':{id:'cfbd' for id in out},'schools':out,'notice':'These athletes appeared in the 2025 roster archive; it says nothing about their 2026 team, status, injury, starting role, or playing time. Player props are synthetic.'}
 
 def main():
     p=argparse.ArgumentParser()

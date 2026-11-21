@@ -1,6 +1,6 @@
 import {TEAMS,TEAM_MAP,DEFAULT_CONFIG,ENGINE_VERSION,simulateGame,simulateBatch,hash32} from './engine.js';
 import {FORMATS,FORMAT_MAP,createTournament,simulateTournament,monteCarloTournament,defaultParticipants} from './tournament.js';
-import {observed,headToHead,HISTORICAL,SOURCE_INDEX,loadPublicData,sourceStatus,rosterForTeam} from './observed.js';
+import {observed,headToHead,HISTORICAL,SOURCE_INDEX,loadPublicData,sourceStatus,rosterForTeam,rosterSourceForTeam} from './observed.js';
 import {histogram,atlas,scoreboardCurve,convergence,driveStrip,propBars} from './charts.js';
 
 const root=document.getElementById('app');
@@ -84,12 +84,12 @@ function sources(){return `<section class="method-section" id="sources"><div cla
 function coverageIndex(){
  const rosterA=rosterForTeam(state.config.a),rosterB=rosterForTeam(state.config.b);
  const two=[[state.config.a,rosterA],[state.config.b,rosterB]];
- const selectedRosters=two.map(([id,people])=>`<article class="roster-leaf"><div class="roster-head"><h3>${clean(name(id))}</h3><span>${people.length} roster names · 2026</span></div>${people.length?`<div class="roster-list">${people.map(p=>`<div><b>${clean(p.name)}</b><span>${clean(p.position)}</span></div>`).join('')}</div>`:'<p>Current roster names have not yet been imported or matched for this program.</p>'}</article>`).join('');
- const all=visibleTeams.map(t=>{const a=observed(t.id,2026),b=observed(t.id,2025),n=rosterForTeam(t.id,2026).length;return `<tr><th>${clean(t.name)}</th><td>${clean(a?.conference||'—')}</td><td>${a?clean(a.record):'—'}</td><td>${a?one(a.pointsFor):'—'}</td><td>${a?one(a.pointsAgainst):'—'}</td><td>${n||'—'}</td><td>${b?clean(b.record):'—'}</td></tr>`;}).join('');
+ const selectedRosters=two.map(([id,people])=>`<article class="roster-leaf"><div class="roster-head"><h3>${clean(name(id))}</h3><span>${people.length} names · ${clean(rosterSourceForTeam(id)==='weekly'?'weekly school source':rosterSourceForTeam(id)==='cfbd'?'2026 CFBD dataset':'partial source')}</span></div>${people.length?`<div class="roster-list">${people.map(p=>`<div><b>${clean(p.name)}</b><span>${clean(p.position)}</span></div>`).join('')}</div>`:'<p>Current roster names have not yet been imported or matched for this program.</p>'}</article>`).join('');
+ const all=visibleTeams.map(t=>{const a=observed(t.id,2026),b=observed(t.id,2025),n=rosterForTeam(t.id,2026).length;return `<tr><th>${clean(t.name)}</th><td>${clean(a?.conference||'—')}</td><td>${a?clean(a.record):'—'}</td><td>${a?one(a.pointsFor):'—'}</td><td>${a?one(a.pointsAgainst):'—'}</td><td>${n||'—'}</td><td>${n?clean(rosterSourceForTeam(t.id)):'—'}</td><td>${b?clean(b.record):'—'}</td></tr>`;}).join('');
  return `<section class="coverage-section">${cap('05','Every program.','138 FBS schools in the 2026 source catalog. Data are displayed only where an actual snapshot has been ingested.')}
  <details class="roster-drawer"><summary>See both 2026 rosters <span>${rosterA.length+rosterB.length} listed names</span></summary><div class="roster-pair">${selectedRosters}</div><p class="table-caption">Roster listings do not establish starters, injuries, playing time or eligibility. Some names may be outdated if school pages changed after their published snapshots.</p></details>
  <details class="all-teams-drawer"><summary>Open the 138-school verification index <span>2026 + 2025</span></summary>
- <div class="table-frame index-table-frame"><table class="index-table"><thead><tr><th>School</th><th>Conference (2026)</th><th>2026 W–L</th><th>PPG</th><th>Allowed</th><th>2026 roster</th><th>2025 W–L</th></tr></thead><tbody>${all}</tbody></table></div>
+ <div class="table-frame index-table-frame"><table class="index-table"><thead><tr><th>School</th><th>Conference (2026)</th><th>2026 W–L</th><th>PPG</th><th>Allowed</th><th>2026 roster</th><th>Source</th><th>2025 W–L</th></tr></thead><tbody>${all}</tbody></table></div>
  <p class="table-caption">Latest 2026 scored game in installed feed: ${clean(sourceStatus.seasons[2026]?.asOf?.slice(0,10)||'not loaded')}. School program lists are not the same as current verified roster or player-stat coverage.</p></details></section>`;
 }
 function game(){return `${gameInput()}${matchupReport()}${tape()}${insight()}${charts()}${history()}${recentGame()}${playerLaboratory()}${coverageIndex()}${sources()}`}

@@ -96,23 +96,41 @@ def newer_archive(path, supported):
     return out,count
 
 
+def choose_roster(primary,weekly):
+    """Use newer weekly data only if it is near-complete relative to the public base.
+
+    A school scraper sometimes publishes only offensive position groups; 25 named
+    athletes are not proof of a full roster. Prefer breadth over a misleading
+    'fresh' date, and preserve the per-school source choice.
+    """
+    if not primary:
+        return (weekly,'weekly-partial') if len(weekly)>=25 else (primary,'cfbd')
+    primary_positions={x['position'] for x in primary}
+    weekly_positions={x['position'] for x in weekly}
+    enough=len(weekly)>=max(70,round(len(primary)*.80))
+    breadth=len(weekly_positions)>=min(6,max(1,round(len(primary_positions)*.65)))
+    if enough and breadth:return weekly,'weekly'
+    return primary,'cfbd'
+
+
 def build(schedule,cfbd,weekly=None):
     meta=json.loads(Path(schedule).read_text())
     if meta.get("season")!=2026 or meta.get("schemaVersion")!=1:raise ValueError("Invalid 2026 schedule reference")
     supported={x["id"] for x in meta["teams"]}
     older=cfbd_roster(cfbd,supported)
     newer,member_count=(newer_archive(weekly,supported) if weekly and Path(weekly).is_file() else ({},0))
-    output={}
+    output={};school_sources={}
     for id in sorted(supported):
-        # Prefer newer weekly school rosters where complete enough; never stitch two
-        # different player sets together and imply they are a single point-in-time roster.
-        people = newer.get(id) if len(newer.get(id,[])) >= 25 else older.get(id,[])
+        # Never merge two source rosters: preserve each source's date and cohort.
+        people,chosen_source=choose_roster(older.get(id,[]),newer.get(id,[]))
         seen=set();rows=[]
         for p in people:
             k=p["name"].casefold()
             if k not in seen and len(rows)<MAX_PLAYERS:
                 seen.add(k);rows.append(p)
-        if rows:output[id]=sorted(rows,key=lambda x:(x["position"],x["name"].casefold()))
+        if rows:
+            output[id]=sorted(rows,key=lambda x:(x["position"],x["name"].casefold()))
+            school_sources[id]=chosen_source
     if len(output)<70:
         raise ValueError(f"Insufficient recognized FBS rosters: {len(output)}")
     return {"schemaVersion":1,"season":2026,"kind":"roster-snapshot-not-starter-or-availability-chart",
@@ -121,7 +139,8 @@ def build(schedule,cfbd,weekly=None):
         "published":datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "sourceDates":"2026 roster data; individual school snapshot ages differ; check individual school for transfers/injuries",
         "totalPlayers":sum(map(len,output.values())),"schoolsCount":len(output),"weeklyMembersParsed":member_count,
-        "schools":output,
+        "weeklySchoolsUsed":sum(source.startswith('weekly') for source in school_sources.values()),
+        "schoolSources":school_sources,"schools":output,
         "notice":"Full names are roster-listed, not proof of starting status or playing time. Any generated props are synthetic and uncalibrated. No photographs or NIL rights included."}
 
 
@@ -135,6 +154,6 @@ def main():
     data=build(a.schedule,a.cfbd_roster,a.weekly_zip)
     dest=Path(a.out);dest.parent.mkdir(exist_ok=True,parents=True)
     dest.write_text(json.dumps(data,ensure_ascii=False,separators=(",",":"),sort_keys=True)+"\n",encoding="utf-8")
-    print(json.dumps({k:data[k] for k in ('season','schoolsCount','totalPlayers','weeklyMembersParsed')}))
+    print(json.dumps({k:data[k] for k in ('season','schoolsCount','totalPlayers','weeklyMembersParsed','weeklySchoolsUsed')}))
 
 if __name__=='__main__':main()

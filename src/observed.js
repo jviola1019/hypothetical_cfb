@@ -8,6 +8,7 @@
 export const OBSERVED_SEASON = 2025;
 const seasonSnapshots = new Map();
 const seasonRosters = new Map();
+const seasonRosterOrigins = new Map();
 export const sourceStatus = {seasons:{},rosters:{}};
 export const HISTORICAL = Object.freeze({
   'ole-miss': {
@@ -98,7 +99,7 @@ export function installRosterSnapshot(payload){
   if(!payload || payload.schemaVersion!==1 || ![2025,2026].includes(payload.season) ||
     !payload.schools || typeof payload.schools!=='object' || Array.isArray(payload.schools) ||
     typeof payload.sourceUrl!=='string' || !payload.sourceUrl.startsWith('https://'))throw Error('Invalid roster snapshot');
-  let schools=0,players=0;const teams={};
+  let schools=0,players=0;const teams={},origins={};
   for(const [id,people] of Object.entries(payload.schools)){
     if(!/^[a-z0-9-]{2,60}$/.test(id) || !Array.isArray(people)||people.length>260)throw Error('Invalid roster team');
     const seen=new Set(),out=[];
@@ -109,9 +110,14 @@ export function installRosterSnapshot(payload){
       out.push(Object.freeze({name:person.name,position:person.position,source:payload.sourceUrl,
         season:payload.season,verifiedRoster:true,roleIsVerified:false,year:payload.season}));
     }
-    if(out.length){teams[id]=out;schools++;players+=out.length;}
+    if(out.length){
+      teams[id]=out;schools++;players+=out.length;
+      const origin=payload.schoolSources?.[id] || 'not-recorded';
+      origins[id]=['cfbd','weekly','weekly-partial','not-recorded'].includes(origin)?origin:'not-recorded';
+    }
   }
   seasonRosters.set(payload.season,Object.freeze(teams));
+  seasonRosterOrigins.set(payload.season,Object.freeze(origins));
   sourceStatus.rosters[payload.season]={schools,players,asOf:payload.published||'unknown',source:payload.sourceUrl};
   return schools;
 }
@@ -134,6 +140,8 @@ export function namedPlayer(id,role,season=2026){
  return n===2025?HISTORICAL[id]?.players?.[role]||null:null;
 }
 export function rosterForTeam(id,season=2026){return seasonRosters.get(Number(season))?.[id]||[];}
+/** The importer records whether this school came from its weekly report or CFBD's CSV. */
+export function rosterSourceForTeam(id,season=2026){return seasonRosterOrigins.get(Number(season))?.[id]||'not-loaded';}
 export function headToHead(a,b){return VERIFIED_RESULTS.filter(x=>[x.home,x.away].includes(a)&&[x.home,x.away].includes(b));}
 export async function loadPublicData(base='./public/data/'){
   const loaded=[];const payloads=[];
