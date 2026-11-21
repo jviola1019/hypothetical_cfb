@@ -39,3 +39,11 @@ A 2026 player-event-derived descriptive summary is **not** a predictive model. I
 **Playoff rules:** `src/cfpSelection.js` constructs a *hypothetical* participant field only when the caller provides rankings and conference champions; it does not claim to reproduce the actual future CFP committee selections or official live rankings.
 
 All source artifacts must preserve: version, classification, cutoff, fit/evaluation seasons, baseline and limitations. When missing, the GUI omits empirical audits rather than substituting simulated ones.
+
+## Actual v0.8 full-source model results (2026-11-21)
+
+**Score-residual study:** 2024 fit n=798; 2025 evaluation n=808; 2026 n=629. In 2026, margin CRPS 10.35532 points, MAE 14.59385, 80/90% coverage 79.332%/90.302%. Total CRPS 9.23050 points, MAE 13.19107, 80/90% coverage 79.650%/89.030%. Margin-residual winner Brier 0.2174466 against historical home-only 0.2396811; notably this *is not better* than v0.7's independently selected two-feature pregame winner model, which reported 0.203625. There is no demonstrated joint score/player/possession calibration.
+
+**Player-event study:** 2025 cohort training, 2026 sequential event-game evaluation, 7,250 evaluated events among 1,623 athletes. Brier 0.166846 and log-loss 0.5089542 versus frozen prior-only Brier 0.1872194 and log-loss 0.5626787. Those are *conditional on an event being recorded* and therefore subject to selection bias and within-athlete event correlation. They do not represent the probability an athlete exceeds a prop in the next game. No untouched 2026 benchmark is possible at this stage.
+
+Exact source artifacts: `public/data/score-evaluation-2026.json`, `public/data/player-model-evaluation-2026.json`. GitHub Actions full-source run 44884709038 passed.

@@ -13,11 +13,18 @@
 - Browser research endpoints accept only validated size-bounded, schema-versioned, same-origin derived JSON. CSP includes restricted Google Font CSS/font hosts but no external JavaScript.
 - Node performance single run: 1,000-game batch 592.6 ms; 128-team bracket 60.3 ms (local CPU; not iOS).
 
-## Pending independent verification
+## Verified GitHub Actions v0.8 release and research data
 
-- GitHub Actions full-data v0.8 refresh with observed athlete event model and score calibration results; numerical evidence and sample sizes must be read from completed artifacts before being advertised.
-- CI and Pages success on *final* v0.8 commit (the prior v0.7 release was deployed).
-- Physical Safari/iPhone, native Web Workers, complete device-performance measurements and penetration testing.
+- Source commit `61a4d568ce73e3e856bfbb97ebb4c1851d400d80`, [CI run 44884708956](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44884708956) **passed**.
+- [Data-refresh run 44884709038](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44884709038) **passed**, with new observed outputs committed as `d004db829c5822541bfd575f138fec9deb0e2e72`.
+- [Pages run 44884751903](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44884751903) **passed** for that data commit. Earlier v0.8 Pages attempt was superseded/cancelled by the data commit.
+- 2024 score-residual fit n=798; 2025 evaluation n=808; 2026 evaluation n=629. 2026 margin CRPS 10.35532, total CRPS 9.23050; margin 80/90% cover 79.332%/90.302%; total 80/90% cover 79.650%/89.030%; winner Brier 0.2174466 versus historical home-only prior 0.2396811.
+- 2026 conditional athlete-event model evaluated **7,250 recorded events from 1,623 athletes**, Brier **0.166846** versus frozen 2025 cohort prior Brier **0.1872194**. Neither metric establishes unconditional player props.
+- 2026 public capped derived athlete summaries: **1,628 examples across 138 FBS programs**, source 193,254 rows and 752 matched games.
+
+## Remaining external verification
+
+- Physical Safari/iPhone, native Web Workers, complete device-performance measurements and third-party penetration testing are not verified.
 
 ## Experimental / not implemented
 

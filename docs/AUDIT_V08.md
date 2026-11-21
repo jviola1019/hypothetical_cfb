@@ -28,3 +28,7 @@
 ## What is not certified
 
 External penetration testing, sports-betting suitability, high-fidelity possession and player forecasting, physical Safari/iOS browser operation, uninspected current-2026 matchup data, official future CFP selection and up-to-the-minute roster availability. Do not represent the project as production-certified.
+
+## Verified remote run update
+
+[CI 44884708956](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44884708956), [full-source refresh 44884709038](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44884709038), and [Pages 44884751903](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44884751903) completed successfully on 2026-11-21. Full data metrics and their limitations appear in `docs/VALIDATION_V08.md`. These executions do not constitute native Safari or independent penetration testing.
