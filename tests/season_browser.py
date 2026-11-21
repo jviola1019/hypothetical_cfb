@@ -30,6 +30,23 @@ window.fetch=async (url)=>{
    reliability2026:[{bin:4,n:120,meanPrediction:.45,observedFrequency:.4,wilson95:[.33,.49]},
                     {bin:7,n:100,meanPrediction:.75,observedFrequency:.73,wilson95:[.64,.80]}]};
  }
+ else if(String(url).includes('score-evaluation-2026')){
+  const m={crps:11.2,mae:14.4,interval80Coverage:.79,interval90Coverage:.9,interval80Offset:[-23,23],interval90Offset:[-34,34]};
+  payload={schemaVersion:1,modelVersion:'empirical-score-residual-v0.8',
+   classification:'full-game-score-residual-distribution-not-a-possession-calibration',
+   warmupSeason:2023,fitSeason:2024,fitGames:798,sourceCutoff:'2026-11-21',
+   limitations:'Synthetic test fixture; does not establish real-world possession model calibration or athlete game prop probabilities.',
+   evaluations:{'2025':{n:808,margin:m,total:m,winnerBrierFromMarginResiduals:.2,winnerBrierHomePrior:.24},
+                '2026':{n:629,margin:m,total:m,winnerBrierFromMarginResiduals:.21,winnerBrierHomePrior:.24}}};
+ }
+ else if(String(url).includes('player-model-evaluation-2026')){
+  payload={schemaVersion:1,modelVersion:'beta-binomial-event-game-v0.8',
+   trainingSeason:2025,evaluationSeason:2026,priorStrength:6,sourceCutoff:'2026-11-21',
+   classification:'retrospective-conditional-event-game-forward-test-not-general-props',
+   evaluatedAthletes:78,model:{n:900,brier:.21,logLoss:.61},
+   cohortPriorOnlyBaseline:{n:900,brier:.24,logLoss:.68},
+   limitations:'Test fixture for conditional event-game forecasts only, not an all-games individual-player prop forecast.'};
+ }
  else if(String(url).includes('players-2026/')){
   const home=String(url).includes('ole-miss');const tid=home?'ole-miss':'georgia';
   const nm=home?'Avery Test Historian':'Morgan Test Observer';
@@ -37,7 +54,9 @@ window.fetch=async (url)=>{
    sourceUrl:'https://github.com/sportsdataverse/cfbfastR-data/blob/main/player_stats/csv/player_stats_2026.csv',
    sourceCutoff:'2026-11-21',lastRecordedGame:'2026-11-15',classification:'derived-player-aggregate-not-projection',
    playerCount:1,players:[{name:nm,position:'QB',stat:'passingYards',label:'Pass yards',line:250.5,
-    eventGames:7,n:7,hit:4,mean:247,median:250,p10:120,p90:380}]};
+    eventGames:7,n:7,hit:4,mean:247,median:250,p10:120,p90:380,
+    eventModel:{probability:.51,approxInterval90:[.27,.74],eventGamesUsed:7,
+     cohortTrainingEvents:500,classification:'experimental-conditional-next-recorded-event-game'}}]};
  }
  else if(String(url).includes('rosters-2026'))payload={schemaVersion:1,season:2026,sourceUrl:'https://github.com/sportsdataverse/cfbfastR-data',published:'2026-11-16',schools:{'ole-miss':[{name:'Current Test Quarterback',position:'QB'},{name:'Current Test Receiver',position:'WR'},{name:'Another Test Receiver',position:'WR'}],'georgia':[{name:'Georgia Test Quarterback',position:'QB'}]}};
  else return {ok:false};
@@ -60,6 +79,9 @@ with sync_playwright() as p:
   assert not errors,errors
   assert page.locator('[data-field="a"] option').count()==138
   assert page.locator('.research-panel').count()==1
+  assert page.locator('.score-evaluation').count()==1
+  assert page.locator('.score-evaluation .coverage-chart').count()==1
+  assert page.locator('.player-model-audit').count()>=1
   assert page.locator('.reliability-study svg').count()==1
   assert page.get_by_text('Avery Test Historian').count()>=1
   assert page.get_by_text('Current Test Quarterback').count()>=1

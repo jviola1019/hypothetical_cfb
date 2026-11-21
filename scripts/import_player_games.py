@@ -18,6 +18,8 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from import_season_schedules import team_id
+from player_event_model import (train_priors, validate_priors,
+    next_event_probability, chronological_evaluation)
 
 SOURCE='https://github.com/sportsdataverse/cfbfastR-data'
 MAX_BYTES=145_000_000
@@ -84,7 +86,16 @@ def read_completed(schedule_csv,season,cutoff,team_ids):
     if len(games)<400:raise ValueError('Insufficient completed game coverage')
     return games
 
-def build(season, input_csv, schedule_csv, teams_json, roster_json, cutoff, out_dir):
+def build(season, input_csv, schedule_csv, teams_json, roster_json, cutoff, out_dir,
+          priors_in=None, priors_out=None, evaluation_out=None):
+    if priors_in and season != 2026:
+        raise ValueError('2025 prior training must precede 2026 evaluation')
+    if priors_out and season != 2025:
+        raise ValueError('Only the 2025 training set can produce model priors')
+    if evaluation_out and (season != 2026 or not priors_in):
+        raise ValueError('2026 conditional event evaluation requires 2025 priors')
+    prior_doc = (validate_priors(json.loads(Path(priors_in).read_text(encoding='utf-8')))
+                 if priors_in else None)
     path=Path(input_csv)
     if not path.is_file() or not (1<=path.stat().st_size<=MAX_BYTES):raise ValueError('Missing/oversized player file')
     teams,roster_names=load_reference(teams_json,roster_json,season,cutoff)
@@ -141,6 +152,7 @@ def build(season, input_csv, schedule_csv, teams_json, roster_json, cutoff, out_
        'TE':('receivingYards',30.5,'Receiving yards'),
        'K':('fieldGoalsMade',1.5,'Field goals made')
     }
+    training_samples=[]
     for person in grouped.values():
         games_list=sorted(person.pop('games').values(),key=lambda x:(x['date'],x['gameId']))
         if len(games_list)<3:continue
@@ -158,12 +170,34 @@ def build(season, input_csv, schedule_csv, teams_json, roster_json, cutoff, out_
                      'receivingYards':'receptions', 'fieldGoalsMade':'fieldGoalsAttempted'}.get(stat)
         values=[g.get(stat,0) for g in games_list if stat in g or (counterpart and counterpart in g)]
         if len(values)<3:continue
+        training_samples.append({'position':position, 'stat':stat,
+                                 'line':threshold, 'values':values[:]})
         values.sort();n=len(values)
         hit=sum(v>threshold for v in values)
         def quantile(q):return values[min(n-1,int(round((n-1)*q)))]
-        docs[person['team']].append({'name':person['name'],'position':person.get('position') or '—',
+        row={'name':person['name'],'position':person.get('position') or '—',
           'stat':stat,'label':label,'line':threshold,'eventGames':len(games_list),'n':n,'hit':hit,
-          'mean':round(sum(values)/n,2),'median':quantile(.5),'p10':quantile(.1),'p90':quantile(.9)})
+          'mean':round(sum(values)/n,2),'median':quantile(.5),'p10':quantile(.1),'p90':quantile(.9)}
+        if prior_doc:
+            event_hits=[int(value>threshold) for value in training_samples[-1]['values']]
+            projection=next_event_probability(prior_doc,position,stat,event_hits)
+            if projection:
+                row['eventModel']={
+                    'probability':round(projection['probability'],5),
+                    'approxInterval90':[round(v,5) for v in projection['approxInterval90']],
+                    'eventGamesUsed':projection['eventGamesUsed'],
+                    'cohortTrainingEvents':projection['priorCohortEvents'],
+                    'classification':projection['classification']}
+        docs[person['team']].append(row)
+    if priors_out:
+        trained=train_priors(training_samples, season=2025)
+        out=Path(priors_out);out.parent.mkdir(parents=True,exist_ok=True)
+        out.write_text(json.dumps(trained,sort_keys=True,separators=(',',':'))+'\n',encoding='utf-8')
+    if evaluation_out:
+        evaluated=chronological_evaluation(training_samples,prior_doc,season=2026)
+        evaluated['sourceCutoff']=cutoff
+        out=Path(evaluation_out);out.parent.mkdir(parents=True,exist_ok=True)
+        out.write_text(json.dumps(evaluated,sort_keys=True,separators=(',',':'))+'\n',encoding='utf-8')
     counts={};tally=0
     for tid,school in sorted(teams.items()):
         players=docs.get(tid,[])
@@ -197,7 +231,11 @@ def main():
     for opt in ['csv','schedule-csv','teams-json','rosters-json','out-dir']:
         p.add_argument('--'+opt,required=True)
     p.add_argument('--cutoff',default=datetime.now(timezone.utc).date().isoformat())
+    p.add_argument('--priors-in',default=None)
+    p.add_argument('--priors-out',default=None)
+    p.add_argument('--evaluation-out',default=None)
     a=p.parse_args()
-    r=build(a.season,a.csv,a.schedule_csv,a.teams_json,a.rosters_json,a.cutoff,a.out_dir)
+    r=build(a.season,a.csv,a.schedule_csv,a.teams_json,a.rosters_json,a.cutoff,a.out_dir,
+            priors_in=a.priors_in,priors_out=a.priors_out,evaluation_out=a.evaluation_out)
     print(json.dumps({k:r[k] for k in ('season','sourceRowsRead','matchedGameCount','derivedAthleteSummaries','schoolFiles','eventsAttributed')}))
 if __name__=='__main__':main()

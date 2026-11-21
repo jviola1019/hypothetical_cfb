@@ -32,3 +32,12 @@ Initial dependency-free static synthetic football simulator with two tabs, 13 to
 - New accessible 2026 model reliability SVG plot with intervals, accessible exact data table; source evidence distinct from synthetic prop controls.
 - Expanded 39 JS and 19 Python tests, mobile/desktop DOM harnesses and architecture/security/license documentation.
 - Verified data workflow, CI and Pages deployment on GitHub; remaining native Safari/worker and live availability validation outstanding.
+
+## 0.8.0 — 2026-11-21
+- Add chronology-constrained player event-only beta-binomial research and separate baseline evaluation; never claim future full-game player props.
+- Add score residual model with 2024-fitted interval calibration/CRPS checks on later seasons.
+- Add CFP 12/24 qualification logic with official-source metadata, externally supplied rankings/champions, season-specific Notre Dame rule and provisional field label.
+- Add independent game state integrity auditor, corruption tests, bounded overtime behavior and enhanced client validation.
+- Add data-backed empirical score chart and read-only event-conditioned athlete audit; no extra matchup controls.
+- Harden CSP Google Font allowlist, retain same-origin scripts and build-time library-free static deployment.
+- Run Node/Python/browser-harness tests and publish architecture plus second-pass audit records.

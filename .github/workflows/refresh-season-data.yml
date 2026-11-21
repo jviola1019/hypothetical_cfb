@@ -11,6 +11,8 @@ on:
       - 'scripts/trim_2025_rosters.py'
       - 'scripts/import_player_games.py'
       - 'scripts/evaluate_multiyear.py'
+      - 'scripts/evaluate_score_distribution.py'
+      - 'scripts/player_event_model.py'
   schedule:
     - cron: '27 13 * * 1'
 permissions:
@@ -103,6 +105,16 @@ jobs:
             --schedule-2025 /tmp/gridiron-ingest/schedules-2025.csv \
             --schedule-2026 /tmp/gridiron-ingest/schedules-2026.csv \
             --out public/data/model-compare-2026.json
+      - name: Evaluate score-level residual intervals (no drive-calibration claim)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/evaluate_score_distribution.py \
+            --schedule-2023 /tmp/gridiron-ingest/schedules-2023.csv \
+            --schedule-2024 /tmp/gridiron-ingest/schedules-2024.csv \
+            --schedule-2025 /tmp/gridiron-ingest/schedules-2025.csv \
+            --schedule-2026 /tmp/gridiron-ingest/schedules-2026.csv \
+            --out public/data/score-evaluation-2026.json
       - name: Ingest play-level 2025 and 2026 player game events
         shell: bash
         run: |
@@ -111,12 +123,18 @@ jobs:
             curl --fail --location --retry 2 --max-time 180 --proto '=https' --tlsv1.2 \
               "https://raw.githubusercontent.com/sportsdataverse/cfbfastR-data/main/player_stats/csv/player_stats_${year}.csv" \
               -o "/tmp/gridiron-ingest/player-stats-${year}.csv"
+            if [[ "$year" == 2025 ]]; then
+              flags=(--priors-out /tmp/gridiron-ingest/player-priors-2025.json)
+            else
+              flags=(--priors-in /tmp/gridiron-ingest/player-priors-2025.json
+                     --evaluation-out public/data/player-model-evaluation-2026.json)
+            fi
             python scripts/import_player_games.py --season "$year" \
               --csv "/tmp/gridiron-ingest/player-stats-${year}.csv" \
               --schedule-csv "/tmp/gridiron-ingest/schedules-${year}.csv" \
               --teams-json "public/data/season-${year}.json" \
               --rosters-json "public/data/rosters-${year}.json" \
-              --out-dir "public/data/players-${year}"
+              --out-dir "public/data/players-${year}" "${flags[@]}"
           done
       - name: Unit and ingestion tests
         run: |
@@ -141,7 +159,15 @@ jobs:
           for year,schools in [(2025,136),(2026,138)]:
               player=json.load(open(f'public/data/players-{year}/manifest.json'))
               assert player['schoolFiles']>=schools and player['athletesWithRecordedEvents']>400 and player['derivedAthleteSummaries']>900
-          print('Release data validation passed with observed per-game player events and multi-year benchmark')
+          score=json.load(open('public/data/score-evaluation-2026.json'))
+          assert score['fitSeason']==2024 and score['fitGames']>=400
+          assert score['evaluations']['2026']['n']>=300
+          assert 0 <= score['evaluations']['2026']['margin']['interval90Coverage'] <= 1
+          player_model=json.load(open('public/data/player-model-evaluation-2026.json'))
+          assert player_model['trainingSeason']==2025 and player_model['evaluationSeason']==2026
+          assert player_model['model']['n'] >= 100 and player_model['model']['n']==player_model['cohortPriorOnlyBaseline']['n']
+          print('Evaluated 2026 event-conditioned athlete samples:',player_model['model']['n'])
+          print('Validated score intervals and athlete conditional event model; neither is a possession-calibrated full-game prop model')
           PY
       - name: Commit validated observed data only
         shell: bash
@@ -152,6 +178,7 @@ jobs:
           git add public/data/season-2025.json public/data/season-2026.json \
                   public/data/rosters-2025.json public/data/rosters-2026.json \
                   public/data/research-2026.json public/data/model-compare-2026.json \
+                  public/data/score-evaluation-2026.json public/data/player-model-evaluation-2026.json \
                   public/data/players-2025/ public/data/players-2026/
           if ! git diff --cached --quiet; then
             git commit -m 'data: refresh 2025–2026 observed FBS records and roster snapshots'

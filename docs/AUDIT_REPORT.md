@@ -83,3 +83,7 @@ The drive engine is not a real NCAA play-by-play emulator: no authentic fourth-d
 ### Release-verification and honest uncertainty
 
 Full-source pipeline succeeded, not merely its fixtures: [Actions data refresh 44882376273](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44882376273). Actual player summaries and model evaluation files were fetched from `main` and inspected; named 2026 athletes include Trinidad Chambliss (Ole Miss), Gunner Stockton (Georgia), and Josh Hoover (Indiana), which intentionally **does not** conflate Indiana's 2025 roster with its 2026 lineup. Source last completed game varies by school: Ole Miss 2026-11-15, Georgia 2026-11-14, Indiana 2026-11-14. No source is a live injury report. 2026 reliability shows residual miscalibration; selected model is a research baseline rather than production forecast.
+
+## v0.8 second-pass audit
+
+See `docs/AUDIT_V08.md` for the severity-ranked limitations, mitigations, test evidence and residual risks.

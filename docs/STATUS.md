@@ -1,3 +1,39 @@
+# GRIDIRON LAB v0.8 — live implementation status (2026-11-21)
+
+**Base:** `d69345a109b2ee39662ef66080947f51ff997d2d`; written implementation plan: `docs/ARCHITECTURE_V08.md`.
+
+## Implemented and verified locally
+
+- 55/55 JavaScript Node tests; 28/28 Python unit/ETL tests; JS syntax and static build.
+- Chromium inlined DOM harness at 390px and 1370px: two tabs, team selection, 12/24 tournaments, game inspection, score research graphic/table, conditional athlete-model audit, no horizontal overflow or JavaScript error. Native ES module, Web Worker and physical iPhone Safari remain unverified.
+- Pure official-format CFP 2026 12-team and 2027 24-team rules selector, **only from externally supplied rankings/champions**; cannot assert official selection.
+- Independent whole-game integrity auditor over 650 seeded scenarios, known corruption regressions, clock, quarter and OT reconciliation, fixed cap preventing invented extreme-OT winner.
+- New retrospective 2025-prior/2026 conditional recorded-athlete-event model, previous-event-only updates and prior-only baseline, with bounded optional source output and UI label.
+- New 2024-fitted margin/total residual distribution evaluation against later games with CRPS, interval coverages and winner-prior baseline; engine itself still synthetic.
+- Browser research endpoints accept only validated size-bounded, schema-versioned, same-origin derived JSON. CSP includes restricted Google Font CSS/font hosts but no external JavaScript.
+- Node performance single run: 1,000-game batch 592.6 ms; 128-team bracket 60.3 ms (local CPU; not iOS).
+
+## Pending independent verification
+
+- GitHub Actions full-data v0.8 refresh with observed athlete event model and score calibration results; numerical evidence and sample sizes must be read from completed artifacts before being advertised.
+- CI and Pages success on *final* v0.8 commit (the prior v0.7 release was deployed).
+- Physical Safari/iPhone, native Web Workers, complete device-performance measurements and penetration testing.
+
+## Experimental / not implemented
+
+- Calibrated **unconditional** full-game player props: no authoritative playing-time/availability/zero-production denominator or sufficiently complete injuries. Current research conditions on a recorded stat event.
+- Possession-transition calibration: source game scores are not observed drive-level state changes; synthetic generator has consistency tests only.
+- Authentic committee-selected CFP field: external official postseason rankings and conference champions not independently established; selector is programmatic and hypothetical.
+- Genuine untouched 2026 predictive holdout: previously inspected in project iterations.
+
+## Evidence
+
+`docs/ARCHITECTURE_V08.md`, `docs/AUDIT_V08.md`, `docs/VALIDATION_V08.md`, `docs/MODEL_CARD.md`, source-specific JSON artifact manifests and GitHub Actions run logs.
+
+---
+
+## Previous v0.7 status preserved for traceability
+
 # GRIDIRON LAB v0.7 — execution status (2026-11-21)
 
 **Classification:** offline-first research demonstration. None of the game-generator or named-athlete frequencies have been calibrated for actual future games.

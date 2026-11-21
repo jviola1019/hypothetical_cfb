@@ -14,6 +14,16 @@ function checkPlayer(p){
  !Number.isInteger(p.hit)||p.hit<0||p.hit>p.n||
  ![p.mean,p.median,p.p10,p.p90,p.line].every(x=>Number.isFinite(x)&&x>=0&&x<=1200)||
  p.p10>p.median||p.median>p.p90||p.mean>p.p90+200)return false;
+ if(p.eventModel!==undefined){
+  const m=p.eventModel;
+  if(!m||m.classification!=='experimental-conditional-next-recorded-event-game'||
+     !Number.isFinite(m.probability)||m.probability<0||m.probability>1||
+     !Number.isInteger(m.eventGamesUsed)||m.eventGamesUsed!==p.n||
+     !Number.isInteger(m.cohortTrainingEvents)||m.cohortTrainingEvents<30||
+     !Array.isArray(m.approxInterval90)||m.approxInterval90.length!==2||
+     m.approxInterval90.some(x=>!Number.isFinite(x)||x<0||x>1)||
+     m.approxInterval90[0]>m.probability||m.approxInterval90[1]<m.probability)return false;
+ }
  return true;
 }
 export function installPlayerEvidence(doc){

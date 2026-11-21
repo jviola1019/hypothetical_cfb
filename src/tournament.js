@@ -1,4 +1,5 @@
 import {TEAM_MAP,TEAMS,DEFAULT_CONFIG,ENGINE_VERSION,hash32,rng,validateConfig,simulateGame} from './engine.js';
+import {selectCFPField} from './cfpSelection.js';
 export const FORMATS=[
 {id:'fbs12',label:'CFP 12 · 2026–27',size:12,kind:'official-fbs',byes:4,season:'2026–27'},
 {id:'fbs24',label:'CFP 24 · 2027–28',size:24,kind:'official-fbs',byes:8,season:'2027–28'},
@@ -30,6 +31,15 @@ export function rulesOrder(format){let n=1;while(n<format.size)n*=2;let order=se
 export function validateParticipants(ids,formatId){const f=FORMAT_MAP[formatId];if(!f)throw Error('Unsupported bracket format');if(!Array.isArray(ids)||ids.length!==f.size)throw Error(`Expected ${f.size} participants`);if(new Set(ids).size!==ids.length)throw Error('Duplicate participant');if(ids.some(x=>!TEAM_MAP[x]))throw Error('Unknown team');return true;}
 export function defaultParticipants(formatId){const f=FORMAT_MAP[formatId];if(!f)throw Error('Unknown format');const fcs=TEAMS.filter(x=>x.division==='fcs').map(x=>x.id).concat(TEAMS.filter(x=>x.division==='fbs').map(x=>x.id));return (formatId==='fcs24'?fcs:TEAMS.filter(x=>x.division==='fbs').map(x=>x.id)).slice(0,f.size);}
 export function createTournament(formatId='fbs12',participants=defaultParticipants(formatId),seed=20261120){validateParticipants(participants,formatId);if(!Number.isSafeInteger(+seed)||+seed<0||+seed>4294967295)throw Error('Invalid seed');const f=FORMAT_MAP[formatId];const order=rulesOrder(f);const slots=order.map(i=>i<=f.size?participants[i-1]:null);return {formatId,participants:participants.slice(),seed:+seed,slots,stage:0,rounds:[],played:{},champion:null,version:ENGINE_VERSION};}
+/** Builds an official-geometry bracket only after explicit qualification inputs pass.
+ * The returned bracket is still hypothetical until committee rankings/champions
+ * have been independently verified against an official Selection Day release.
+ */
+export function createCommitteeInputTournament(input, seed=20261121) {
+ const selection=selectCFPField(input);
+ const tournament=createTournament(input.formatId,selection.participantIds,seed);
+ return {...tournament,selection};
+}
 export const roundName=(f,stage)=>{
   const rounds=Math.ceil(Math.log2(f.size));
   const remaining=rounds-stage;

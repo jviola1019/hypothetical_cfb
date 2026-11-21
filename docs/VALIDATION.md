@@ -22,3 +22,7 @@ Historical data are source-defined, not refreshed live. Brier score requires mat
 - GitHub [data refresh 44882376273](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44882376273) **succeeded** and published verified multi-year sample counts 792/798/808/629, 1,627 current-year derived athlete summaries and 1,617 archived-year summaries. See `public/data/model-compare-2026.json` and `public/data/players-2026/manifest.json` for ground truth.
 - GitHub [Pages run 44882408482](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44882408482) **succeeded** after the data-refresh commit superseded the initial deployment.
 - Reported 2026 forward Brier 0.203625 for the model selected by 2025 Brier; comparison 0.239703 home-only and 0.250000 coin. The 2026 sample has been inspected in past project releases; the 2026 check is exploratory and **not a newly untouched holdout**.
+
+## v0.8 evidence
+
+See `docs/VALIDATION_V08.md` for the new locally executed 55 JS / 28 Python tests, Chromium simulated DOM harnesses, native browser blocks, performance measurements, and still-pending external v0.8 full-source checks.
