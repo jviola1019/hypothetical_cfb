@@ -7,12 +7,26 @@
   "historicalSeason": 2025,
   "verified2026FbsProgramCatalog": 138,
   "verified2025FbsProgramCatalog": 136,
-  "expectedOptionalSnapshots": ["data/season-2026.json", "data/rosters-2026.json", "data/season-2025.json", "data/rosters-2025.json"],
+  "expectedOptionalSnapshots": [
+    "data/season-2026.json",
+    "data/rosters-2026.json",
+    "data/season-2025.json",
+    "data/rosters-2025.json"
+  ],
   "scoringSourceCutoffUtc": "2026-11-15T18:00:00.000Z",
   "rosterUpstreamWeeklyRelease": "2026-11-16",
-  "sourceRefreshStatus": "Source pipeline staged; do not claim snapshots published until the action completes successfully.",
+  "sourceRefreshStatus": "Verified on GitHub Actions 44877761545; 2026 138/138 rosters, 14930 names; 2025 136/136 rosters, 15415 names; latest 2026 score 2026-11-15 UTC.",
   "fittedPlayerPropModels": 0,
   "fittedGameModels": 0,
   "notice": "Official results and school-reported roster identity facts must not be confused with synthetic generated player performances or calibrated forecasts.",
-  "sources": ["docs/DATA_PROVENANCE.md", "docs/MODEL_CARD.md", "docs/STATUS.md"]
+  "sources": [
+    "docs/DATA_PROVENANCE.md",
+    "docs/MODEL_CARD.md",
+    "docs/STATUS.md"
+  ],
+  "verifiedRoster2026Schools": 138,
+  "verifiedRoster2026Names": 14930,
+  "verifiedRoster2025Schools": 136,
+  "verifiedRoster2025Names": 15415,
+  "refreshWorkflowRunUrl": "https://github.com/jviola1019/hypothetical_cfb/actions/runs/44877761545"
 }
