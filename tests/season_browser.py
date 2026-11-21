@@ -19,6 +19,17 @@ window.fetch=async (url)=>{
  let payload;
  if(String(url).includes('research-2026'))payload={schemaVersion:1,modelVersion:'chronological-elo-slope-0.1.0',classification:'experimental-2025-trained-2026-held-out',asOf:'2026-11-21',lastScoredGame:'2026-11-15T20:00:00Z',training:{season:2025,games:650,calibratedSlope:1.1},holdout:{season:2026,evaluatedGames:500,calibratedElo:{brier:.19,logLoss:.54,marginMAE:13,totalMAE:17},constantBaseline:{brier:.25}},fixedParameters:{eloScale:400,initialElo:1500,homeElo:55,priorGames:4,startingPointsPerTeam:27,homePointsMargin:2.4},teamState:Object.fromEntries(FBS_TEAMS.map((t,i)=>[t.id,{elo:1450+i*.6,gamesCurrentSeason:10,scoredToDate:270,allowedToDate:230}]))};
  else if(String(url).includes('season-2026'))payload={schemaVersion:1,season:2026,sourceUrl:'https://github.com/sportsdataverse/cfbfastR-data',lastCompletedGame:'2026-11-15T18:00:00.000Z',teams:schoolFixture};
+ else if(String(url).includes('model-compare-2026')){
+  const models=['coin','homeOnly','elo','margin','fixedBlend','logisticPair'];
+  const make=(b)=>Object.fromEntries(models.map((m,i)=>[m,{n:600,brier:b+i*.005,logLoss:.6,marginMAE:14,totalMAE:13}]));
+  payload={schemaVersion:1,modelVersion:'multiyear-temporal-0.7.0',
+   classification:'2023-warmup-2024-fit-2025-select-2026-previously-inspected-forward-check',
+   modelSelectedOn2025:'elo',modelCoefficientsFitted2024:{eloScale:1},
+   gamesBySeason:{'2023':600,'2024':600,'2025':600,'2026':600},
+   evaluation:{'2025':make(.2),'2026':make(.21)},
+   reliability2026:[{bin:4,n:120,meanPrediction:.45,observedFrequency:.4,wilson95:[.33,.49]},
+                    {bin:7,n:100,meanPrediction:.75,observedFrequency:.73,wilson95:[.64,.80]}]};
+ }
  else if(String(url).includes('players-2026/')){
   const home=String(url).includes('ole-miss');const tid=home?'ole-miss':'georgia';
   const nm=home?'Avery Test Historian':'Morgan Test Observer';
@@ -49,6 +60,7 @@ with sync_playwright() as p:
   assert not errors,errors
   assert page.locator('[data-field="a"] option').count()==138
   assert page.locator('.research-panel').count()==1
+  assert page.locator('.reliability-study svg').count()==1
   assert page.get_by_text('Avery Test Historian').count()>=1
   assert page.get_by_text('Current Test Quarterback').count()>=1
   assert page.get_by_text('138 FBS').count()>=1 or page.get_by_text('138 programs').count()>=1

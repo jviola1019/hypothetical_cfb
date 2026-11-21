@@ -15,3 +15,5 @@
 **Deployment URL:** https://jviola1019.github.io/hypothetical_cfb/ (verify CI and Pages deploy, not assumed).
 
 **License:** MIT for original application source, not automatically third-party datasets, teams' marks or athletes' likenesses.
+
+**Verified data refresh (Nov 21, 2026):** [Actions 44882376273](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44882376273) processed 193,254 source player-event rows for 2026 and published 1,627 derived athlete summaries across all 138 FBS school files. The four-season benchmark selected a two-feature model on 2025 Brier and observed 0.203625 Brier in the previously inspected 2026 forward check. **This is not independent player prop calibration.**

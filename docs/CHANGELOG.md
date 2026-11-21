@@ -23,3 +23,12 @@ Initial dependency-free static synthetic football simulator with two tabs, 13 to
 - GitHub Actions refresh run 44877761545 successfully produced source-backed 2026 138-team results and **138 school rosters / 15,187 names**, 2025 136-team results and **136 school rosters / 15,415 names**. Added explicit 2025 season-matched roster importer; numerical prop distributions remain synthetic.
 
 - Audited weekly 2026 roster completeness: later but truncated school feeds are no longer allowed to overwrite broad primary rosters. Published roster entries include per-program source provenance. Added a regression test for the 45-vs-120 player failure.
+
+## 2026-11-21 · v0.7 quantitative audit release
+
+- Added multi-year chronological model comparison; 2024 fitted, 2025 selected, 2026 forward only; home-only, Elo, scoring rate, fixed ensemble, two-feature regularized logistic and coin baselines, Wilson reliability bins, descriptive weekly bootstrap.
+- Added score-state continuity, fumble/INT transitions, round-aware CFP site metadata and tournament-state integrity tests.
+- Added 2025/26 player-event ETL with a **derived-aggregate-only** public output (12 names per school cap), preserving raw inputs only in temporary Actions workspace. Added actual observed player trend ranges and protected raw-log ingestion boundary.
+- New accessible 2026 model reliability SVG plot with intervals, accessible exact data table; source evidence distinct from synthetic prop controls.
+- Expanded 39 JS and 19 Python tests, mobile/desktop DOM harnesses and architecture/security/license documentation.
+- Verified data workflow, CI and Pages deployment on GitHub; remaining native Safari/worker and live availability validation outstanding.

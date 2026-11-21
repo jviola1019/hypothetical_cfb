@@ -90,7 +90,7 @@ def build(season, input_csv, schedule_csv, teams_json, roster_json, cutoff, out_
     teams,roster_names=load_reference(teams_json,roster_json,season,cutoff)
     games=read_completed(schedule_csv,season,cutoff,set(teams))
     grouped=defaultdict(lambda:{'name':'','team':'','athleteId':None,'rosterListed':False,'position':'','games':{}})
-    seen=set();rows_read=0;events_count=0;game_ids=set();invalid_teams=0
+    seen=set();rows_read=0;events_count=0;game_ids=set();school_event_dates=defaultdict(set);invalid_teams=0
     with path.open(encoding='utf-8-sig',newline='') as f:
         r=csv.DictReader(f)
         if not set(FIELDS).issubset(r.fieldnames or []):raise ValueError('Unsupported play-level player stat schema')
@@ -126,7 +126,7 @@ def build(season, input_csv, schedule_csv, teams_json, roster_json, cutoff, out_
                     person['rosterListed']=bool(person['position'])
                 line=person['games'].setdefault(game_id,{'gameId':game_id,'date':game['date']})
                 line[stat]=line.get(stat,0)+val
-                events_count+=1;game_ids.add(game_id)
+                events_count+=1;game_ids.add(game_id);school_event_dates[tid].add(game['date'])
     if invalid_teams>max(200,rows_read//10):raise ValueError('Excessive player-team/schedule mismatches')
     if rows_read<50 or events_count<20:raise ValueError('Insufficient source-backed player events')
     target=Path(out_dir);target.mkdir(parents=True,exist_ok=True)
@@ -155,7 +155,7 @@ def build(season, input_csv, schedule_csv, teams_json, roster_json, cutoff, out_
         # Zero-yard rushes, catches and completions contribute a zero in the
         # companion yardage metric rather than disappearing from the sample.
         counterpart={'passingYards':'completions','rushingYards':'rushAttempts',
-                     'receivingYards':'receptions'}.get(stat)
+                     'receivingYards':'receptions', 'fieldGoalsMade':'fieldGoalsAttempted'}.get(stat)
         values=[g.get(stat,0) for g in games_list if stat in g or (counterpart and counterpart in g)]
         if len(values)<3:continue
         values.sort();n=len(values)
@@ -170,7 +170,7 @@ def build(season, input_csv, schedule_csv, teams_json, roster_json, cutoff, out_
         players.sort(key=lambda x:(-x['n'],-x['mean'],x['name']))
         players=players[:12] # limited, derived visual display; not a raw database mirror
         # The game-date summary uses observed matched sources, not the import date.
-        last=max((games[g]['date'] for g in game_ids if tid in games[g]['teams']),default=cutoff)
+        last=max(school_event_dates.get(tid,set()),default=cutoff)
         doc={'schemaVersion':2,'season':season,'team':tid,'school':school,
           'classification':'derived-player-aggregate-not-projection',
           'sourceUrl':SOURCE+f'/blob/main/player_stats/csv/player_stats_{season}.csv',

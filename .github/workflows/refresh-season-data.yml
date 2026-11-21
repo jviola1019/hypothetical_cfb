@@ -140,7 +140,7 @@ jobs:
           assert compare['gamesBySeason']['2026']>=300
           for year,schools in [(2025,136),(2026,138)]:
               player=json.load(open(f'public/data/players-{year}/manifest.json'))
-              assert player['schoolFiles']>=schools and player['athletesWithRecordedEvents']>400
+              assert player['schoolFiles']>=schools and player['athletesWithRecordedEvents']>400 and player['derivedAthleteSummaries']>900
           print('Release data validation passed with observed per-game player events and multi-year benchmark')
           PY
       - name: Commit validated observed data only

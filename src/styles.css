@@ -198,3 +198,6 @@ table tbody tr{border-color:#283947}table tbody tr:hover{background:rgba(93,130,
 .brier-meter span{display:block;height:100%;background:#e9ac62}
 /* Data rights: percentile range is an aggregate, not a redraw of raw game logs. */
 .evidence-range{font:600 13px var(--font-data);color:#e6bc82;white-space:nowrap}
+
+.reliability-study{background:#111f29;border:1px solid var(--line);padding:24px;margin-top:16px}.reliability-study svg{display:block;width:100%;max-width:740px;height:auto;overflow:visible;margin:10px auto 8px}.reliability-study .graph-head p{max-width:660px}.reliability-study details{border-top:1px solid #324554;padding:11px 0}.reliability-study summary{cursor:pointer;font:600 12px var(--font-data);color:#e6bc82}.reliability-study td,.reliability-study th{padding:8px 11px;text-align:left}.reliability-study .table-frame{overflow-x:auto}
+@media(max-width:680px){.reliability-study{padding:14px 10px}.reliability-study .graph-head{padding-inline:8px}}

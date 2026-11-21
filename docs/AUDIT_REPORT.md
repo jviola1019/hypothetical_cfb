@@ -79,3 +79,7 @@ The drive engine is not a real NCAA play-by-play emulator: no authentic fourth-d
 - The source repository's historical team/roster snapshots derive partly from upstream services with redistribution conditions; current metadata alone does not grant unrestricted data republication. Reassess existing snapshots and permissions separately.
 - CI relies on pinned GitHub Actions major tags, without commit-SHA pinning, SBOM or artifact signing. This is an open CI supply-chain risk.
 - Browser test harness is not native WebKit/Safari, so first-run workers and offline caching must be separately tested.
+
+### Release-verification and honest uncertainty
+
+Full-source pipeline succeeded, not merely its fixtures: [Actions data refresh 44882376273](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44882376273). Actual player summaries and model evaluation files were fetched from `main` and inspected; named 2026 athletes include Trinidad Chambliss (Ole Miss), Gunner Stockton (Georgia), and Josh Hoover (Indiana), which intentionally **does not** conflate Indiana's 2025 roster with its 2026 lineup. Source last completed game varies by school: Ole Miss 2026-11-15, Georgia 2026-11-14, Indiana 2026-11-14. No source is a live injury report. 2026 reliability shows residual miscalibration; selected model is a research baseline rather than production forecast.

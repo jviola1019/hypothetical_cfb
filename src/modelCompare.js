@@ -8,6 +8,11 @@ export function installModelComparison(x){
   !['2025','2026'].every(k=>x.evaluation[k]&&['coin','homeOnly','elo','margin','fixedBlend','logisticPair'].every(m=>{
     const v=x.evaluation[k][m];return v&&Number.isInteger(v.n)&&v.n>0&&Number.isFinite(v.brier)&&v.brier>=0&&v.brier<=1;
   }))||typeof x.modelSelectedOn2025!=='string'||!x.evaluation['2025'][x.modelSelectedOn2025])throw Error('Invalid multi-year evaluation');
+ if(x.reliability2026&&(!Array.isArray(x.reliability2026)||x.reliability2026.length>10||
+ x.reliability2026.some(b=>!Number.isInteger(b.bin)||b.bin<0||b.bin>9||!Number.isInteger(b.n)||b.n<1||
+ !Array.isArray(b.wilson95)||b.wilson95.length!==2||
+ ![b.meanPrediction,b.observedFrequency,...b.wilson95].every(v=>Number.isFinite(v)&&v>=0&&v<=1)||
+ b.wilson95[0]>b.observedFrequency||b.wilson95[1]<b.observedFrequency)))throw Error('Invalid reliability bins');
  artifact=structuredClone(x);return artifact;
 }
 export const modelComparison=()=>artifact;
