@@ -27,3 +27,6 @@ Retain the dark stadium-green sports score aesthetic and one functional signal c
 
 ## Modeling disclosures preserved
 Roster-listed athletes are not guaranteed starters. Simulated score, box score and prop outcomes are hypothetical and not validated betting markets. Official CFP seeding is separate from provisional Elo-based fantasy fields.
+
+## GitHub Pages rollout incident
+The first design-audit Pages workflow passed checkout, Node tests, build and artifact upload, but deploy-pages returned zero indexed artifacts immediately after upload. The workflow now grants `actions: read` and polls artifact metadata before deployment. This is a CI artifact discovery / eventual-consistency incident, not a football-code or build failure. The final release is considered deployed only after a successful Pages run.
