@@ -1,32 +1,32 @@
-# GRIDIRON LAB v0.5.0 — status / 2026-11-21
+# GRIDIRON LAB v0.6.0 — implementation and audit status (2026-11-21)
 
-## Implemented and verified locally
+## Implemented and locally tested
 
-- Dark **Night Edition** design: Archivo Narrow display, Public Sans text, IBM Plex Mono numerals; navy-black panels, copper highlights, asymmetric header/score typography, field graphic, comprehensive data tables and SVG chart contrast. Two primary tabs retained; game controls only team A, team B, home/away/neutral. Reduced-motion CSS.
-- Verified 2026 138 FBS **program names** extracted from the 2026 season schedule and 2025 136 distinct FBS program names; unique slug tests (including Texas A&M, Miami (OH), Hawai'i).
-- Historical `2026` and `2025` team-record adapters with source cutoff and per-school reference panels, and roster adapters for source-backed 2026 names/positions. **Both full upstream roster imports succeeded** on GitHub Actions run 44877761545: 2026 138/138 school rosters (15,187 names) and 2025 136/136 school rosters (15,415 names).
-- Per-school current roster provenance shows whether 2026 names come from the published primary season CSV or a more complete weekly school source; a new regression fixture rejects truncated later roster snapshots.
-- Source-validated school/season IDs; malformed snapshot, duplicate record, forged HTML-like names, excess file size, incorrect school names, and incomplete schedules handled by guards or safe fallback.
-- Seeded simulation with generated score distribution, possession report, player box reconciliation, threshold player props and Monte Carlo tournaments; **none calibrated against real outcomes**.
-- 13 tournament formats and inspectable games; large formats render horizontally. Only FBS-specific 12/24 rules are diagrammatic; qualification and officially seeded brackets not reconstructed.
-- Executed locally: `npm run check`, `npm test` (**20/20**), `python -m unittest discover -s tests -p 'test_*.py'` (**7/7**), `npm run build`. Browser Chromium harness at 390 and 1370 viewport passed game controls, 138-team picker, simulated named-prop sheet using explicitly fabricated TEST fixtures, 12/24 team bracket and game-inspector, with no horizontal overflow. Browser harness mocks worker and optional network fixtures, so it does not validate live Pages or physical Safari.
+- Existing dark Night Edition retained. Exactly two primary tabs; Game input is **two teams and venue** only. Additional high-contrast observed-vs-experimental research desk panel shows only when the validated JSON research artifact loads; unavailable state explicitly says data is missing.
+- Separate experimental pregame Elo baseline pipeline in standard-library Python (`scripts/evaluate_rolling_model.py`), trained chronologically on 2025 data and designed for 2026 holdout; results are schema-validated at UI boundary.
+- Football fixes: correct second-OT mandatory 2PT, overtime score/possession/play reconciliation, scoring-quarter allocation at drive completion, symmetric artificial 40-OT failsafe. Input-size limits for prop distributions.
+- Import hardening: unknown FBS program IDs, incomplete W–L accounting, forged roster teams rejected. In-memory snapshots are not overwritten after validation failures.
+- FBS official format stage-name corrections; FCS-inspired bracket explicitly mixed and hypothetical.
+- Node **31/31** tests, Python **11/11** tests, syntax/build, benchmark and Chromium DOM harness at 390px/1370px (see `docs/AUDIT_REPORT.md`). Browser figures use clearly synthetic test fixtures.
 
-## Implemented but deployment/source execution not yet independently verified
+## Implemented but not independently verified on full upstream data (until Actions completes)
 
-- `.github/workflows/refresh-season-data.yml` scheduled/manual 2025/2026 game ingestion and both season-matched roster archives **ran successfully** on GitHub run 44877761545. The completed job downloaded public files, validated record schemas and committed source-backed JSON to main. Future automatic refreshes are not guaranteed to succeed. Pages deployment of the very latest commit requires its own successful action.
-- Exactly 138 FBS school rosters were loaded from the November 2026 data source (15,187 names); exactly 136 school rosters from the 2025 archive (15,415 names). These measured counts come from the job logs and its committed JSON, not school-level injury or participation verification.
-- Native browser ES modules, actual Web Workers and iPhone Safari remain unverified beyond DOM harness. Documented benchmark refers to CPU environment, not physical iPhone.
+- Updated scheduled/manual data refresh workflow obtains public 2025/2026 score CSVs, executes a 2025-trained→2026-heldout historical evaluation and (after passed checks) writes `public/data/research-2026.json` for all supported programs.
+- **No empirical holdout scores are to be claimed unless the workflow actually ran and its resulting artifact was inspected.** The research panel remains in unavailable state until the data is genuinely published.
 
-## Partial / experimental
+## Existing source coverage preserved
 
-- Team strength model uses source-backed retrospective scoring as a simple uncalibrated profile proxy where available, synthetic hashed fallback where absent. No out-of-sample validation, opponent adjustment, or predictive research evidence.
-- The named player sheet associates roster-listed names with illustrative QB/RB/WR/TE slots in sorted position order; starter assignment is **not verified**. Generated stats are not projected performance for those individuals.
-- FCS24 option only demonstrates tournament shape and currently mixes five named FCS school references with FBS entries; it is **not an authentic FCS participant field**. Official campus and reseeding rules are incomplete.
-- Some detailed play-by-play and true player usages are not represented by this coarse drive model. A 92-threat architecture applicability matrix exists, but not a complete pen test.
+- 2026: 138 FBS programs and 15,187 roster-listed athletes; 2025: 136 FBS programs and 15,415 roster-listed athletes were established by a previous GitHub refresh. Roster lists do not validate depth charts, injuries, starter status or individual usage.
+- Actual 2026 schedule source previously lagged to 2026-11-15. Any new refresh must show an explicit latest game cutoff; no assertion of live data.
 
-## Not implemented / blocked
+## Experimental / not calibrated
 
-- Verified full 2026 athlete participation or real-time injuries, official 2026 depth charts, full 2026 per-player actual prop training data, true opponent-adjusted 2026 forecast model, chronological backtest, Brier/log loss, real sportsbook lines, a reliable keyless live 2026 API, complete NCAA rules enforcement, per-play play-by-play simulator.
-- Comprehensive Firefox/WebKit/physical iPhone accessibility and performance QA.
+- JavaScript score/drive/player-stat simulator and named player-prop sheets. Actual observations, Elo research predictions, and generator frequencies are not interchangeable. No individual player model was fitted.
+- College OT tail cap, full playoff selection logic and FCS entrants incomplete.
 
-**Strict rule:** school lists, imported observations, and model-generated outputs must remain independently and visibly labeled. No numeric synthetic score or prop frequency is represented as a validated betting probability.
+## Blocked / not tested
+
+- Browser sandbox blocks native localhost URL navigation, so real Web Workers, native ES imports, installed-hosted Pages runtime and physical iPhone Safari not tested from this environment. Chromium inlined DOM harness passed only; not a substitute for native runtime.
+- Licensed comprehensive historical player-game training data, injury/availability feeds, validated player projections and 92 adversarial exploit cases.
+
+See `docs/ARCHITECTURE_PLAN.md`, `docs/AUDIT_REPORT.md`, `docs/MODEL_CARD.md` and `docs/VALIDATION.md` for explicit evidence and remaining work.

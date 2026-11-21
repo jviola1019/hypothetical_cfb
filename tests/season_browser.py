@@ -9,7 +9,7 @@ html=(root/'index.html').read_text();css=(root/'src/styles.css').read_text();css
 html=re.sub(r'<meta http-equiv="Content-Security-Policy"[^>]*>', '', html)
 html=html.replace('<link rel="stylesheet" href="./src/styles.css">',f'<style>{css}</style>')
 html=html.replace('<script type="module" src="./src/app.js"></script>','')
-bundle='\n'.join(re.sub(r'^import .*?;\s*$', '', (root/f'src/{name}').read_text(),flags=re.M).replace('export ','') for name in ['catalog.js','observed.js','engine.js','tournament.js','charts.js','app.js'])
+bundle='\n'.join(re.sub(r'^import .*?;\s*$', '', (root/f'src/{name}').read_text(),flags=re.M).replace('export ','') for name in ['catalog.js','observed.js','research.js','engine.js','tournament.js','charts.js','app.js'])
 bundle=bundle.replace('import.meta.url',"'https://example.invalid/src/app.js'")
 stub="""class Worker {constructor(){this.onmessage=null;}terminate(){}postMessage(m){setTimeout(()=>{try{let value;if(m.type==='forecast'){const games=[];for(let i=0;i<m.n;i++)games.push(simulateGame(m.config,hash32(m.config.seed+':'+i)));value={...outcomeSummary(games,m.config),props:namedPropSummaries(games,m.config)};}else if(m.type==='tournament'){value=monteCarloTournament(createTournament(m.tournament.formatId,m.tournament.participants,m.tournament.seed),m.n,m.config);}this.onmessage?.({data:{task:m.task,type:'result',value}})}catch(e){this.onmessage?.({data:{task:m.task,type:'error',message:String(e)}})}},20)}}"""
 fixture=json.dumps({'schemaVersion':1,'season':2026,'sourceUrl':'https://github.com/sportsdataverse/cfbfastR-data','lastCompletedGame':'2026-11-15T18:00:00.000Z','teams':[{'id':id,'school':name,'conference':'TEST','games':10,'wins':6,'losses':4,'pointsFor':31.3,'pointsAgainst':22.1} for id,name in [('ole-miss','Ole Miss'),('georgia','Georgia')]]})
@@ -18,7 +18,8 @@ mock="""
 window.fetch=async (url)=>{
  const schoolFixture=FBS_TEAMS.map((t,i)=>({id:t.id,school:t.name,conference:'TEST FIXTURE',games:10,wins:5,losses:5,pointsFor:27,pointsAgainst:22}));
  let payload;
- if(String(url).includes('season-2026'))payload={schemaVersion:1,season:2026,sourceUrl:'https://github.com/sportsdataverse/cfbfastR-data',lastCompletedGame:'2026-11-15T18:00:00.000Z',teams:schoolFixture};
+ if(String(url).includes('research-2026'))payload={schemaVersion:1,modelVersion:'chronological-elo-slope-0.1.0',classification:'experimental-2025-trained-2026-held-out',asOf:'2026-11-21',lastScoredGame:'2026-11-15T20:00:00Z',training:{season:2025,games:650,calibratedSlope:1.1},holdout:{season:2026,evaluatedGames:500,calibratedElo:{brier:.19,logLoss:.54,marginMAE:13,totalMAE:17},constantBaseline:{brier:.25}},fixedParameters:{eloScale:400,initialElo:1500,homeElo:55,priorGames:4,startingPointsPerTeam:27,homePointsMargin:2.4},teamState:Object.fromEntries(FBS_TEAMS.map((t,i)=>[t.id,{elo:1450+i*.6,gamesCurrentSeason:10,scoredToDate:270,allowedToDate:230}]))};
+ else if(String(url).includes('season-2026'))payload={schemaVersion:1,season:2026,sourceUrl:'https://github.com/sportsdataverse/cfbfastR-data',lastCompletedGame:'2026-11-15T18:00:00.000Z',teams:schoolFixture};
  else if(String(url).includes('rosters-2026'))payload={schemaVersion:1,season:2026,sourceUrl:'https://github.com/sportsdataverse/cfbfastR-data',published:'2026-11-16',schools:{'ole-miss':[{name:'Current Test Quarterback',position:'QB'},{name:'Current Test Receiver',position:'WR'},{name:'Another Test Receiver',position:'WR'}],'georgia':[{name:'Georgia Test Quarterback',position:'QB'}]}};
  else return {ok:false};
  return {ok:true,headers:{get:()=>null},text:async()=>JSON.stringify(payload)};
@@ -32,13 +33,14 @@ with sync_playwright() as p:
   page.set_content(html)
   # Make FBS_TEAMS available to mocked fetch after app code loads (functions execute after bundle)
   # Move mock ahead of app.js, but catalog first.
-  script='\n'.join(re.sub(r'^import .*?;\s*$', '', (root/f'src/{name}').read_text(),flags=re.M).replace('export ','') for name in ['catalog.js','observed.js','engine.js','tournament.js','charts.js']) + '\n' + mock + '\n' + stub + '\n' + re.sub(r'^import .*?;\s*$', '', (root/'src/app.js').read_text(),flags=re.M).replace('import.meta.url',"'https://example.invalid/src/app.js'")
+  script='\n'.join(re.sub(r'^import .*?;\s*$', '', (root/f'src/{name}').read_text(),flags=re.M).replace('export ','') for name in ['catalog.js','observed.js','research.js','engine.js','tournament.js','charts.js']) + '\n' + mock + '\n' + stub + '\n' + re.sub(r'^import .*?;\s*$', '', (root/'src/app.js').read_text(),flags=re.M).replace('import.meta.url',"'https://example.invalid/src/app.js'")
   page.add_script_tag(content=script)
   page.wait_for_timeout(1700)
   print('VIEW',width,'menu',page.locator('[data-field="a"] option').count(),'props',page.locator('.props-table tbody tr').count(),'errors',errors)
   print('WIDTH',page.evaluate('({scroll:document.documentElement.scrollWidth,inner:window.innerWidth})'))
   assert not errors,errors
   assert page.locator('[data-field="a"] option').count()==138
+  assert page.locator('.research-panel').count()==1
   assert page.get_by_text('Current Test Quarterback').count()>=1
   assert page.get_by_text('138 FBS').count()>=1 or page.get_by_text('138 programs').count()>=1
   assert page.evaluate('document.documentElement.scrollWidth<=window.innerWidth+2')

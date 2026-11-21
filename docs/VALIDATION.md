@@ -1,21 +1,9 @@
-# Verification report — v0.5.0 / 2026-11-21
+# GRIDIRON LAB v0.6 — executed tests and evidence
 
-Executed in an isolated container with Node.js, Python and headless Chromium:
+Baseline (pre-modification): Node 20/20; Python 7/7; static build passes.
 
-- `npm run check`: **passed** (JavaScript syntax including catalog, data adapters, worker, game/tournament engine).
-- `npm test`: **20/20 passed**. Four added tests check 138 unique FBS IDs, 2026 snapshot validation and recovery on malformed payload, strict roster-name safety, historical-year isolation, named synthetic props and seed reproducibility. Existing 16 tests cover 300 simulated game integrity fixtures, 13 bracket configurations, N-1 played games, Monte Carlo consistency, illegal inputs, player yard/target reconciliation.
-- `python -m unittest discover -s tests -p 'test_*.py'`: **7/7 passed** including new score schedule fixture for all 138 sample schools, duplicate-game rejection, 2026 full-name roster CSV parser and bounded ZIP member parsing. Test input schools/players are synthetic and do not assert real historical performance.
-- `npm run build`: passed using only Node built-ins (no npm runtime packages).
-- `python tests/season_browser.py --mobile` and `python tests/season_browser.py`: passed on headless Chromium 390px and 1370px. Loaded mock season and roster fixtures with 138 FBS entries, selected teams, inspected a complete 12-team playoff and completed 24-team bracket, with no document overflow. **Inline source injection, synthetic Worker, and intercepted data transport were used**; browser result does not establish native worker, network, or real Safari correctness.
+Revised: Node **31/31**; Python **11/11** (including four new pregame-leakage tests); static syntax checks and build pass. Browser inline-source Chromium run at 390px and 1370px passed team selection, full 138-school picker, research panel under test-fixture data, named test players, 12/24 bracket play and game inspector with no overflow or page exceptions.
 
-## Source observation audit
+Seven specifically reproduced defects and regression fixtures are enumerated in `AUDIT_REPORT.md`. Browser localhost navigation was attempted and blocked by administrator; native workers remain unverified. Full-source **2026 held-out Brier/log loss are pending the refreshed research artifact**; no empirical model metrics are supplied by local fixtures.
 
-`cfbfastR-data` schedule CSVs examined via authorized GitHub connector. 2026: 888 fixture rows, 752 scored, 138 FBS programs, latest scored November 15. 2025: 3,831 rows, 3,829 scored, 136 FBS programs. The 2026 roster CSV and weekly November 16 school release were verified **available by metadata**, but full dataset contents could not be downloaded within this container. Full roster ingestion remains pending a successful Actions run.
-
-## Empirical evaluation status
-
-No historical train/validation/test split, no held-out forecasts or real-game fitted player model. Brier score: not measured. Log loss: not measured. Spread MAE and total RMSE: not measured. Calibration: not established. Football realism is a coarse demonstration, not independently established by passing invariant tests.
-
-## Browser/security limitations
-
-Playwright smoke tests use an injected DOM harness (which proved interaction behavior and narrow-screen width), not hosted HTTPS navigation. Chromium only, not Firefox/Safari/iOS. Google Fonts were removed from the inline test harness to prevent blocked font-network waits; fonts remain available with fallback in the published site. Threat matrix classifies 92 hazards but is not 92 completed exploit tests. No secrets or authenticated endpoints in the static frontend.
+Commands: `npm run check`; `npm test`; `python -m unittest discover -s tests -p 'test_*.py'`; `npm run build`; `python tests/season_browser.py --mobile`; `python tests/season_browser.py`; `npm run benchmark`.

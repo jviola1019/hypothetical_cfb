@@ -1,7 +1,7 @@
 {
   "name": "gridiron-lab",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.6.0",
   "type": "module",
   "description": "Offline-first synthetic college-football simulation laboratory; statistical forecasts unvalidated.",
   "license": "MIT",
@@ -10,7 +10,7 @@
     "test": "node --test tests/*.test.js",
     "build": "node scripts/build.mjs",
     "benchmark": "node scripts/benchmark.mjs",
-    "check": "node --check src/catalog.js && node --check src/observed.js && node --check src/app.js && node --check src/engine.js && node --check src/tournament.js && node --check src/worker.js && node --check src/charts.js"
+    "check": "node --check src/catalog.js && node --check src/research.js && node --check src/observed.js && node --check src/app.js && node --check src/engine.js && node --check src/tournament.js && node --check src/worker.js && node --check src/charts.js"
   },
   "engines": {"node": ">=20"}
 }

@@ -2,7 +2,7 @@ import {TEAM_MAP,TEAMS,DEFAULT_CONFIG,ENGINE_VERSION,hash32,rng,validateConfig,s
 export const FORMATS=[
 {id:'fbs12',label:'CFP 12 · 2026–27',size:12,kind:'official-fbs',byes:4,season:'2026–27'},
 {id:'fbs24',label:'CFP 24 · 2027–28',size:24,kind:'official-fbs',byes:8,season:'2027–28'},
-{id:'fcs24',label:'FCS 24 · 2026',size:24,kind:'fcs-inspired',byes:8,season:'2026'},
+{id:'fcs24',label:'FCS-inspired 24 · mixed-field demo',size:24,kind:'fcs-inspired',byes:8,season:'hypothetical'},
 ...([2,4,8,16,32,48,64,68,96,128].map(n=>({id:'custom'+n,label:`${n} teams · hypothetical`,size:n,kind:'hypothetical',byes:null,season:'custom'})))
 ];
 export const FORMAT_MAP=Object.fromEntries(FORMATS.map(x=>[x.id,x]));
@@ -11,7 +11,20 @@ export function rulesOrder(format){let n=1;while(n<format.size)n*=2;let order=se
 export function validateParticipants(ids,formatId){const f=FORMAT_MAP[formatId];if(!f)throw Error('Unsupported bracket format');if(!Array.isArray(ids)||ids.length!==f.size)throw Error(`Expected ${f.size} participants`);if(new Set(ids).size!==ids.length)throw Error('Duplicate participant');if(ids.some(x=>!TEAM_MAP[x]))throw Error('Unknown team');return true;}
 export function defaultParticipants(formatId){const f=FORMAT_MAP[formatId];if(!f)throw Error('Unknown format');const fcs=TEAMS.filter(x=>x.division==='fcs').map(x=>x.id).concat(TEAMS.filter(x=>x.division==='fbs').map(x=>x.id));return (formatId==='fcs24'?fcs:TEAMS.filter(x=>x.division==='fbs').map(x=>x.id)).slice(0,f.size);}
 export function createTournament(formatId='fbs12',participants=defaultParticipants(formatId),seed=20261120){validateParticipants(participants,formatId);if(!Number.isSafeInteger(+seed)||+seed<0||+seed>4294967295)throw Error('Invalid seed');const f=FORMAT_MAP[formatId];const order=rulesOrder(f);const slots=order.map(i=>i<=f.size?participants[i-1]:null);return {formatId,participants:participants.slice(),seed:+seed,slots,stage:0,rounds:[],played:{},champion:null,version:ENGINE_VERSION};}
-const roundName=(f,stage)=>{if(f.size===68&&stage===0)return 'Play-in';if(stage===0)return 'Opening round';return ['','Second round','Quarterfinals','Semifinals','Championship'][stage]||`Round ${stage+1}`};
+export const roundName=(f,stage)=>{
+  const rounds=Math.ceil(Math.log2(f.size));
+  const remaining=rounds-stage;
+  if(remaining===1)return 'Championship';
+  if(remaining===2)return 'Semifinals';
+  if(remaining===3)return 'Quarterfinals';
+  if(f.size===68&&stage===0)return 'Play-in';
+  if(f.size===68&&stage===1)return 'Round of 64';
+  if(f.size===68&&stage===2)return 'Round of 32';
+  if(stage===0)return 'First round';
+  if(f.id==='fbs24'&&stage===1)return 'Second round';
+  const fieldSize=Math.pow(2,remaining);
+  return fieldSize===32?'Round of 32':fieldSize===16?'Round of 16':`Round ${stage+1}`;
+};
 function gameConfig(a,b,base,stage,seed,formatId){const sa=Number(base?.seasonA??2026),sb=Number(base?.seasonB??2026);return {...DEFAULT_CONFIG,a,b,seasonA:sa,seasonB:sb,venue:formatId==='fbs12'&&stage===0?'a':formatId==='fbs24'&&stage<=1?'a':'neutral',pace:Number(base?.pace??1),shift:0,seed};}
 function readSlots(t){return t.slots.length/2}
 export function playablePairs(t){if(t.champion)return [];const result=[];for(let j=0;j<readSlots(t);j++){const a=t.slots[2*j],b=t.slots[2*j+1];if(a&&b)result.push({index:j,a,b,game:t.played[j]||null});}return result;}

@@ -1,3 +1,4 @@
+import {FBS_TEAMS} from './catalog.js';
 /**
  * Historical reference cards, 2025 completed season only.
  * These are observed full-season statistics, not point-in-time forecast inputs.
@@ -6,6 +7,7 @@
  * Scope deliberately limited until a licensed, machine-verifiable full data feed is integrated.
  */
 export const OBSERVED_SEASON = 2025;
+const VALID_FBS_IDS = new Map(FBS_TEAMS.map(t=>[t.id,t.name]));
 const seasonSnapshots = new Map();
 const seasonRosters = new Map();
 const seasonRosterOrigins = new Map();
@@ -83,7 +85,8 @@ export function installSeasonSnapshot(payload) {
   for(const row of payload.teams){
     if(!row || !/^[a-z0-9-]{2,60}$/.test(row.id) || Object.hasOwn(out,row.id) ||
        !Number.isInteger(row.games) || row.games<1 || row.games>18 ||
-       !Number.isInteger(row.wins) || !Number.isInteger(row.losses) || row.wins+row.losses>row.games ||
+       !Number.isInteger(row.wins) || !Number.isInteger(row.losses) || row.wins<0 || row.losses<0 || row.wins+row.losses!==row.games ||
+       !VALID_FBS_IDS.has(row.id) || row.school!==VALID_FBS_IDS.get(row.id) ||
        !Number.isFinite(row.pointsFor) || row.pointsFor<0 || row.pointsFor>100 ||
        !Number.isFinite(row.pointsAgainst) || row.pointsAgainst<0 || row.pointsAgainst>100) throw Error('Invalid team record');
     out[row.id]={school:row.school||row.id, season:payload.season, games:row.games, wins:row.wins, losses:row.losses,
@@ -101,7 +104,7 @@ export function installRosterSnapshot(payload){
     typeof payload.sourceUrl!=='string' || !payload.sourceUrl.startsWith('https://'))throw Error('Invalid roster snapshot');
   let schools=0,players=0;const teams={},origins={};
   for(const [id,people] of Object.entries(payload.schools)){
-    if(!/^[a-z0-9-]{2,60}$/.test(id) || !Array.isArray(people)||people.length>260)throw Error('Invalid roster team');
+    if(!/^[a-z0-9-]{2,60}$/.test(id) || !VALID_FBS_IDS.has(id) || !Array.isArray(people)||people.length>260)throw Error('Invalid roster team');
     const seen=new Set(),out=[];
     for(const person of people){
       if(typeof person.name!=='string'||person.name.length<3||person.name.length>100|| !/^[a-zA-Z0-9-]{1,6}$/.test(person.position||''))continue;

@@ -1,23 +1,19 @@
-# Model card — GRIDIRON LAB simulated outcome engine v0.5.0
+# Model card — GRIDIRON LAB v0.6
 
-**Status:** experimental, uncalibrated. Synthetic game and player stat generator; not a statistically fitted, scientifically validated prediction model.
+## Two deliberately separate engines
 
-## Inputs and season semantics
+**Research baseline (experimental, source-backed only after pipeline succeeds).** Python `scripts/evaluate_rolling_model.py` uses only completed games with valid scores, season and kickoff timestamps, FBS/FBS matching, and 2025-to-2026 time separation. It trains one regularized Elo-logit slope using **2025** chronologically constructed pregame features. On **2026** it scores predictions before updating either team's rating, and produces Brier, log loss, scoring-error and calibration tables. Initial rating 1500, year retention .65, K=24, home effect 55 Elo, logistic scale 400; no model weights tuned on the 2026 holdout. Approximate scored-point estimates use smoothed team 2026 games observed before the game and a fixed 2.4-point home margin. This is a deliberately simple opponent-aware baseline because opponents enter Elo; point means are not fully opponent-adjusted.
 
-The default comparison and simulation season is **2026**. All 138 FBS program names in the verified 2026 schedule are selectable. The 2025 archive has 136 schedule-listed FBS programs. The validated GitHub import currently published `public/data/season-2026.json` and `season-2025.json` for all 138 and 136 FBS schools respectively. When either snapshot is present and validated, observed `games`, `wins`, `losses`, average points scored and average allowed may be displayed; `teamProfile()` also transforms retrospective season averages into simple bounded simulated offense/defense multipliers. **These transformations are arbitrary, not opponent-adjusted or fitted; the aggregates are not pregame-safe observations for past matches.** When actual data is unavailable, the engine uses reproducible seeded synthetic strength proxies.
+**Synthetic drive simulator (still not fitted).** JS `src/engine.js` uses fixed illustrative scoring/turnover probabilities and retrospective offensive/defensive multipliers from current season aggregates. It is deterministic under seed and audited for point/drive/player bookkeeping and 2026-style OT handling, but a validated model win frequency does **not** follow from successful accounting tests. The model is a game-design demonstrator. No run should be used as a betting or fantasy projection.
 
-## Score simulation
+## Training, validation and leakage
 
-Approximate alternating drive generator, with conditional scoring/turnover chances, allocated passes/rushes, yards and touchdowns, and coarse overtime. Simulated scores and teams' box lines obey internal arithmetic rules tested on fixtures. Simulations use seeded hashing and provide sampled mean points, score-margin and total distributions and win share. Sample win frequency MC standard error is √[p(1-p)/N], which is **only computer simulation uncertainty**, not real-world forecasting confidence.
+Train 2025 completed FBS/FBS games, hold out 2026 completed FBS/FBS games through a recorded cutoff. Rates/rating state for each historical fixture are computed from earlier played games only. 2025 end-of-season ratings are known before August 2026; 2026 scores affect **later**, never earlier, predictions. The GUI uses the latest 2026 team rating state for hypothetical future games; it does not recreate pregame predictions for already-played dates. All metrics must be obtained from the committed `public/data/research-2026.json` with model version and source cutoff; if missing the UI refuses to show empirical scores. The app never silently substitutes demo fixture scores.
 
-## Athlete identities versus player prop results
+## Coverage and eligibility
 
-The **2026 roster snapshot** (138 FBS schools, 15,187 roster names verified in the November 21 refresh) supplies full names and football position codes for recognized schools. Sorting a roster by position to label synthetic QB/RB/WR/TE roles **does not establish who starts, is available, or will receive opportunities**. No individual player usage, injury or depth-chart observations are fitted. If identity is missing the name slot is suppressed, and a fictitious human name is never invented. Past 2025 players are not reused as 2026 identities. All generated player box scores/props are synthetic samples; they are not statistically calibrated estimates of those named athletes.
+Catalog: 138 FBS programs in 2026 and 136 in 2025, based on the inspected SportsDataverse schedule. Results feed lag is shown in UI. Public rosters contain names/position only; role allocation is not confirmed. Player prop thresholds remain synthetic regardless of whether a full name is printed. FCS 24-option is not an official selection field.
 
-## Evaluation
+## Risk: calibration and generalization
 
-Training seasons: 0. Held-out seasons: 0. Empirical coverage: 2026 school results and 15,187 roster-listed names; 2025 school results and 15,415 roster-listed names. No athlete-specific fitted stat models. Proper scores, spread/total accuracy, individual player errors and forecast calibration: **not available**. Intended use: transparent game design and educational exploration. Not suitable for betting, official NCAA selection, fantasy lineup decisions, player assessment or policy making.
-
-## Risk and governance
-
-Data freshness varies by school; latest 2026 game score in inspected source was November 15 while current date is November 21. An import manifest records the source and last-completed game. A verified player name never implies rights to publish photos or endorsements. The site cannot certify historical results as server-authoritative because it's served as static HTML/JS. Future work requires timed cutoffs, protected validation sets, a credible opponent-adjusted fitted baseline, and independent backtests before any predictive skill claim.
+2026 evaluation is chronologically separated from 2025 fit, but one year's holdout and shared opponents limit confidence. The fixed Elo hyperparameters are documented engineering choices, not a proof of optimality. Confidence intervals for calibration use Wilson uncertainty; an exploratory weekly cluster bootstrap measures paired Brier improvement. Before first full-source Actions run, quantitative performance is **unverified**. After that, historical metrics do not authorize real-money recommendations.

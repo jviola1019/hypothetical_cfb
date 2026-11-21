@@ -1,17 +1,18 @@
-# Tournament rulebook — source-grounded subset
+# Bracket rulebook — audited v0.6 (2026-11-21)
 
-Verified November 20, 2026.
+The game engine is a **simplified possession simulator**, not complete NCAA rulebook enforcement. College overtime now models:
+- First overtime: alternating possessions from opponent's 25-yard line; touchdown may have routine one-point try.
+- Second overtime: touchdown requires two-point attempt; no ordinary PAT; two-point try results tracked separately.
+- Third overtime onward: alternating two-point tries; a deterministic, symmetric emergency cap at period 40 prevents indefinite loops, so marathon overtime tail probabilities are **synthetic**.
+- Every try updates simulated drive/play and overtime-score ledgers. Defensive return scores, penalties, 1-point safeties, and exact play clocks are not modeled.
 
-- `fbs12`: **2026–27** official size and opening bracket geometry. Seeds 1–4 receive first-round byes. Seeds 5–8 host 9–12 pairings. Quarterfinal bracket lanes follow official CFP example. Official qualifying and eligibility/CFP committee selection not implemented.
-- `fbs24`: **2027–28** official size and opening bracket geometry. Seeds 1–8 receive first-round byes and host second-round games. Seeds 9–16 host seeds 17–24 in round 1. Eight games round one, eight round two, four quarterfinals, two semifinals, one final = 23 games. Top-eight lanes match official bracket displayed 1,8,5,4,6,3,7,2. Conference autobid qualification, bowl-site allocations and official selection process not implemented.
-- `fcs24`: FCS-inspired 24-team shape and eight first-round byes; **not a fully implemented official NCAA FCS selection or geographically constrained bracket.** FCS does not use the FBS CFP rules.
-- `custom2`, `custom4`, `custom8`, `custom16`, `custom32`, `custom48`, `custom64`, `custom68`, `custom96`, `custom128`: hypothetical single-elimination formats. 68 uses four opening games followed by a standard 64; all events have exactly N−1 played games. Byes are automatic advances, not wins.
+Bracket structures:
+- `fbs12`: 2026–27 official **size and bracket lane geometry**, first-round 5–12, 6–11, 7–10, 8–9; seeds 1–4 byes, then quarterfinals, semifinals, championship. Selection/qualification and exact bowl assignments not reproduced.
+- `fbs24`: 2027–28 announced **size and lane geometry**, 1–8 byes, 9–16 host 17–24, second round, quarterfinals, semifinals, championship. Field qualifications and hosting exceptions remain outside model.
+- `fcs24`: explicitly **FCS-inspired mixed-field demonstration** because current program catalog includes only five FCS example teams. Not an official FCS selection or champion.
+- Other formats: hypothetical fields, no official qualification.
 
-Official sources:
-- https://collegefootballplayoff.com/news/2026/1/23/2627-format
-- https://collegefootballplayoff.com/sports/2024/5/29/12-team-format
-- https://collegefootballplayoff.com/news/2026/11/9/24-team-expansion
+Sources:
+- https://collegefootballplayoff.com/sports/2026/8/9/bracket-place-holder
 - https://collegefootballplayoff.com/sports/2026/11/9/24-team-format
-- https://www.ncaa.com/news/football/article/2026-08-24/2026-fcs-football-championship-bracket-schedule-selection-info-playoffs
-
-Caution: labeling an official bracket **size and matchup topology** does not make custom entrants, modeled rankings or later-round bowl locations official.
+- https://collegefootballplayoff.com/news/2026/11/9/24-team-expansion

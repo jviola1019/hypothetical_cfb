@@ -152,3 +152,26 @@ table tbody tr{border-color:#283947}table tbody tr:hover{background:rgba(93,130,
  .study-section,.history-section,.game-section,.props-section,.bracket-section,.playoff-study,.inspector-section,.coverage-section{margin-top:50px}
 }
 @media(prefers-reduced-motion:reduce){.score-feature,.graph-panel,.roster-drawer{animation:none!important}}
+/* Audit edition — separate empirically evaluated research from the synthetic drive study. */
+.research-panel{margin:28px 0 36px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(270px,.7fr);gap:0;border:1px solid #567687;background:#07151d;color:#e9eef2;position:relative;overflow:hidden}
+.research-panel::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:#dc9a54}
+.research-main{padding:clamp(22px,3vw,44px);min-width:0}
+.research-aside{border-left:1px solid #32424d;background:#0e202a;padding:clamp(20px,2.5vw,35px);min-width:0}
+.research-panel .eyebrow{color:#e0a968;letter-spacing:.11em;font-size:11px}
+.research-panel h2{font-family:var(--font-display,'Archivo Narrow',sans-serif);font-size:clamp(25px,2.7vw,44px);line-height:1.05;margin:12px 0 10px;font-weight:700;text-transform:none;color:#f0f5f8}
+.research-panel p{color:#afbdc5;line-height:1.55;margin:12px 0 16px;font-size:14px}
+.research-lede{max-width:65ch}
+.research-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid #344750;margin-top:22px;padding-top:20px}
+.research-metric{padding:0 17px;border-right:1px solid #344750;min-width:0}
+.research-metric:first-child{padding-left:0}.research-metric:last-child{border-right:0}
+.research-metric small{display:block;color:#adc0ce;letter-spacing:.055em;font-size:10px;line-height:1.5;text-transform:uppercase;max-width:120px}
+.research-metric b{display:block;font-family:'IBM Plex Mono',monospace;font-size:clamp(19px,2vw,31px);font-weight:500;letter-spacing:-.055em;margin:7px 0;color:#f0f4f7}
+.research-metric em{font-size:10px;font-style:normal;color:#8fa3b0}
+.research-aside .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#f4b878;letter-spacing:.08em}
+.research-aside .metric-row{display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid #2d4352;padding:12px 0;color:#c3d0d9;font-size:13px}
+.research-aside .metric-row strong{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;color:#f7fafb;font-variant-numeric:tabular-nums}
+.research-aside .conclusion{font-size:12px;color:#b7c7cf;margin:16px 0 0}
+.research-fallback{padding:20px 28px;border-left:4px solid #d69d58;background:#12232c;color:#d0dee4;margin:24px 0 30px}
+.research-fallback strong{display:block;color:#f5e0c4}.research-fallback p{font-size:13px;margin:5px 0 0}
+@media(max-width:760px){.research-panel{grid-template-columns:minmax(0,1fr)}.research-aside{border-left:0;border-top:1px solid #32424d}.research-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.research-metric{padding:0 8px}.research-metric small{font-size:9px}}
+@media(max-width:390px){.research-metrics{grid-template-columns:1fr;gap:12px}.research-metric,.research-metric:first-child{padding:0 0 8px;border-right:0;border-bottom:1px solid #344750}.research-metric:last-child{border-bottom:0}}

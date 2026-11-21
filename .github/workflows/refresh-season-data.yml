@@ -6,6 +6,7 @@ on:
       - '.github/workflows/refresh-season-data.yml'
       - 'scripts/import_2026_rosters.py'
       - 'scripts/import_season_schedules.py'
+      - 'scripts/evaluate_rolling_model.py'
       - 'scripts/import_2025_rosters.py'
       - 'scripts/trim_2025_rosters.py'
   schedule:
@@ -77,6 +78,14 @@ jobs:
             --schedule public/data/season-2025.json \
             --csv /tmp/gridiron-ingest/cfbd-rosters-2025.csv \
             --out public/data/rosters-2025.json
+      - name: Evaluate pregame 2025-trained baseline against 2026 holdout
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/evaluate_rolling_model.py \
+            --train-csv /tmp/gridiron-ingest/schedules-2025.csv \
+            --holdout-csv /tmp/gridiron-ingest/schedules-2026.csv \
+            --out public/data/research-2026.json
       - name: Unit and ingestion tests
         run: |
           npm test
@@ -86,6 +95,11 @@ jobs:
           for y,min_count in [(2025,136),(2026,138)]:
               o=json.load(open(f'public/data/season-{y}.json'))
               assert o['allFbsSchoolsIdentified']>=min_count, o['allFbsSchoolsIdentified']
+          model=json.load(open('public/data/research-2026.json'))
+          assert model['training']['season']==2025 and model['holdout']['season']==2026
+          assert model['holdout']['evaluatedGames']>=300
+          assert model['holdout']['calibratedElo']['n']==model['holdout']['evaluatedGames']
+          print('2026 chronological holdout evaluated:',model['holdout']['calibratedElo']['brier'])
           o=json.load(open('public/data/rosters-2026.json'))
           assert o['schoolsCount']==138, o['schoolsCount']
           old=json.load(open('public/data/rosters-2025.json'))
@@ -99,7 +113,8 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add public/data/season-2025.json public/data/season-2026.json \
-                  public/data/rosters-2025.json public/data/rosters-2026.json
+                  public/data/rosters-2025.json public/data/rosters-2026.json \
+                  public/data/research-2026.json
           if ! git diff --cached --quiet; then
             git commit -m 'data: refresh 2025–2026 observed FBS records and roster snapshots'
             git push
