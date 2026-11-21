@@ -43,7 +43,7 @@ Repository: https://github.com/jviola1019/hypothetical_cfb
 2. Push to `main`; `.github/workflows/deploy-pages.yml` checks, tests, builds and deploys the `dist` directory.
 3. Verify Actions is green before trusting `https://jviola1019.github.io/hypothetical_cfb/`.
 
-The GitHub connector can verify source commits, but it does not itself prove the published Pages runtime is healthy.
+The GitHub connector independently confirmed that CI and the Pages deploy workflow succeeded on the redesign commit. A direct browser fetch and native Web Worker behavior on the public URL still require device-level verification.
 
 ## Engineering and known limitations
 

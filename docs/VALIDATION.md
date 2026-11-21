@@ -14,4 +14,8 @@ No real-game historical holdout backtest was run. Train seasons 0; test seasons 
 
 ## Unverified
 
-Firefox, WebKit, iPhone physical browser, screen reader, live Google Fonts loading, hosting HTTP response security headers, external NCAA roster refresh workflow, GitHub Pages Action completion and public URL response, 92-threat dynamic pen test, large-data memory profiling. See `STATUS.md` and `THREAT_MODEL.md`.
+Firefox, WebKit, iPhone physical browser, screen reader, live Google Fonts loading, hosting HTTP response security headers, external NCAA roster refresh workflow, public URL HTTP response, 92-threat dynamic pen test, large-data memory profiling. See `STATUS.md` and `THREAT_MODEL.md`.
+
+## GitHub CI evidence
+
+For source commit `bae3cc71c65c224d85b34a6e96f919b20390569d`, [CI Verify](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44875923917) and [Deploy GitHub Pages](https://github.com/jviola1019/hypothetical_cfb/actions/runs/44875923915) both reported `completed/success`. The latter verified steps checkout, Node setup, lint/test/build, `configure-pages`, artifact upload, and `deploy-pages`. A successful Action does not by itself establish that every client runtime interaction works on an actual iPhone.

@@ -15,7 +15,7 @@
 
 - Real Web Worker and native module resolution under GitHub Pages runtime; actual iPhone Safari performance, axe/WCAG automated audit, and Google Fonts web loading.
 - `.github/workflows/refresh-roster.yml` full upstream ingestion and commit (requires workflow dispatch, GitHub network and permission; not executed).
-- GitHub Pages deployment job and hosted website response. Source commit publication is separate from deployment verification.
+- Direct HTTPS response from the public Pages URL remains unverified by this container. The deployment action itself succeeded on commit `bae3cc71c65c224d85b34a6e96f919b20390569d`.
 
 ## Experimental / partial
 
@@ -32,3 +32,7 @@
 - Complete official future bracket logic, risk-factor-driven injury/weather/rest effects, realistic play-level engine, comprehensive multi-browser accessibility audits, independent pen test.
 
 **Evidence rule:** Source file or CI workflow existence is never evidence its real provider refresh or production deployment succeeded.
+
+## Publication verification
+
+Remote source commit `bae3cc71c65c224d85b34a6e96f919b20390569d` verified via GitHub connector. GitHub Actions **Verify** run 44875923917 completed **success**; **Deploy GitHub Pages** run 44875923915 completed **success**, including `actions/deploy-pages@v4`. A direct fetch to `https://jviola1019.github.io/hypothetical_cfb/` was blocked by the browsing environment; live page HTTP rendering and Safari runtime are not independently verified.
