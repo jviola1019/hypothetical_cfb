@@ -2,7 +2,7 @@
 
 **Research status: SYNTHETIC DEMONSTRATOR, NOT AN EMPIRICAL PREDICTOR.**
 
-Two prominent experiences: GAME SIMULATION and PLAYOFF SIMULATION. The offline simulator has seeded drive-level scoring, internally reconciled synthetic positional player lines, game and bracket inspection, user-defined thresholds, four calculated charts, bracket editor, and Monte Carlo tournament experiments. The implementation deliberately refuses to imply that these results are trained on actual NCAA outcomes.
+Two prominent experiences: GAME SIMULATION and PLAYOFF SIMULATION. The offline simulator has seeded drive-level scoring, internally reconciled synthetic positional player lines, game and bracket inspection, synthetic prop-threshold analysis in both tabs, user-defined thresholds, four calculated charts, bracket editor, and Monte Carlo tournament experiments. The implementation deliberately refuses to imply that these results are trained on actual NCAA outcomes.
 
 ## Run
 

@@ -5,9 +5,9 @@
 - Offline two-tab static website; runs from a local HTTP server.
 - Seeded synthetic game generator with regulation/limited overtime and drive logs.
 - Team/pass/receiving/rushing and kicking aggregate stat reconciliation.
-- Simulated single-game score, synthetic role player props, custom spread/total lines, sample score/margin/total diagrams, running win-frequency chart.
+- Simulated single-game score, synthetic role player props in both game tab and playoff game inspector, custom spread/total lines, sample score/margin/total diagrams, running win-frequency chart.
 - 13 labeled tournament presets, seed mapping (including official FBS 12/24 first-round geometry), bracket seed editing/swapping and byes, manual match simulation, full round and tournament simulation, individual game inspector, synthetic championship frequency from full tournament Monte Carlo.
-- Node test and syntax suites, measured local benchmarks, dependency-free static build, Chromium DOM smoke tests at desktop and iPhone width, GitHub Pages workflow source.
+- Node test and syntax suites, measured local benchmarks, dependency-free static build, Chromium DOM smoke tests at desktop and iPhone width with a verified no-horizontal-overflow assertion, GitHub Pages workflow source.
 
 ## Implemented but not independently verified
 

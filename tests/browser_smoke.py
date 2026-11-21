@@ -23,6 +23,8 @@ with sync_playwright() as p:
   page.wait_for_timeout(2000)
   print('viewport:',width,'x',height,'initial metric:',page.locator('.number').first.inner_text() if page.locator('.number').count() else 'NONE')
   assert page.locator('h1').count() == 1
+  print('document scrollWidth / viewport:',page.evaluate('document.documentElement.scrollWidth'),width)
+  assert page.evaluate('document.documentElement.scrollWidth')<=width+2
   assert 'GAME SIMULATION' in page.locator('.primarynav').inner_text()
   assert page.get_by_role('button',name='SIMULATE GAME').count()==1
   page.get_by_role('button',name='SIMULATE GAME').click()
