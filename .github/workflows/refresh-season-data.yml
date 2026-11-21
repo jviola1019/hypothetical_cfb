@@ -195,5 +195,9 @@ jobs:
                   public/data/weekly-lineups-2026.json
           if ! git diff --cached --quiet; then
             git commit -m 'data: refresh 2025–2026 observed FBS records and roster snapshots'
-            git push
+            # Safely incorporate weekly updates that arrived during the lengthy fetch.
+            # Never force-push over a newer live data snapshot.
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
           fi
