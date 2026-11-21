@@ -15,6 +15,7 @@ css=(ROOT/'src/styles.css').read_text()
 css=re.sub(r'^@import[^\n]+$','',css,flags=re.M)
 html=re.sub(r'<meta http-equiv="Content-Security-Policy"[^>]*>','',html)
 html=html.replace('<link rel="stylesheet" href="./src/styles.css">',f'<style>{css}</style>')
+html=html.replace('<link rel="stylesheet" href="./src/refinements.css">',f'<style>{(ROOT/"src/refinements.css").read_text()}</style>')
 html=html.replace('<script type="module" src="./src/app.js"></script>','')
 with sync_playwright() as p:
  browser=p.chromium.launch(headless=True,executable_path='/usr/bin/chromium',args=['--no-sandbox'])

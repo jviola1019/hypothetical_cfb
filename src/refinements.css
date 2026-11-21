@@ -1,0 +1,54 @@
+/* GRIDIRON LAB / 2026 DESIGN AUDIT — editorial refinements */
+:root{--text:#e9eee6;--sub:#c1cfc1;--faint:#a7b4a5}
+.skip-link{position:fixed;left:14px;top:-90px;z-index:90;background:var(--lime);color:var(--night);font:700 14px var(--font);padding:12px 18px;text-decoration:none;transition:top .14s ease}
+.skip-link:focus{top:12px;outline:3px solid #f7f7ea;outline-offset:3px}
+.page-intro{background:linear-gradient(118deg,#121b16 5%,#16241b 75%,#1d2920);border-bottom:1px solid var(--rule-bright)}
+.page-intro h1{font-size:clamp(52px,5.7vw,80px);line-height:.91;letter-spacing:-.012em;max-width:880px}
+.page-intro p{font-size:clamp(14px,1.25vw,16px);line-height:1.55;max-width:670px;color:#cad2c7}
+.intro-symbol{opacity:.4;transform:scale(.78)}
+.nav-item{min-height:44px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:none}
+.nav-item.active{color:var(--lime)}
+.action{min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1.25;font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.015em}
+.action:disabled{opacity:.5}
+button:focus-visible,select:focus-visible,a:focus-visible,summary:focus-visible,.bracket-scroll:focus-visible,.table-scroll:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
+.play-console button:focus-visible,.play-console select:focus-visible,.bracket-seeding button:focus-visible,.bracket-seeding select:focus-visible,.bracket-seeding summary:focus-visible{outline:3px solid #244a30;outline-offset:3px}
+.team-control select,.venue-control select{min-height:42px}
+.console-footer{font-size:13px;line-height:1.5}
+.console-footer .action.primary{font-size:13px;padding:13px 22px}
+.game-canvas{margin-top:24px}
+.lead-section{margin-bottom:12px}
+.ledger-grid{margin:20px 0 30px;gap:clamp(17px,2.5vw,29px)}
+.sheet{padding:18px 20px 12px;background:#121d16;border:1px solid var(--rule)}
+.sheet h3{font-size:28px;margin-bottom:13px}
+.game-tape{margin:24px 0 34px;border:1px solid var(--rule-bright);background:#152119}
+.game-tape>summary{padding:17px 20px;min-height:56px;display:flex;justify-content:space-between;gap:16px;align-items:center;font-size:15px;font-weight:700;color:var(--cream)}
+.game-tape>summary span{font:500 11px/1.5 var(--mono);color:var(--sub)}
+.game-tape[open]>summary{border-bottom:1px solid var(--rule)}
+.game-tape .two-viz{margin:22px 20px}
+.game-tape .position-sheet{margin:22px 20px}
+.drive-ledger{margin:22px 20px 26px}
+.drive-ledger h3{font:700 22px var(--display);margin:0 0 13px;text-transform:uppercase}
+.roster-coverage{margin-top:26px}
+.personnel-desk{margin-top:18px;margin-bottom:35px}
+.personnel-desk summary{min-height:74px}
+.personnel-desk summary small{font-size:12px}
+.personnel-expander{font-size:11px;white-space:nowrap}
+.round-switches .action{font-size:12px;min-height:43px}
+.swap-controls select,.atlas-filters select{min-height:44px;font-size:13px}
+.atlas-pager .action,.restore-wrap .action{min-height:44px;font-size:12px}
+.stat-table{font-variant-numeric:tabular-nums}
+.table-scroll:focus-visible{outline-offset:1px}
+#main:focus{outline:0}
+#game-inspector:focus{outline:2px solid var(--lime);outline-offset:6px}
+@media(max-width:780px){.topbar-inner{gap:3px}.navigation{gap:8px;justify-content:space-between}.nav-item{padding:0 8px;font-size:12px}.page-intro h1{font-size:clamp(49px,11.2vw,77px)}.page-intro{padding-top:21px;padding-bottom:21px}.play-console{margin-top:20px}.personnel-desk summary b{font-size:24px}}
+@media(max-width:480px){.page-intro h1{font-size:clamp(48px,12.5vw,61px);line-height:.86}.page-intro p{font-size:14px}.console-footer{display:grid;gap:9px}.console-footer .action.primary{width:100%}.ledger-grid{gap:15px}.sheet{padding:15px 12px}.game-tape>summary{display:block;padding:15px}.game-tape>summary span{display:block;margin-top:4px;font-size:10px}.game-tape .two-viz,.game-tape .position-sheet,.drive-ledger{margin:14px 10px}.roster-coverage{padding:13px}.nav-item{padding:0 4px;font-size:11px}.personnel-desk summary small{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.skip-link{transition:none}}
+@media(max-width:480px){
+ .console-intro{display:block}
+ .console-intro .console-season{display:block;max-width:none;text-align:left;margin-top:5px;font-size:11px}
+ .console-intro h2{font-size:30px;line-height:1.03}
+ .fixture-center{grid-template-columns:minmax(0,1fr) minmax(115px,1.22fr) minmax(0,1fr);gap:4px;padding:26px 11px 30px}
+ .fixture-team strong{font-size:clamp(19px,4.9vw,24px);line-height:1.06;letter-spacing:-.01em}
+ .fixture-score-number{font-size:clamp(43px,12vw,55px)}
+ .fixture-meta{font-size:10px}
+}
