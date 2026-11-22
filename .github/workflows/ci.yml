@@ -52,3 +52,50 @@ jobs:
           path: /tmp/gridiron-browser
           if-no-files-found: ignore
           retention-days: 7
+
+  temporal-backtest:
+    name: Pregame time-split replay backtest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve published completed-game source schedules
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gridiron-temporal
+          for year in 2023 2024 2025 2026; do
+            curl --fail --location --retry 3 --max-time 90 --proto '=https' --tlsv1.2 \
+              "https://raw.githubusercontent.com/sportsdataverse/cfbfastR-data/main/schedules/csv/cfb_schedules_${year}.csv" \
+              -o "/tmp/gridiron-temporal/schedule-${year}.csv"
+          done
+      - name: Derive only features observed before each kickoff
+        run: |
+          python3 scripts/export_pregame_sim_fixtures.py \
+            --schedule-2023 /tmp/gridiron-temporal/schedule-2023.csv \
+            --schedule-2024 /tmp/gridiron-temporal/schedule-2024.csv \
+            --schedule-2025 /tmp/gridiron-temporal/schedule-2025.csv \
+            --schedule-2026 /tmp/gridiron-temporal/schedule-2026.csv \
+            --out /tmp/gridiron-temporal/pregame.json
+      - name: Fit 2024, validate 2025, audit 2026 actual JavaScript replay generator
+        run: node scripts/evaluate_playable_generator.mjs /tmp/gridiron-temporal/pregame.json /tmp/gridiron-temporal/calibration.json
+      - name: Guard against nonsensical or fabricated evaluation counts
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/gridiron-temporal/calibration.json'))
+          assert d['fitGames']>=400
+          assert d['validation2025']['n']>=400 and d['evaluation2026']['n']>=300
+          assert d['base'] in [23,25,27,29,31,33]
+          if d['enabled']:
+              assert d['validation2025']['brier']<=.25
+              assert d['validation2025']['scoreMAE']<=d['validation2025']['flatScoreMAE']
+          print('Temporal replay acceptance gate:',d['enabled'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: temporal-replay-validation
+          path: /tmp/gridiron-temporal/calibration.json
+          retention-days: 7
