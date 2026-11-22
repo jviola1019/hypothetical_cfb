@@ -271,8 +271,15 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,su
 .data-grid p,.coverage-bars p{color:#64717d}
 .coverage-track{background:#d1d7dd}
 .coverage-track b{background:#ee643d}
+.coverage-intro{background:#202935!important;color:#f5f7f8!important;border-color:#4b5865!important}
+.coverage-intro>div{border-right-color:#4a5968}
+.coverage-intro strong{color:#fff!important;font:900 45px/.98 var(--display)}
+.coverage-intro small{color:#ff997b!important}
+.coverage-intro p{color:#d3dce3!important}
 .coverage-row{color:#263440}
 .audit-explainer{background:#fff;color:#222b34}
+.audit-explainer p{color:#586775!important}
+.audit-explainer p b{color:#1b2833!important;font-weight:800}
 .audit-explainer h3,.sources-grid h3{color:#17222d}
 .audit-meter{background:#d5dadf}.audit-meter span{background:#e7643f}
 .research-stamp{color:#5b6875}

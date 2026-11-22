@@ -72,6 +72,10 @@ def check(browser_type,engine,width):
         page.screenshot(path=str(OUT/f"{engine}-{width}-playoffs.png"),full_page=True,animations="disabled")
         page.locator('[data-action="tab-research"]').click()
         page.locator(".audit-section").first.wait_for(timeout=30000)
+        assert page.locator('.coverage-intro').evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(32, 41, 53)', "Old dark olive uncertainty metric panel"
+        assert page.locator('.coverage-intro strong').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(255, 255, 255)', "Historical uncertainty numbers must contrast with dark metrics panel"
+        assert page.locator('.audit-explainer p b').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(27, 40, 51)', "Explainer emphasis cannot be white-on-white"
+
         displayed=page.locator('.data-grid article strong').all_text_contents()
         source_root=Path(__file__).resolve().parents[1]
         season=json.loads((source_root/'public/data/season-2026.json').read_text())

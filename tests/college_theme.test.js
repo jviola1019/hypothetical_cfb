@@ -24,6 +24,8 @@ test('new stadium edition replaces four contradictory old skins',()=>{
  assert.ok(contrast('#64707c','#ffffff')>=4.5);
  assert.ok(contrast('#ffffff','#1d2630')>=12);
  assert.ok(contrast('#141920','#eb5b35')>=4.5);
+ assert.match(css,/\.coverage-intro strong\{color:#fff!important/);
+ assert.doesNotMatch(app,/#d6f065/);
  assert.match(css,/prefers-reduced-motion:reduce/);
  assert.match(css,/:focus-visible/);
 });
