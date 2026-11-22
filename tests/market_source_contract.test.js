@@ -11,13 +11,14 @@ test('public Game tab reports auditable exact counts instead of unlabeled sampli
  assert.match(game,/histogram\(m\.margin,m\.markets\?\.reference\.marginThreshold/);
  assert.match(game,/histogram\(m\.total,m\.markets\?\.reference\.totalLine/);
 });
-test('research win probability, implied spread and independently modeled total are explicitly different claims',()=>{
+test('research probability and scoring-rate point-pair arithmetic remain separate and internally exact',()=>{
  const research=app.slice(app.indexOf('function matchupForecast()'),app.indexOf('function scoreboard('));
- assert.match(research,/illustrativeMarginFromProbability\(e\.pA,empiricalResidual\)/);
- assert.match(research,/ELO-IMPLIED SPREAD/);
- assert.match(research,/INDEPENDENT SCORE-TOTAL CENTER/);
- assert.match(research,/NOT a fitted or validated market spread/);
- assert.doesNotMatch(research,/const margin=sa-sb/);
+ assert.match(research,/const scoreA=e\.expectedA,scoreB=e\.expectedB/);
+ assert.match(research,/e\.expectedMargin/);
+ assert.match(research,/SCORE-ESTIMATE MARGIN/);
+ assert.match(research,/SCORE-ESTIMATE TOTAL/);
+ assert.match(research,/These are NOT validated sportsbook spreads/);
+ assert.doesNotMatch(research,/illustrativeMarginFromProbability/);
 });
 test('the ledger is scrollable and small screen evidence labels cannot expand the page',()=>{
  assert.match(css,/\.ledger-scroll\{[^}]*overflow-x:auto/);

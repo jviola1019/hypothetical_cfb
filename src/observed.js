@@ -97,7 +97,7 @@ export function installSeasonSnapshot(payload) {
       coverage:'season-to-date-retrospective'};
   }
   seasonSnapshots.set(payload.season,Object.freeze(out));
-  sourceStatus.seasons[payload.season]={schools:Object.keys(out).length,asOf:payload.lastCompletedGame,source:payload.sourceUrl};
+  sourceStatus.seasons[payload.season]={schools:Object.keys(out).length,gamesWithScores:Number.isSafeInteger(payload.gamesWithScores)&&payload.gamesWithScores>=0&&payload.gamesWithScores<=2000?payload.gamesWithScores:null,asOf:payload.lastCompletedGame,source:payload.sourceUrl};
   return Object.keys(out).length;
 }
 export function installRosterSnapshot(payload){

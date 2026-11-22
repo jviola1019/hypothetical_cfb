@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="560" viewBox="0 0 1920 560" role="img" aria-label="Original illustration of a night football stadium">
+<defs>
+<linearGradient id="night" x2="0" y2="1"><stop stop-color="#03060b"/><stop offset=".55" stop-color="#111b29"/><stop offset="1" stop-color="#050a10"/></linearGradient>
+<linearGradient id="field" x2="0" y2="1"><stop stop-color="#253735"/><stop offset="1" stop-color="#090f13"/></linearGradient>
+<linearGradient id="haze" x2="0" y2="1"><stop stop-color="#f4f4f0" stop-opacity=".25"/><stop offset="1" stop-color="#f4f4f0" stop-opacity="0"/></linearGradient>
+<pattern id="crowd" width="40" height="26" patternUnits="userSpaceOnUse"><circle cx="3" cy="5" r="1.2" fill="#d5d9de" opacity=".4"/><circle cx="18" cy="13" r="1.5" fill="#ff6b45" opacity=".4"/><circle cx="34" cy="23" r=".8" fill="#a9b1bd" opacity=".43"/></pattern>
+<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 0H4" stroke="#fff" stroke-opacity=".025"/></pattern>
+<filter id="light"><feGaussianBlur stdDeviation="25"/></filter>
+</defs>
+<rect width="1920" height="560" fill="url(#night)"/>
+<path d="M0 0H1920V175C1420 160 470 165 0 185Z" fill="#07101b"/>
+<path d="M0 199Q960 55 1920 199V366H0Z" fill="#141d29"/>
+<path d="M0 210Q960 85 1920 210V310Q960 242 0 320Z" fill="url(#crowd)" opacity=".83"/>
+<path d="M0 294Q960 200 1920 294V405H0Z" fill="#111923"/>
+<path d="M0 311Q960 210 1920 311V375Q960 301 0 375Z" fill="url(#crowd)" opacity=".8"/>
+<path d="M0 376Q960 300 1920 376" fill="none" stroke="#b7beca" stroke-opacity=".27" stroke-width="5"/>
+<path d="M0 413L645 328H1275L1920 413V560H0Z" fill="url(#field)"/>
+<path d="M0 443L665 343H1255L1920 443" stroke="#bbc4c6" stroke-opacity=".22" stroke-width="3" fill="none"/>
+<g stroke="#abb6b7" stroke-opacity=".14" stroke-width="3">
+<path d="M345 560L745 337"/><path d="M690 560L850 337"/><path d="M1030 560L1014 337"/><path d="M1365 560L1150 337"/><path d="M1680 560L1210 337"/>
+<path d="M180 491H1740"/><path d="M430 447H1490"/><path d="M635 413H1285"/><path d="M762 390H1158"/>
+</g>
+<path d="M939 357V283M981 357V283M939 287H981" stroke="#d6d9db" stroke-width="4" fill="none"/>
+<path d="M0 0L135 0L320 560H0Z" fill="#040608" opacity=".67"/><path d="M1920 0H1785L1600 560H1920Z" fill="#040608" opacity=".67"/>
+<g fill="#fff"><rect x="340" y="109" width="160" height="9" rx="2"/><rect x="1420" y="109" width="160" height="9" rx="2"/></g>
+<g fill="#fff" opacity=".68" filter="url(#light)"><ellipse cx="420" cy="113" rx="180" ry="42"/><ellipse cx="1500" cy="113" rx="180" ry="42"/></g>
+<rect width="1920" height="560" fill="url(#haze)" opacity=".13"/><rect width="1920" height="560" fill="url(#scan)"/>
+</svg>

@@ -42,6 +42,22 @@ def check(browser_type,engine,width):
         text=page.locator(".market-ledger").inner_text()
         assert "850" in text, f"{engine} {width}: expected real Worker 850-run forecast, got {text[:400]}"
         assert page.evaluate("window.__realWorkersCreated")>=1, "Browser Web Worker was not created"
+        # Verify the actual new game CSS and locally served stadium asset, rather
+        # than passing on DOM-only assertions while a stylesheet 404s.
+        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(233, 233, 229)', "Old/absent site skin"
+        assert "night-stadium.svg" in page.locator('.page-intro').evaluate("(el) => getComputedStyle(el).backgroundImage"), "Stadium asset not used"
+        assert page.evaluate("fetch('./public/assets/night-stadium.svg').then(r => r.ok)"), "Local stadium illustration failed to load"
+        # The visible score pair must reproduce the printed point total and margin.
+        estimates=page.locator('.snapshot-figures strong').all_text_contents()
+        import re
+        parts=re.findall(r'\d+\.\d+',estimates[0])
+        assert len(parts)==2, f"Expected paired scoring-rate estimates; got {estimates}"
+        a,b=map(float,parts)
+        margin=float(estimates[1].replace('+',''))
+        total=float(estimates[2])
+        assert abs(a-b-margin)<.051, f"Displayed score margin inconsistency: {estimates}"
+        assert abs(a+b-total)<.051, f"Displayed score total inconsistency: {estimates}"
+
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Mobile document overflow"
         page.screenshot(path=str(OUT/f"{engine}-{width}-game.png"),full_page=True,animations="disabled")
         page.locator('[data-action="tab-playoff"]').click()
@@ -52,6 +68,9 @@ def check(browser_type,engine,width):
         page.screenshot(path=str(OUT/f"{engine}-{width}-playoffs.png"),full_page=True,animations="disabled")
         page.locator('[data-action="tab-research"]').click()
         page.locator(".audit-section").first.wait_for(timeout=30000)
+        displayed=page.locator('.data-grid article strong').all_text_contents()
+        assert displayed[:3]==['138','803','15,187'], f"Research source labels mismatch committed data: {displayed}"
+
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Research document overflow"
         page.screenshot(path=str(OUT/f"{engine}-{width}-research.png"),full_page=True,animations="disabled")
         assert not exceptions,f"{engine} JS exceptions: {exceptions}"

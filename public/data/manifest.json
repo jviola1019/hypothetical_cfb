@@ -2,7 +2,7 @@
   "version": "1.2.0",
   "releaseDate": "2026-11-22",
   "model": "neutral-fallback-with-historical-team-profile-when-loaded",
-  "calibration": "game-generator-not-calibrated-player-props-not-calibrated",
+  "calibration": "temporal-drive-intensity-v2: 2024 fit; 2025 historical gate FAILED / disabled; margin 80pct coverage 0.7116; player props NOT calibrated",
   "primarySeason": 2026,
   "historicalSeason": 2025,
   "verified2026FbsProgramCatalog": 138,
@@ -28,7 +28,6 @@
   "verifiedRoster2026Names": 15187,
   "verifiedRoster2025Schools": 136,
   "verifiedRoster2025Names": 15415,
-  "refreshWorkflowRunUrl": "https://github.com/jviola1019/hypothetical_cfb/actions/runs/44878009382",
   "verifiedRoster2026WeeklySchools": 101,
   "verifiedRoster2026PrimarySchools": 37,
   "researchStatus": "Independent pregame research and reliability panels documented in model card; 2026 evaluated previously, not pristine.",
@@ -48,5 +47,6 @@
   "researchSourceCutoffUtc": "2026-11-21T21:00:00.000Z",
   "realismNotice": "Score/drive and player prop simulations remain synthetic and uncalibrated; 2026 player-event histories are retrospective conditionally observed data",
   "weeklyLineupSource": "data/weekly-lineups-2026.json",
-  "weeklyLineupStatus": "Manual Nov 21 2026 evidence for four named 2026 roles; weekly GitHub refresh rebuilds 138 roster-linked role projections. Nonverified schools explicitly remain usage-projected or roster-only."
+  "weeklyLineupStatus": "All 138 FBS programs receive six roster-matched, source-graded modeled role slots. Projected or usage-estimated identity is NOT confirmation of a game-day starter. The dated weekly and personnel audit artifacts carry the exact counts.",
+  "refreshWorkflowUrl": "https://github.com/jviola1019/hypothetical_cfb/actions/workflows/refresh-season-data.yml"
 }

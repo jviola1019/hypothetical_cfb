@@ -1,5 +1,8 @@
 # GRIDIRON LAB · COLLEGE CHAMPIONSHIP STUDIO (v1.2.0)
 
+> **Saturday Night 26 design update:** An original college-football game presentation with athletic Barlow typography, an illustrated stadium, compact broadcast scoreboards, responsive tournament brackets and one consolidated visual skin. Data displays are cross-checked by `npm run audit:data`. [Visual and factual audit](docs/STYLE_SYSTEM_SATURDAY_NIGHT_26.md). This is independent fan-created software, not affiliated with NCAA or EA. The playable score model remains synthetic where its historical margin-coverage gate fails.
+
+
 **A free, offline-first college-football game and playoff simulator.** Pick two FBS teams and a venue, then see one replayable generated game: scoring by quarter, gameplay/drive timeline, full team and named-athlete box, player stat threshold frequencies, empirical *research* estimate where available, and readable probability distributions. The **Playoffs** tab builds 2–138-team hypothetical brackets with individual game inspection. The **Model & Validation** tab holds all technical statistics, model diagnostics, source cutoffs and caveats.
 
 **Playable game backtest:** [2024 fit, 2025 check, 2026 forward diagnostics](docs/REPLAY_VALIDATION_2026-11-22.md). The conditioned replay adapter currently fails its historical margin-uncertainty gate and remains disabled. Source-ranked 2026 role identities are not all game-day verified starters.

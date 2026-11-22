@@ -24,6 +24,22 @@ def sync():
     m["verifiedRoster2026Names"]=r["totalPlayers"]
     m["verifiedRoster2026WeeklySchools"]=w
     m["verifiedRoster2026PrimarySchools"]=n-w
+    game=read("public/data/playable-calibration-2026.json")
+    if game["modelVersion"]!="temporal-drive-intensity-v2" or game["schemaVersion"]!=1:
+        raise ValueError("Missing or incompatible canonical replay validation")
+    m["calibration"]=(
+        f"{game['modelVersion']}: 2024 fit; 2025 historical gate "
+        f"{'PASSED' if game['enabled'] else 'FAILED / disabled'}; "
+        f"margin 80pct coverage {game['validation2025']['coverage80Margin']:.4f}; "
+        "player props NOT calibrated"
+    )
+    m["weeklyLineupStatus"]=(
+        "All 138 FBS programs receive six roster-matched, source-graded modeled role slots. "
+        "Projected or usage-estimated identity is NOT confirmation of a game-day starter. "
+        "The dated weekly and personnel audit artifacts carry the exact counts."
+    )
+    m["refreshWorkflowUrl"]="https://github.com/jviola1019/hypothetical_cfb/actions/workflows/refresh-season-data.yml"
+    m.pop("refreshWorkflowRunUrl",None)
     m["sourceRefreshStatus"]=(
         f"Checked-in 2026 source files: {n} FBS rosters, {r['totalPlayers']} roster-listed names "
         f"({w} supplemental school snapshots, {n-w} CFBD schools). "

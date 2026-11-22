@@ -166,6 +166,7 @@ jobs:
       - name: Unit and ingestion tests
         run: |
           npm test
+          npm run audit:data
           python -m unittest discover -s tests -p 'test_*.py'
           python - <<'PY'
           import json
