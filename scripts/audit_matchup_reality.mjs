@@ -21,7 +21,7 @@ for(const year of [2026]){installSeasonSnapshot(read('public/data/season-'+year+
 installWeeklyLineup(read('public/data/weekly-lineups-2026.json'));
 installResearchSnapshot(read('public/data/research-2026.json'));
 for(const id of new Set(catalog.flat())) {
- try{installPlayerEvidence(read('public/data/players-2026/'+id+'.json'))}catch(e){if(e.code!=='ENOENT')throw e}
+ try{installPlayerEvidence(read('public/data/players-2026/'+id+'.json'))}catch(e){if(e.code!=='ENOENT')console.error('NON-CONFORMING PLAYER ARTIFACT',id,e.message)}
 }
 const n=Number(process.env.MATCHUP_RUNS||300);
 if(!Number.isSafeInteger(n)||n<100||n>1000)throw Error('Unsupported sample count');
