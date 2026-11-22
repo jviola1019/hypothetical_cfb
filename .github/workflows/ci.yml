@@ -5,6 +5,29 @@ on:
 permissions:
   contents: read
 jobs:
+  matchup-diagnostics:
+    name: Baseline matchup + 2026 roster/player reality audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Play neutral/strong-side/underdog-side fixtures using dated 2026 observations
+        env:
+          MATCHUP_RUNS: '300'
+        run: node scripts/audit_matchup_reality.mjs /tmp/matchup-audit-2026.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matchup-reality-2026
+          path: /tmp/matchup-audit-2026.json
+          if-no-files-found: ignore
+          retention-days: 14
+
   test:
     runs-on: ubuntu-latest
     steps:

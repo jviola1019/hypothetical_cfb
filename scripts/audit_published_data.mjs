@@ -51,6 +51,21 @@ assert.equal(personnel.summary.checkedRoleSlots,828);
 assert.equal(personnel.pass,true);
 assert.equal(personnel.summary.allIndependentlyVerifiedStarters,false);
 assert.equal(weekly.generatedOn,personnel.generatedOn);
+const curated=JSON.parse(readFileSync(new URL('../research/weekly-lineups/2026-11-21.json',import.meta.url),'utf8'));
+if(curated.weekStart===weekly.weekStart&&curated.weekEnd===weekly.weekEnd){
+ for(const e of curated.entries){
+  if(e.observedOn<weekly.weekStart||e.observedOn>weekly.generatedOn)continue;
+  const emitted=weekly.teams[e.team]?.roles?.[e.role];
+  assert.equal(emitted?.name,e.name,'Current-week curated athlete not carried into published weekly lineup: '+e.team+'/'+e.role);
+  assert.equal(emitted?.basis,e.basis,'Current-week source grade drift: '+e.team+'/'+e.role);
+ }
+ for(const injury of curated.unavailable){
+  if(injury.observedOn<weekly.weekStart||injury.observedOn>weekly.generatedOn)continue;
+  const emitted=weekly.teams[injury.team]?.unavailable?.find(x=>x.name===injury.name);
+  assert.equal(emitted?.status,injury.status,'Current-week injury report omitted or altered: '+injury.team+'/'+injury.name);
+ }
+}
+
 let basis={},roleSlots=0;
 for(const id of ids){
  const chart=weekly.teams[id];

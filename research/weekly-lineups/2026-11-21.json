@@ -9,10 +9,10 @@
       "team": "ohio-state",
       "role": "QB",
       "name": "Luke Fahey",
-      "basis": "depth-chart-projected",
+      "basis": "reported-replacement",
       "observedOn": "2026-11-21",
-      "sourceUrl": "https://whosstarting.com/team/ohio-state/",
-      "note": "Third-party QB1 projection for November 21; prior starter unavailable. The public source does not independently confirm the kickoff starter."
+      "sourceUrl": "https://ohiostatebuckeyes.com/news/2026/11/21/football-buckeyes-drop-tightly-contested-game-at-nebraska",
+      "note": "Nov 21 Nebraska: official Ohio State postgame account confirms Luke Fahey played QB and completed touchdown passes to Jeremiah Smith in Julian Sayin's absence; this is a dated past-game replacement, not next-game certainty."
     },
     {
       "team": "ohio-state",
@@ -65,8 +65,8 @@
       "name": "Faizon Brandon",
       "basis": "reported-replacement",
       "observedOn": "2026-11-21",
-      "sourceUrl": "https://www.saturdaydownsouth.com/news/college-football/tennessee-makes-decision-on-starting-quarterback-vs-lsu/",
-      "note": "Reported game-day starter vs LSU amid George MacIntyre injury."
+      "sourceUrl": "https://utsports.com/sports/football/stats/2026/lsu/boxscore/29985",
+      "note": "November 21: Brandon started vs LSU, but MacIntyre also played (21 pass attempts vs Brandon's 6). Assigning all team passing yards to Brandon is a synthetic single-QB assumption, NOT verified player output."
     },
     {
       "team": "houston",
@@ -162,10 +162,10 @@
       "team": "ole-miss",
       "role": "QB",
       "name": "Trinidad Chambliss",
-      "basis": "depth-chart-projected",
+      "basis": "depth-chart-listed",
       "observedOn": "2026-11-21",
-      "sourceUrl": "https://whosstarting.com/team/ole-miss/",
-      "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+      "sourceUrl": "https://olemisssports.com/news/2026/11/21/football-potgame-notes-vs-wofford",
+      "note": "Official Ole Miss Nov 21 Wofford postgame notes state Trinidad Chambliss made his 24th start. This confirms that game only."
     },
     {
       "team": "ole-miss",
@@ -247,6 +247,15 @@
       "observedOn": "2026-11-21",
       "sourceUrl": "https://whosstarting.com/team/tennessee/",
       "note": "Third-party 2026 depth-chart projection; not confirmed kickoff start or injury clearance."
+    },
+    {
+      "team": "oregon-state",
+      "role": "QB",
+      "name": "Maalik Murphy",
+      "basis": "depth-chart-projected",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://osubeavers.com/game-center/22719",
+      "note": "Nov 21 Utah State official game-center and Pac-12 updates show Murphy replacing Braden Atkinson, who missed a second game with hand injury. Replacement role is game-specific; do not claim a subsequent kickoff starter."
     }
   ],
   "unavailable": [
@@ -289,6 +298,14 @@
       "observedOn": "2026-11-21",
       "sourceUrl": "https://theprecedentmedia.com/the-precedent-daily-2026-11-21/",
       "note": "Dated game-week report; expires after this week."
+    },
+    {
+      "team": "oregon-state",
+      "name": "Braden Atkinson",
+      "status": "out",
+      "observedOn": "2026-11-21",
+      "sourceUrl": "https://sports.yahoo.com/articles/hand-injury-keeps-atkinson-sidelined-183912374.html",
+      "note": "Published Nov 19: hand injury ruled Atkinson out of Nov 21 Utah State game. Expires after that week, not a next-game prognosis."
     }
   ]
 }

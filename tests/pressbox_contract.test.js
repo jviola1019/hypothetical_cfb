@@ -51,8 +51,9 @@ test('three-tab navigation, reduced motion, visible focus, and data provenance r
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
  assert.match(css,/:focus-visible/);
  assert.match(css,/--night:#080c0b/);
- assert.match(app,/Hypothetical • uncalibrated/);
+ assert.match(app,/Hypothetical · uncalibrated/);
+ assert.match(app,/Elo-guided balance · synthetic/);
  assert.match(app,/2026 is not pristine holdout data/);
- assert.match(app,/Missing games and nonparticipation are not modeled as zeros/);
+ assert.match(app,/Missing games and nonparticipation are NOT zero-filled/);
  assert.match(app,/Official CFP bracket geometry/);
 });
