@@ -22,3 +22,85 @@ jobs:
       - name: Strict real-data validation for all 138 FBS role assignments
         run: python scripts/audit_all_fbs_roles.py --roster public/data/rosters-2026.json --weekly public/data/weekly-lineups-2026.json --players public/data/players-2026 --out /tmp/personnel-audit-2026.json --strict
       - run: npm run build
+
+  real-browser:
+    name: Hosted-module Chromium & WebKit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install exact browser driver and real browser engines
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Start actual local HTTP site with ES modules
+        run: |
+          python -m http.server 4173 --bind 127.0.0.1 >/tmp/gridiron-http.log 2>&1 &
+          for i in $(seq 1 25); do curl -fsS http://127.0.0.1:4173/index.html >/dev/null && break || sleep 1; done
+          curl -fsS http://127.0.0.1:4173/index.html >/dev/null
+      - name: Run actual Web Worker and mobile/desktop interaction checks
+        run: python tests/live_browser.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gridiron-real-browser-screenshots
+          path: /tmp/gridiron-browser
+          if-no-files-found: ignore
+          retention-days: 7
+
+  temporal-backtest:
+    name: Pregame time-split replay backtest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve published completed-game source schedules
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gridiron-temporal
+          for year in 2023 2024 2025 2026; do
+            curl --fail --location --retry 3 --max-time 90 --proto '=https' --tlsv1.2 \
+              "https://raw.githubusercontent.com/sportsdataverse/cfbfastR-data/main/schedules/csv/cfb_schedules_${year}.csv" \
+              -o "/tmp/gridiron-temporal/schedule-${year}.csv"
+          done
+      - name: Derive only features observed before each kickoff
+        run: |
+          python3 scripts/export_pregame_sim_fixtures.py \
+            --schedule-2023 /tmp/gridiron-temporal/schedule-2023.csv \
+            --schedule-2024 /tmp/gridiron-temporal/schedule-2024.csv \
+            --schedule-2025 /tmp/gridiron-temporal/schedule-2025.csv \
+            --schedule-2026 /tmp/gridiron-temporal/schedule-2026.csv \
+            --out /tmp/gridiron-temporal/pregame.json
+      - name: Fit 2024, validate 2025, audit 2026 actual JavaScript replay generator
+        run: node scripts/evaluate_playable_generator.mjs /tmp/gridiron-temporal/pregame.json /tmp/gridiron-temporal/calibration.json
+      - name: Guard against nonsensical or fabricated evaluation counts
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/gridiron-temporal/calibration.json'))
+          assert d['fitGames']>=400
+          assert d['validation2025']['n']>=400 and d['evaluation2026']['n']>=300
+          assert d['base'] in [23,25,27,29,31,33]
+          assert d['volatility'] in [0,.15,.3,.45]
+          assert d['marginVolatility'] in [0,.15,.3]
+          assert d['modelVersion']=='temporal-drive-intensity-v2'
+          if d['enabled']:
+              assert d['validation2025']['brier']<=.25
+              assert d['validation2025']['scoreMAE']<=d['validation2025']['flatScoreMAE']
+              assert d['validation2025']['coverage80Margin']>=.74
+              assert d['validation2025']['coverage80Total']>=.74
+          print('Temporal replay acceptance gate:',d['enabled'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: temporal-replay-validation
+          path: /tmp/gridiron-temporal/calibration.json
+          retention-days: 7

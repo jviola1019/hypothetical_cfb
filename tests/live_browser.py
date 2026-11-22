@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+"""Real local HTTP ES modules + real browser Web Workers, not injected source stubs.
+
+Chromium and WebKit desktop/mobile viewports. WebKit on Linux approximates
+the rendering engine but is NOT physical iPhone Safari certification.
+"""
+from __future__ import annotations
+import json
+import os
+from pathlib import Path
+from playwright.sync_api import sync_playwright
+
+URL=os.environ.get("GRIDIRON_TEST_URL","http://127.0.0.1:4173/")
+OUT=Path(os.environ.get("GRIDIRON_SCREENSHOTS","/tmp/gridiron-browser"))
+OUT.mkdir(parents=True,exist_ok=True)
+
+def check(browser_type,engine,width):
+    args={"headless":True}
+    if engine=="chromium":
+        args["args"]=["--no-sandbox"]
+    browser=browser_type.launch(**args)
+    try:
+        ctx=browser.new_context(viewport={"width":width,"height":852},
+            device_scale_factor=2 if width<500 else 1,reduced_motion="reduce")
+        # Keep real Worker; count its creation without replacing or emulating work.
+        ctx.add_init_script("""(() => {
+            const NativeWorker = window.Worker;
+            window.__realWorkersCreated = 0;
+            if (NativeWorker) window.Worker = class extends NativeWorker {
+                constructor(...a) { super(...a); window.__realWorkersCreated++; }
+            };
+        })()""")
+        page=ctx.new_page()
+        exceptions=[]
+        page.on("pageerror",lambda e:exceptions.append(str(e)))
+        response=page.goto(URL,wait_until="domcontentloaded",timeout=30000)
+        assert response and response.ok, "Local deployed-style module navigation failed"
+        page.locator(".fixture-score-number").wait_for(timeout=30000)
+        page.locator(".market-ledger").wait_for(timeout=60000)
+        # The fallback computes 450; a real 850-run Worker is the only supported
+        # way to reach 850 on the game screen.
+        text=page.locator(".market-ledger").inner_text()
+        assert "850" in text, f"{engine} {width}: expected real Worker 850-run forecast, got {text[:400]}"
+        assert page.evaluate("window.__realWorkersCreated")>=1, "Browser Web Worker was not created"
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Mobile document overflow"
+        page.screenshot(path=str(OUT/f"{engine}-{width}-game.png"),full_page=True,animations="disabled")
+        page.locator('[data-action="tab-playoff"]').click()
+        page.locator('[data-field="format"]').select_option("fullFbs138")
+        page.locator('[data-action="playoff-run"]').click(timeout=30000)
+        page.locator(".champion-banner").wait_for(timeout=30000)
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Playoff document overflow"
+        page.screenshot(path=str(OUT/f"{engine}-{width}-playoffs.png"),full_page=True,animations="disabled")
+        page.locator('[data-action="tab-research"]').click()
+        page.locator(".audit-section").first.wait_for(timeout=30000)
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Research document overflow"
+        page.screenshot(path=str(OUT/f"{engine}-{width}-research.png"),full_page=True,animations="disabled")
+        assert not exceptions,f"{engine} JS exceptions: {exceptions}"
+        print(json.dumps({"engine":engine,"width":width,"realWorker":True,"forecastRuns":850,
+                          "fbs138Bracket":True,"screenshots":3,"javascriptErrors":0}))
+        ctx.close()
+    finally:
+        browser.close()
+
+if __name__=="__main__":
+    with sync_playwright() as pw:
+        for engine in ("chromium","webkit"):
+            for width in (390,1370):
+                check(getattr(pw,engine),engine,width)

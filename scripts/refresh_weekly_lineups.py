@@ -31,7 +31,7 @@ def build(roster, summaries, curated, today):
         if not e.get('sourceUrl','').startswith('https://'):raise ValueError('Bad evidence link')
         if e.get('observedOn','')>=begin_s and e.get('observedOn','')<=today.isoformat():
             cur[(e['team'],e['role'])]=e
-        elif e.get('basis')=='reported-replacement' and e.get('observedOn','')<begin_s and (today-dt.date.fromisoformat(e['observedOn'])).days<=21:
+        elif e.get('role')=='QB' and e.get('basis') in ('reported-replacement','depth-chart-projected') and e.get('observedOn','')<begin_s and (today-dt.date.fromisoformat(e['observedOn'])).days<=21:
             # Carry forward the last documented replacement as a *candidate*,
             # never as current-week verified starter. This prevents blindly
             # restoring an earlier, injured season-volume QB.
@@ -55,7 +55,7 @@ def build(roster, summaries, curated, today):
                 roles[role]={k:e[k] for k in ['name','basis','observedOn','sourceUrl','note']}
                 if (team,role) in stale:
                     roles[role]['basis']='last-reported-replacement'
-                    roles[role]['note']='Last documented 2026 role; NOT verified for the current week. Review a fresh depth chart before relying on this athlete.'
+                    roles[role]['note']='Last documented or projected 2026 quarterback candidate; NOT verified for this week. Refresh the source before trusting a starting assignment.'
                 already.add(nm);continue
             candidates=[p for p in valid if p.get('stat')==stat and key(p['name']) not in already and key(p['name']) not in bad and names[key(p['name'])]['position'] in ({'K','PK'} if position=='K' else ({'RB','HB','FB'} if position=='RB' else {position}))]
             candidates.sort(key=lambda p:(-usage_score(p),-p.get('n',0),p['name']))

@@ -45,6 +45,7 @@ export function evaluatedFbsRankings() {
     model:report.modelVersion, covered:schools.length};
 }
 
+export const researchSnapshot=()=>report?structuredClone(report):null;
 export const researchStatus=()=>report?{available:true,version:report.modelVersion,asOf:report.asOf,lastScoredGame:report.lastScoredGame,
   holdoutGames:report.holdout.evaluatedGames,trainingGames:report.training.games}: {available:false};
 export function evaluatedMatchup(a,b,venue){

@@ -28,8 +28,10 @@ class WeeklyTest(unittest.TestCase):
 
  def test_production_priority_not_just_games_recorded(self):
   self.assertGreater(usage_score({'n':7,'mean':132}),usage_score({'n':10,'mean':34}))
- def test_stale_projection_expires_to_2026_usage(self):
+ def test_stale_qb_projection_carries_only_as_unverified_candidate(self):
   projected={'entries':[{**CURATED['entries'][0],'basis':'depth-chart-projected'}], 'unavailable':[]}
   result=build(ROSTER,SUMMARIES,projected,dt.date(2026,11,30))
-  self.assertEqual(result['teams']['ohio-state']['roles']['QB']['basis'],'usage-projected')
+  self.assertEqual(result['teams']['ohio-state']['roles']['QB']['basis'],'last-reported-replacement')
+  self.assertEqual(result['teams']['ohio-state']['roles']['QB']['name'],'Luke Fahey')
+  self.assertNotIn('depth-chart-listed',result['teams']['ohio-state']['roles']['QB']['basis'])
 if __name__=='__main__':unittest.main()
