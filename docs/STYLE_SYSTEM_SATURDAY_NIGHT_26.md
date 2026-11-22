@@ -34,3 +34,15 @@ This audit verifies **internal data integrity and representation of committed re
 Primary dataset: https://github.com/sportsdataverse/cfbfastR-data
 Player roster supplement: https://github.com/fakhar-ud-din/ncaapyscraper
 Statistical report: docs/REPLAY_VALIDATION_2026-11-22.md
+
+## Three additional independently inspected final-score checks
+
+The 2026 upstream schedule file was directly compared against the university-published records for three fixtures selected **before** inserting the automated regression. The data matched exactly:
+
+| 2026 game | Official final | Upstream game ID | University source |
+|---|---|---|---|
+| November 21, Nebraska hosts Ohio State | Nebraska 31, Ohio State 28 | 401858531 | https://ohiostatebuckeyes.com/sports/football/stats/2026/nebraska/boxscore/22224 |
+| November 21, Tennessee hosts LSU | Tennessee 27, LSU 13 | 401856754 | https://utsports.com/sports/football/stats/2026/lsu/boxscore/29985 |
+| September 12, Oregon State hosts Texas Tech | Oregon State 24, Texas Tech 35 | 401856783 | https://osubeavers.com/news/2026/9/12/football-beavs-battle-legree-shines-in-near-record-breaking-day |
+
+The verifier runs during the actual historical source retrieval, so a changed or contradictory score blocks publication rather than only raising a passive notice. **This is three independent spot checks, not verification of all 803 scored games, full rosters or kickoff starters.** The complete game/roster data audit remains source-internal and cannot provide full independent authentication.

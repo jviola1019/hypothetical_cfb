@@ -72,6 +72,8 @@ jobs:
               "https://raw.githubusercontent.com/sportsdataverse/cfbfastR-data/main/schedules/csv/cfb_schedules_${year}.csv" \
               -o "/tmp/gridiron-temporal/schedule-${year}.csv"
           done
+      - name: Match three independently inspected official 2026 box scores
+        run: python scripts/verify_official_score_fixtures.py --schedule /tmp/gridiron-temporal/schedule-2026.csv --fixtures research/official_score_fixtures_2026.json
       - name: Derive only features observed before each kickoff
         run: |
           python3 scripts/export_pregame_sim_fixtures.py \
