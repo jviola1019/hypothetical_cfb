@@ -14,6 +14,8 @@ on:
       - 'scripts/evaluate_multiyear.py'
       - 'scripts/evaluate_score_distribution.py'
       - 'scripts/player_event_model.py'
+      - 'scripts/verify_official_score_fixtures.py'
+      - 'research/official_score_fixtures_2026.json'
       - 'scripts/export_pregame_sim_fixtures.py'
       - 'scripts/evaluate_playable_generator.mjs'
       - 'src/playableCalibration.js'
@@ -49,6 +51,8 @@ jobs:
               --csv "/tmp/gridiron-ingest/schedules-${year}.csv" \
               --out "public/data/season-${year}.json"
           done
+      - name: Compare raw 2026 scores to independent official university game reports
+        run: python scripts/verify_official_score_fixtures.py --schedule /tmp/gridiron-ingest/schedules-2026.csv --fixtures research/official_score_fixtures_2026.json
       - name: Fetch 2026 roster snapshots
         shell: bash
         run: |
@@ -166,6 +170,7 @@ jobs:
       - name: Unit and ingestion tests
         run: |
           npm test
+          npm run audit:data
           python -m unittest discover -s tests -p 'test_*.py'
           python - <<'PY'
           import json

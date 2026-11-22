@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-const css=readFileSync(new URL('../src/refinements.css',import.meta.url),'utf8');
+const css=readFileSync(new URL('../src/stadium-edition.css',import.meta.url),'utf8');
 test('game result precedes provenance, and optional chart research follows core reporting',()=>{
  const page=app.slice(app.indexOf('function gamePage()'),app.indexOf('function tournamentOverview()'));
  assert.ok(page.indexOf('matchupPicker()}')<page.indexOf('game-canvas'));
@@ -20,7 +20,7 @@ test('keyboard access and report focus are explicit',()=>{
  assert.ok(app.includes('current?.dataset?.field'));
  assert.ok(app.includes('next?.focus({preventScroll:true})'));
  assert.ok(app.includes("root.querySelector('#game-inspector')?.focus({preventScroll:true})"));
- assert.ok(html.includes('src/refinements.css'));
+ assert.ok(html.includes('src/stadium-edition.css'));
  assert.ok(css.includes('.skip-link:focus'));
  assert.ok(css.includes('.table-scroll:focus-visible'));
 });

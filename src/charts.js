@@ -1,7 +1,7 @@
 /* Presentation-only SVGs: marks represent input observations or generated game records. */
 const num=x=>Number.isFinite(+x)?+x:0;
 const n1=x=>num(x).toFixed(1);
-const C={ink:'#173452',steel:'#607c9a',jade:'#0d76bf',mint:'#a95d0c',red:'#dc5f35',cream:'#ffffff',grid:'#d7e2ee'};
+const C={ink:'#1a242d',steel:'#667580',jade:'#617c90',mint:'#b8452b',red:'#e35a34',cream:'#ffffff',grid:'#d2d9df'};
 const esc=s=>String(s).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
 const line=(x1,y1,x2,y2,cls='gridline')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${cls}"/>`;
 const axis=(x,y,value,anchor='middle')=>`<text x="${x}" y="${y}" text-anchor="${anchor}" class="svg-text">${esc(value)}</text>`;

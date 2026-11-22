@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "season": 2026,
+  "classification": "independently-inspected-official-final-score-spot-checks-not-a-complete-2026-audit",
+  "inspectedOn": "2026-11-22",
+  "fixtures": [
+    {
+      "gameId": "401858531",
+      "date": "2026-11-21",
+      "home": "Nebraska",
+      "away": "Ohio State",
+      "homePoints": 31,
+      "awayPoints": 28,
+      "officialBoxscore": "https://ohiostatebuckeyes.com/sports/football/stats/2026/nebraska/boxscore/22224"
+    },
+    {
+      "gameId": "401856754",
+      "date": "2026-11-21",
+      "home": "Tennessee",
+      "away": "LSU",
+      "homePoints": 27,
+      "awayPoints": 13,
+      "officialBoxscore": "https://utsports.com/sports/football/stats/2026/lsu/boxscore/29985"
+    },
+    {
+      "gameId": "401856783",
+      "date": "2026-09-12",
+      "home": "Oregon State",
+      "away": "Texas Tech",
+      "homePoints": 24,
+      "awayPoints": 35,
+      "officialBoxscore": "https://osubeavers.com/news/2026/9/12/football-beavs-battle-legree-shines-in-near-record-breaking-day"
+    }
+  ]
+}
