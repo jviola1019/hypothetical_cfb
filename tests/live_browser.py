@@ -73,7 +73,11 @@ def check(browser_type,engine,width):
         page.locator('[data-action="tab-research"]').click()
         page.locator(".audit-section").first.wait_for(timeout=30000)
         displayed=page.locator('.data-grid article strong').all_text_contents()
-        assert displayed[:3]==['138','803','15,187'], f"Research source labels mismatch committed data: {displayed}"
+        source_root=Path(__file__).resolve().parents[1]
+        season=json.loads((source_root/'public/data/season-2026.json').read_text())
+        roster=json.loads((source_root/'public/data/rosters-2026.json').read_text())
+        expected=[str(season['allFbsSchoolsIdentified']),f"{season['gamesWithScores']:,}",f"{roster['totalPlayers']:,}"]
+        assert displayed[:3]==expected, f"Research source labels mismatch committed data: expected {expected}, got {displayed}"
 
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Research document overflow"
         page.screenshot(path=str(OUT/f"{engine}-{width}-research.png"),full_page=True,animations="disabled")
