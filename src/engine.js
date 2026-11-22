@@ -111,9 +111,19 @@ export function namedPropSummaries(games,config){
       const player=namedPlayer(id,role,season);if(!player)continue;
       const values=games.map(g=>g.teams[teamIndex].players[role][stat]||0).sort((a,b)=>a-b);
       const n=values.length;if(!n)continue;
-      out.push({id:id+'-'+role+'-'+stat,team:id,role,fullName:player.name,stat,unit,line,
+      const matched=player.stat===(stat==='rushYards'?'rushingYards':stat)&&
+        player.eventGames>=4&&Number.isFinite(player.observedMean);
+      // Historical conditional event-game means are a NON-market reference,
+      // not a posterior next-game expectation or sportsbook line.
+      const observedMean=matched?player.observedMean:null;
+      const referenceLine=matched&&observedMean>=10?
+        Math.max(.5,Math.min(999.5,Math.floor(observedMean)+.5)):line;
+      out.push({id:id+'-'+role+'-'+stat,team:id,role,fullName:player.name,stat,unit,line:referenceLine,
+       lineBasis:matched&&observedMean>=10?'observed-2026-recorded-event-mean':'generic-illustrative',
        mean:values.reduce((a,b)=>a+b,0)/n,median:values[Math.floor(n/2)],p10:values[Math.floor((n-1)*.1)],p90:values[Math.floor((n-1)*.9)],
-       above:values.filter(v=>v>line).length/n,n,values,seasonObservedMean:(player.stat===(stat==='rushYards'?'rushingYards':stat)&&player.observedMean!=null)?player.observedMean:null,
+       above:values.filter(v=>v>referenceLine).length/n,n,values,seasonObservedMean:observedMean,
+       observedEventGames:matched?player.eventGames:0,
+       roleVerified:player.roleVerified,roleBasis:player.selectionBasis,
        observedStat:stat});
     }
   }
