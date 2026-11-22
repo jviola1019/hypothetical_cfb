@@ -145,6 +145,8 @@ jobs:
             --curated research/weekly-lineups/2026-11-21.json \
             --date "$(date -u +%F)" \
             --out public/data/weekly-lineups-2026.json
+      - name: Synchronize release provenance after refreshing source snapshots
+        run: python3 scripts/sync_data_manifest.py
       - name: Unit and ingestion tests
         run: |
           npm test
@@ -182,8 +184,6 @@ jobs:
           print('Evaluated 2026 event-conditioned athlete samples:',player_model['model']['n'])
           print('Validated score intervals and athlete conditional event model; neither is a possession-calibrated full-game prop model')
           PY
-      - name: Synchronize release provenance after refreshing source snapshots
-        run: python3 scripts/sync_data_manifest.py
       - name: Commit validated observed data only
         shell: bash
         run: |
