@@ -10,14 +10,18 @@ We ran **16 pairs across three venue settings, 300 seeded games per scenario = 1
 
 | Matchup and site | Legacy replay A win | New 2026 Elo-guided replay A win | Separate 2026 Elo reference |
 |---|---:|---:|---:|
-| Oklahoma vs Tulsa · neutral | 40.7% | 64.0% | 68.7% |
-| Georgia vs Kent State · neutral | 89.0% | 91.7% | 89.6% |
-| Ohio State vs Akron · neutral | 78.3% | 92.3% | 85.7% |
-| Oregon vs Nevada · neutral | 65.7% | 91.3% | 82.4% |
-| Virginia Tech vs Memphis · neutral | 47.7% | 24.3% | 30.5% |
-| Clemson vs East Carolina · neutral | 49.7% | 44.0% | 43.2% |
+| Oklahoma vs Tulsa · neutral | 40.7% | 61.3% | 68.7% |
+| Georgia vs Kent State · neutral | 89.0% | 94.3% | 89.6% |
+| Ohio State vs Akron · neutral | 78.3% | 91.7% | 85.7% |
+| Oregon vs Nevada · neutral | 65.7% | 87.3% | 82.4% |
+| Virginia Tech vs Memphis · neutral | 47.7% | 31.0% | 30.5% |
+| Clemson vs East Carolina · neutral | 49.7% | 45.3% | 43.2% |
 
-Across 48 cases, mean absolute internal model-reference disagreement fell from **9.43 to 5.24 percentage points**; max from **37.30 to 10.54 points**. The remaining gaps, including an overconfident Oregon/Nevada fictional replay, deserve further prospective validation. These numbers are **not** independent win-probability calibration or sportsbook predictions.
+Across 48 cases, mean absolute internal model-reference disagreement fell from **9.43 to 4.80 percentage points**; max from **37.30 to 10.20 points**. The remaining gaps, including sometimes overconfident large favorite simulations, deserve further prospective validation. These numbers are **not** independent win-probability calibration or sportsbook predictions.
+
+### Observed non-P4 results are not a model adjustment factor
+
+An additional descriptive count from [SportsDataverse 2025/2026 completed FBS schedules](https://github.com/sportsdataverse/cfbfastR-data) found that SEC/Big Ten/Big 12/ACC teams played 107 games against American, Mountain West, MAC, Conference USA, Sun Belt and Pac-12 opponents in 2025, with **15 non-P4 winners (14.0%)**. Through November 21, 2026 the comparable record was **3 non-P4 winners in 76 matchups (3.9%)**. Independents such as Notre Dame were excluded rather than falsely treated as G5. The 2026 set was heavily P4-hosted (**69 of 76 matchups**), and matchups are not random; the two years should not be combined into a blanket P4 adjustment. This is descriptive external-data cross-checking, not a new untouched forecast holdout.
 
 The deterministic 2026 game-strength adapter blends opponent-adjusted Elo strength at 82% and raw team offense-vs-defense log strength at 18%, then conserves a geometric game scoring environment. The coefficients are a transparent game-design heuristic **not fitted to a sealed new season**. It never introduces a blanket P4-vs-G5 indicator. The independent historical *pregameScoring* research engine remains unchanged, and its historical coverage gate still blocks activation.
 
@@ -29,13 +33,13 @@ Illustrative neutral-matchup diagnostics from the 300-run research-conditioned r
 
 | 2026 athlete | Position | Legacy simulated average | Revised simulated average | Observed 2026 per *recorded-stat event game* |
 |---|---|---:|---:|---:|
-| Luke Fahey (Ohio State) | QB passing yards | 363.5 | 258.1 | 220.8 |
-| Gunner Stockton (Georgia) | QB passing yards | 373.8 | 233.3 | 212.7 |
-| Trinidad Chambliss (Ole Miss) | QB passing yards | 370.3 | 273.9 | 262.5 |
-| DeSean Bishop (Tennessee) | RB rushing yards | source-dependent | 116.5 | 112.0 |
-| Jeremiah Smith (Ohio State) | WR receiving yards | source-dependent | 99.7 before WR-share refinement | 135.6 |
+| Luke Fahey (Ohio State) | QB passing yards | 363.5 | 261.3 | 220.8 |
+| Gunner Stockton (Georgia) | QB passing yards | 373.8 | 231.8 | 212.7 |
+| Trinidad Chambliss (Ole Miss) | QB passing yards | 370.3 | 273.2 | 262.5 |
+| DeSean Bishop (Tennessee) | RB rushing yards | source-dependent | 115.9 | 112.0 |
+| Jeremiah Smith (Ohio State) | WR receiving yards | source-dependent | 128.4 after WR-share refinement | 135.6 |
 
-The receiving opportunity model has since been refined to use a shrinkage-weighted 2026 QB game mean rather than a fixed 330-yards denominator; rerun benchmark in CI to measure this separately. **These means are conditional on a player having a recorded event. Absences or unknown snap denominators were not zero-filled; comparing them with unconditional synthetic games is exploratory.** The player sheet explicitly reports each difference, uses an observed-mean derived *illustrative reference threshold* when supported, and warns about large mismatches.
+The receiving opportunity model uses a shrinkage-weighted 2026 QB game mean rather than an inflated fixed 330-yard denominator. Source-event means are not guaranteed playing-time-adjusted targets, and the model still lacks full targets/snaps denominators. **These means are conditional on a player having a recorded event. Absences or unknown snap denominators were not zero-filled; comparing them with unconditional synthetic games is exploratory.** The player sheet explicitly reports each difference, uses an observed-mean derived *illustrative reference threshold* when supported, and warns about large mismatches.
 
 The old JSON validator silently dropped six schools' entire player-event documents because a runner's 10th-percentile net rushing yards can legitimately be negative. It now allows bounded negatives **only for rushing** and a CI test loads all 138 school documents through the same validator used by the browser.
 
