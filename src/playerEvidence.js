@@ -12,7 +12,8 @@ function checkPlayer(p){
  !Number.isInteger(p.eventGames)||p.eventGames<3||p.eventGames>18||
  !Number.isInteger(p.n)||p.n<3||p.n>p.eventGames||
  !Number.isInteger(p.hit)||p.hit<0||p.hit>p.n||
- ![p.mean,p.median,p.p10,p.p90,p.line].every(x=>Number.isFinite(x)&&x>=0&&x<=1200)||
+ ![p.mean,p.median,p.p10,p.p90].every(x=>Number.isFinite(x)&&x>=(p.stat==='rushingYards'?-150:0)&&x<=1200)||
+ !Number.isFinite(p.line)||p.line<0||p.line>1200||
  p.p10>p.median||p.median>p.p90||p.mean>p.p90+200)return false;
  if(p.eventModel!==undefined){
   const m=p.eventModel;
