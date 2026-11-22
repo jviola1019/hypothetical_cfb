@@ -9,10 +9,10 @@
       "team": "ohio-state",
       "role": "QB",
       "name": "Luke Fahey",
-      "basis": "reported-replacement",
+      "basis": "depth-chart-projected",
       "observedOn": "2026-11-21",
       "sourceUrl": "https://whosstarting.com/team/ohio-state/",
-      "note": "Projected QB1 for Ohio State vs Nebraska on November 21; previous starter injured. Projection, not a guaranteed pre-kickoff assignment."
+      "note": "Third-party QB1 projection for November 21; prior starter unavailable. The public source does not independently confirm the kickoff starter."
     },
     {
       "team": "ohio-state",
@@ -81,10 +81,10 @@
       "team": "tcu",
       "role": "QB",
       "name": "Adam Schobel",
-      "basis": "reported-replacement",
+      "basis": "depth-chart-projected",
       "observedOn": "2026-11-21",
       "sourceUrl": "https://theprecedentmedia.com/the-precedent-daily-2026-11-21/",
-      "note": "Expected first career start vs Utah; Jaden Craig doubtful; not post-kickoff confirmed."
+      "note": "Pregame expectation that Schobel would start November 21, not an independently confirmed kickoff starter."
     },
     {
       "team": "alabama",

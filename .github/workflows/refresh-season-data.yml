@@ -14,6 +14,10 @@ on:
       - 'scripts/evaluate_multiyear.py'
       - 'scripts/evaluate_score_distribution.py'
       - 'scripts/player_event_model.py'
+      - 'scripts/export_pregame_sim_fixtures.py'
+      - 'scripts/evaluate_playable_generator.mjs'
+      - 'src/playableCalibration.js'
+      - 'src/engine.js'
   schedule:
     - cron: '27 13 * * 1'
 permissions:
@@ -116,6 +120,18 @@ jobs:
             --schedule-2025 /tmp/gridiron-ingest/schedules-2025.csv \
             --schedule-2026 /tmp/gridiron-ingest/schedules-2026.csv \
             --out public/data/score-evaluation-2026.json
+      - name: Fit and chronologically evaluate the actual replay engine (2024 fit / 2025 gate)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/export_pregame_sim_fixtures.py \
+            --schedule-2023 /tmp/gridiron-ingest/schedules-2023.csv \
+            --schedule-2024 /tmp/gridiron-ingest/schedules-2024.csv \
+            --schedule-2025 /tmp/gridiron-ingest/schedules-2025.csv \
+            --schedule-2026 /tmp/gridiron-ingest/schedules-2026.csv \
+            --out /tmp/gridiron-ingest/pregame-engine-fixtures.json
+          node scripts/evaluate_playable_generator.mjs \
+            /tmp/gridiron-ingest/pregame-engine-fixtures.json public/data/playable-calibration-2026.json
       - name: Ingest play-level 2025 and 2026 player game events
         shell: bash
         run: |
@@ -190,7 +206,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add public/data/manifest.json public/data/season-2025.json public/data/season-2026.json \
+          git add public/data/playable-calibration-2026.json public/data/manifest.json public/data/season-2025.json public/data/season-2026.json \
                   public/data/rosters-2025.json public/data/rosters-2026.json \
                   public/data/research-2026.json public/data/model-compare-2026.json \
                   public/data/score-evaluation-2026.json public/data/player-model-evaluation-2026.json \
