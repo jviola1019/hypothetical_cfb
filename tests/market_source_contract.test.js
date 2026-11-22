@@ -13,7 +13,8 @@ test('public Game tab reports auditable exact counts instead of unlabeled sampli
 });
 test('research probability and scoring-rate point-pair arithmetic remain separate and internally exact',()=>{
  const research=app.slice(app.indexOf('function matchupForecast()'),app.indexOf('function scoreboard('));
- assert.match(research,/const scoreA=e\.expectedA,scoreB=e\.expectedB/);
+ assert.match(research,/aTenths=Math\.round\(e\.expectedA\*10\),bTenths=Math\.round\(e\.expectedB\*10\)/);
+ assert.match(research,/const displayedMargin=\(aTenths-bTenths\)\/10,displayedTotal=\(aTenths\+bTenths\)\/10/);
  assert.match(research,/e\.expectedMargin/);
  assert.match(research,/SCORE-ESTIMATE MARGIN/);
  assert.match(research,/SCORE-ESTIMATE TOTAL/);
