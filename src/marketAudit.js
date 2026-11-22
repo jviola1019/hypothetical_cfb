@@ -3,13 +3,20 @@
  * Team A spread convention: Team A covers iff (A points - B points) + spreadA > 0.
  * Half-point reference lines intentionally avoid push ambiguity with integer scores.
  */
+/** One simulation scenario, including the optional evidence-conditioned model inputs. */
+export function sameScenario(a,b){
+ if(!a||!b||['a','b','seasonA','seasonB','venue','pace','shift'].some(k=>a[k]!==b[k]))return false;
+ const p=a.pregameScoring,q=b.pregameScoring;
+ if(p===undefined&&q===undefined)return true;
+ return !!p&&!!q&&['a','b','base','volatility','marginVolatility'].every(k=>p[k]===q[k]);
+}
 const validLine=x=>typeof x==='number'&&Number.isFinite(x)&&Math.abs(x)<=1000;
 const nonnegativeInt=x=>Number.isSafeInteger(x)&&x>=0&&x<=1000;
 const num=x=>Math.round(x*10000000000)/10000000000;
 export function simulatedMarketLedger(games, options={}) {
   if(!Array.isArray(games)||games.length===0||games.length>10000) throw Error('Invalid synthetic game sample');
   const scenario=games[0]?.config;
-  if(!scenario||games.some(g=>!g?.config||['a','b','seasonA','seasonB','venue','pace','shift'].some(k=>g.config[k]!==scenario[k])))throw Error('Mixed scenario configurations in synthetic ledger');
+  if(!scenario||games.some(g=>!sameScenario(g?.config,scenario)))throw Error('Mixed scenario configurations in synthetic ledger');
   let a=0,b=0,sumMargin=0,sumTotal=0;
   for(const g of games){
     if(!g||!Array.isArray(g.final)||g.final.length!==2||!g.final.every(nonnegativeInt)||

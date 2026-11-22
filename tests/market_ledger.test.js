@@ -61,3 +61,21 @@ test('both ledgers reject different seasons or simulation regimes',async()=>{
  }
  assert.equal(simulateBatch(DEFAULT_CONFIG,50,2026).markets.n,50);
 });
+
+test('histogram and market ledgers never pool distinct evidence-conditioned scoring parameters',async()=>{
+ const {outcomeSummary}=await import('../src/engine.js');
+ const c={...DEFAULT_CONFIG,pregameScoring:{a:35,b:21,base:27,volatility:.15,marginVolatility:.3}};
+ const first=simulateGame(c,31);
+ for(const variation of [
+   {a:36,b:21,base:27,volatility:.15,marginVolatility:.3},
+   {a:35,b:21,base:27,volatility:.15,marginVolatility:0},
+   {a:35,b:21,base:27,volatility:.3,marginVolatility:.3}
+ ]){
+   const other=simulateGame({...c,pregameScoring:variation},32);
+   assert.throws(()=>outcomeSummary([first,other],c),/Mixed matchup/);
+   assert.throws(()=>simulatedMarketLedger([first,other]),/Mixed scenario/);
+ }
+ const second=simulateGame(c,33);
+ const led=simulatedMarketLedger([first,second]);
+ assert.equal(led.n,2);
+});
