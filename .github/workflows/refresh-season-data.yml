@@ -2,6 +2,7 @@ name: Refresh FBS 2023–26 forecasts, 2025–26 player events and rosters
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - '.github/workflows/refresh-season-data.yml'
       - 'scripts/import_2026_rosters.py'
