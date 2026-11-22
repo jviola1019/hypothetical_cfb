@@ -4,7 +4,11 @@ const ids=new Set(FBS_TEAMS.map(x=>x.id));
 const allowedRoles=new Set(['QB','RB','WR1','WR2','TE','K']);
 const allowedBasis=new Set(['depth-chart-listed','depth-chart-projected','reported-replacement','usage-projected','last-reported-replacement','roster-only']);
 let weekly=null;
-const dateOk=s=>typeof s==='string'&&/^20\d{2}-(0[1-9]|1[0-2])-([0-2]\d|3[01])$/.test(s)&&!Number.isNaN(Date.parse(s+'T00:00:00Z'));
+const dateOk=s=>{
+ if(typeof s!=='string'||!/^20\d{2}-(0[1-9]|1[0-2])-([0-2]\d|3[01])$/.test(s))return false;
+ const [y,m,d]=s.split('-').map(Number);
+ return new Date(Date.UTC(y,m-1,d)).toISOString().slice(0,10)===s;
+};
 export const personKey=n=>String(n||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[\u2018\u2019]/g,"'").replace(/\s+/g,' ').trim().toLowerCase();
 const goodName=n=>typeof n==='string'&&n.length>=3&&n.length<=100&&!/[<>\x00-\x1f]/.test(n);
 const goodUrl=url=>typeof url==='string'&&url.length<=450&&/^https:\/\/[^/?#\s]+\//.test(url)&&!/[<>\\]/.test(url);
@@ -41,7 +45,7 @@ export function currentLineup(team,day=new Date().toISOString().slice(0,10)){
 }
 /** Always treat an expired observed starter as an identity PRIOR, not a verified starter today. */
 export function lineupRole(team,role,day=new Date().toISOString().slice(0,10)){
- const q=currentLineup(team,day),e=q?.roles?.[role];if(!e)return null;
+ const q=currentLineup(team,day),e=q?.roles?.[role];if(!e||e.observedOn>day)return null;
  const verified=q.current&&['depth-chart-listed','reported-replacement'].includes(e.basis);
  const projected=q.current&&e.basis==='depth-chart-projected';
  return {...e,verifiedCurrent:verified,displayBasis:verified?e.basis:projected?'depth-chart-projected':(e.basis==='usage-projected'?'usage-projected':'historical-role-not-reverified'),weekStart:q.weekStart,weekEnd:q.weekEnd};
@@ -49,6 +53,6 @@ export function lineupRole(team,role,day=new Date().toISOString().slice(0,10)){
 export function lastReportedUnavailable(team,name,day=new Date().toISOString().slice(0,10)){
  const q=currentLineup(team,day);if(!q)return null;
  const e=q.unavailable.find(x=>personKey(x.name)===personKey(name));
- return e?{...e,current:q.current&&e.observedOn>=q.weekStart}:null;
+ return e?{...e,current:q.current&&e.observedOn>=q.weekStart&&e.observedOn<=day}:null;
 }
 export function weeklySummary(){return weekly?{schools:weekly.schools,weekStart:weekly.weekStart,weekEnd:weekly.weekEnd,generatedOn:weekly.generatedOn}:null;}

@@ -50,3 +50,14 @@ test('outcomeSummary refuses to merge samples from different team orders or venu
  assert.throws(()=>outcomeSummary([first,swapped],DEFAULT_CONFIG),/Mixed matchup/);
  assert.throws(()=>outcomeSummary([first,neutral],DEFAULT_CONFIG),/Mixed matchup/);
 });
+
+test('both ledgers reject different seasons or simulation regimes',async()=>{
+ const {outcomeSummary}=await import('../src/engine.js');
+ const first=simulateGame(DEFAULT_CONFIG,201);
+ for(const changes of [{seasonA:2025},{seasonB:2025},{pace:1.2},{shift:.2}]){
+   const mixed=simulateGame({...DEFAULT_CONFIG,...changes},202);
+   assert.throws(()=>outcomeSummary([first,mixed],DEFAULT_CONFIG),/Mixed matchup/);
+   assert.throws(()=>simulatedMarketLedger([first,mixed]),/Mixed scenario/);
+ }
+ assert.equal(simulateBatch(DEFAULT_CONFIG,50,2026).markets.n,50);
+});

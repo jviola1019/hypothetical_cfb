@@ -64,3 +64,16 @@ test('third-party projected starter is NOT presented as verified game-day report
  assert.equal(namedPlayer('ohio-state','QB',2026,'2026-11-21').roleVerified,false);
  installWeeklyLineup(doc);
 });
+
+test('calendar-day validation rejects normalized impossible dates',()=>{
+ for(const generatedOn of ['2026-02-29','2026-02-31','2026-04-31','2026-13-01'])
+   assert.throws(()=>installWeeklyLineup({...doc,generatedOn}),/Invalid weekly lineup header/);
+ installWeeklyLineup(doc);
+});
+test('later weekly evidence cannot appear as a historically verified starter',()=>{
+ installRosterSnapshot(roster);installWeeklyLineup(doc);
+ assert.equal(lineupRole('ohio-state','QB','2026-11-18'),null);
+ assert.equal(lastReportedUnavailable('ohio-state','Julian Sayin','2026-11-18').current,false);
+ assert.equal(namedPlayer('ohio-state','QB',2026,'2026-11-18').roleVerified,false);
+ assert.equal(lineupRole('ohio-state','QB','2026-11-21').verifiedCurrent,true);
+});

@@ -8,6 +8,8 @@ const nonnegativeInt=x=>Number.isSafeInteger(x)&&x>=0&&x<=1000;
 const num=x=>Math.round(x*10000000000)/10000000000;
 export function simulatedMarketLedger(games, options={}) {
   if(!Array.isArray(games)||games.length===0||games.length>10000) throw Error('Invalid synthetic game sample');
+  const scenario=games[0]?.config;
+  if(!scenario||games.some(g=>!g?.config||['a','b','seasonA','seasonB','venue','pace','shift'].some(k=>g.config[k]!==scenario[k])))throw Error('Mixed scenario configurations in synthetic ledger');
   let a=0,b=0,sumMargin=0,sumTotal=0;
   for(const g of games){
     if(!g||!Array.isArray(g.final)||g.final.length!==2||!g.final.every(nonnegativeInt)||

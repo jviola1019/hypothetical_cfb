@@ -1,5 +1,5 @@
 /* GRIDIRON LAB / 2026 DESIGN AUDIT — editorial refinements */
-:root{--text:#e9eee6;--sub:#c1cfc1;--faint:#a7b4a5}
+:root{--text:#183653;--sub:#506782;--faint:#667e97}
 .skip-link{position:fixed;left:14px;top:-90px;z-index:90;background:var(--lime);color:var(--night);font:700 14px var(--font);padding:12px 18px;text-decoration:none;transition:top .14s ease}
 .skip-link:focus{top:12px;outline:3px solid #f7f7ea;outline-offset:3px}
 .page-intro{background:linear-gradient(118deg,#121b16 5%,#16241b 75%,#1d2920);border-bottom:1px solid var(--rule-bright)}

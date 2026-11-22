@@ -17,6 +17,8 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: python3 -m unittest discover -s tests -p 'test_*.py'
+      - name: Check that published manifest matches checked-in source artifacts
+        run: python3 scripts/sync_data_manifest.py --check
       - name: Strict real-data validation for all 138 FBS role assignments
         run: python scripts/audit_all_fbs_roles.py --roster public/data/rosters-2026.json --weekly public/data/weekly-lineups-2026.json --players public/data/players-2026 --out /tmp/personnel-audit-2026.json --strict
       - run: npm run build
