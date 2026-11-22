@@ -63,8 +63,33 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add public/data/weekly-lineups-2026.json public/data/personnel-audit-2026.json
-          if ! git diff --cached --quiet; then
+          # Another data-refresh job can advance main after this job checked out.
+          # Never push a stale snapshot or discard a more recent 2026 roster.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git reset --hard origin/main
+            python scripts/refresh_weekly_lineups.py \
+              --roster public/data/rosters-2026.json \
+              --players public/data/players-2026 \
+              --curated research/weekly-lineups/2026-11-21.json \
+              --date "$(date -u +%F)" \
+              --out public/data/weekly-lineups-2026.json
+            python scripts/audit_all_fbs_roles.py \
+              --roster public/data/rosters-2026.json \
+              --weekly public/data/weekly-lineups-2026.json \
+              --players public/data/players-2026 \
+              --out public/data/personnel-audit-2026.json --strict
+            git add public/data/weekly-lineups-2026.json public/data/personnel-audit-2026.json
+            if git diff --cached --quiet; then
+              echo "Current upstream roles already match the source evidence"
+              exit 0
+            fi
             git commit -m 'data: reset 2026 depth-chart provenance and lineup projections for current week'
-            git push
-          fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Concurrent main update after lineup calculation; recomputing from newest source"
+            sleep "$((attempt * 2))"
+          done
+          echo 'Could not publish a consistent week-scoped role snapshot after retries' >&2
+          exit 1
