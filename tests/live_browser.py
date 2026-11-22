@@ -45,6 +45,10 @@ def check(browser_type,engine,width):
         # Verify the actual new game CSS and locally served stadium asset, rather
         # than passing on DOM-only assertions while a stylesheet 404s.
         assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(233, 233, 229)', "Old/absent site skin"
+        assert page.locator('.brand-copy').evaluate("(el) => getComputedStyle(el).flexDirection")=='column', "Wordmark/subtitle should stack without collision"
+        assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(21, 29, 38)', "Quarter table is using old olive background"
+        assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(242, 245, 247)', "Quarter scores lack readable contrast"
+
         assert "night-stadium.svg" in page.locator('.page-intro').evaluate("(el) => getComputedStyle(el).backgroundImage"), "Stadium asset not used"
         assert page.evaluate("fetch('./public/assets/night-stadium.svg').then(r => r.ok)"), "Local stadium illustration failed to load"
         # The visible score pair must reproduce the printed point total and margin.
@@ -83,5 +87,5 @@ def check(browser_type,engine,width):
 if __name__=="__main__":
     with sync_playwright() as pw:
         for engine in ("chromium","webkit"):
-            for width in (390,1370):
+            for width in (320,390,768,1370):
                 check(getattr(pw,engine),engine,width)

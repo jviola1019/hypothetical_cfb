@@ -30,9 +30,10 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,su
 .brand-mark:before{display:none}
 .brand-mark b{font:900 25px/.9 var(--display);font-style:italic;letter-spacing:-.04em;color:#fff;transform:skew(10deg)}
 .brand-copy{gap:4px}
+.brand-copy{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;min-width:0}
 .brand-copy strong{color:#fff;font:900 31px/.88 var(--display);font-style:italic;letter-spacing:-.014em}
 .brand-slash{color:var(--accent);margin:0 4px}
-.brand-copy small{color:#aab0b6;letter-spacing:.12em;font:600 9px/1.2 var(--mono)}
+.brand-copy small{display:block;white-space:nowrap;color:#aab0b6;letter-spacing:.12em;font:600 9px/1.2 var(--mono)}
 .navigation{gap:0;margin-left:auto;align-items:stretch;align-self:stretch}
 .nav-item{border:0;border-bottom:4px solid transparent;padding:0 20px;min-height:52px;font:800 15px var(--display);letter-spacing:.06em;text-transform:uppercase;color:#c2c6ca;background:transparent}
 .nav-item:hover{color:#fff;background:#1d232c}
@@ -118,6 +119,13 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,su
 .fixture-summary{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;padding:12px 22px;border-top:1px solid #34404d;background:#1b222c;color:#dce4ec;font:600 11px/1.5 var(--mono)}
 .fixture-summary b{color:#ff997f}
 .field-ruler{display:flex;justify-content:space-between;padding:6px 12px;background:#0d171a;color:#8bafaa;font:500 9px var(--mono);letter-spacing:.05em;border-top:1px solid #2b4443}
+.game-canvas>.table-scroll{margin:0;background:#151d26;border:1px solid #3a4651;border-top:0}
+.score-table{background:#151d26;color:#f0f3f6;width:100%;min-width:350px;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.score-table thead th{background:#1d2833;color:#b9c5d0!important;border-bottom:1px solid #4c5965;font:700 10px var(--mono);letter-spacing:.06em}
+.score-table tbody td,.score-table tbody th{color:#f2f5f7!important;background:#151d26;border-bottom:1px solid #394652;font:700 13px var(--mono)}
+.score-table tbody tr:hover td,.score-table tbody tr:hover th{background:#25313d}
+.score-table tbody th{font:800 17px var(--display);letter-spacing:.07em;color:#fff!important}
+.score-table tbody td:last-child strong{color:#ff8c65!important;font:900 29px var(--display)}
 .result-buttons{margin:13px 0 28px}
 .jump-link{font:700 12px var(--display);letter-spacing:.1em;color:#a83820}
 .research-snapshot{margin:22px 0 29px;border:1px solid #ccd1d6;border-top:4px solid #303c49;background:#fff;color:#161d24;box-shadow:none;padding:24px}
@@ -212,6 +220,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,su
 .bracket-seeding{background:#fff;color:#1b2630;border:1px solid #ccd2d9;border-top:4px solid #25313d;box-shadow:none}
 .seed-intro{background:#1d2630;color:#fff}
 .seed-intro h3{font:900 32px var(--display);color:#fff}
+.seed-intro .eyebrow{color:#ff9b7c!important}
 .seed-intro p{color:#d0d9e0}
 .seed-intro:after{border-color:#eb5b35}
 .seed-source-chip{border-color:#b1b7c0;color:#e1e6ea}
@@ -253,6 +262,9 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,su
 .champion-banner span{color:#ffa789;font:700 10px var(--mono)}
 .champion-banner h2{color:#fff;font:900 clamp(43px,5vw,76px)/.9 var(--display)}
 .champion-banner p{color:#d8e0e5}
+.odds-bar{background:#dae0e3}.odds-bar span{background:#e95b36}
+.inspector-view{border-color:#ec603d}
+.ranking-num{color:#5c6773}
 .data-grid article,.coverage-bars,.evaluation-bar>div{background:#fff;border:1px solid #cbd2d8;box-shadow:none;color:#182530}
 .data-grid strong,.evaluation-bar strong,.coverage-intro strong{font:900 43px/.98 var(--display);color:#17212d}
 .data-grid article>span,.coverage-intro small,.evaluation-bar span{font:700 10px var(--mono);color:#aa3e27}
@@ -326,6 +338,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,su
  .team-control{padding:14px 9px}
  .team-control small,.venue-control small{font-size:9px}
  .team-control select{font-size:clamp(19px,5vw,24px)}
+ .score-table{min-width:315px}
  .team-selector-id{width:18px;height:18px}
  .versus{font-size:15px}
  .venue-control{padding:12px 13px}
