@@ -14,13 +14,18 @@ export function receivingWeights(team,season=2026){
  const doc=getPlayerEvidence(team,season);if(!doc)return base;
  const names=['WR1','WR2','TE','RB'].map(role=>namedPlayer(team,role,season)?.name);
  const evidence=new Map(doc.players.filter(p=>p.stat==='receivingYards'&&p.n>=4).map(p=>[personKey(p.name),p]));
- // ~330 game passing yards is an explicit *allocation reference*, not a fitted
- // opponent-specific forecast. Shrink event-game estimates back to base shares.
+ // Prefer the source roster QB's 2026 recorded-stat-game production when
+ // available; a hard-coded 330-yard denominator understated exceptional WR1s.
+ // Cap high-concentration target shares and shrink toward a multi-receiver mix.
+ // This is NOT a participation-conditioned receiving-yardage model.
+ const qb=namedPlayer(team,'QB',season),qbDoc=(doc.players||[]).find(p=>
+   p.stat==='passingYards'&&p.n>=4&&personKey(p.name)===personKey(qb?.name));
+ const reference=qbDoc?Math.max(240,qbDoc.mean):285;
  const values=base.slice(0,4).map((fallback,i)=>{
   const row=evidence.get(personKey(names[i]));if(!row)return fallback;
   const strength=clamp(row.n/(row.n+3),0,.8);
-  const empirical=clamp(row.mean/330,.025,.62);
-  return clamp((1-strength)*fallback+strength*empirical,.025,.62);
+  const empirical=clamp(row.mean/reference,.025,.54);
+  return clamp((1-strength)*fallback+strength*empirical,.025,.54);
  });
  const sum=values.reduce((a,b)=>a+b,0);
  if(sum>.91){const factor=.91/sum;for(let i=0;i<values.length;i++)values[i]*=factor;}

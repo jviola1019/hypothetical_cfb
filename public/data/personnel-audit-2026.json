@@ -1,1 +1,987 @@
-{"schemaVersion":1,"season":2026,"generatedOn":"2026-11-22","classification":"modeled-role-integrity-NOT-confirmed-138-team-depth-charts","pass":true,"summary":{"schools":138,"schoolChecks":138,"checkedRoleSlots":828,"reportedGameDayStarterRoles":3,"depthChartListed":3,"depthChartProjected":20,"usageEstimated":719,"rosterOnly":83,"allIndependentlyVerifiedStarters":false},"errors":[],"teams":{"air-force":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"akron":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"alabama":{"testedRoles":6,"sourceReferenced":4,"usageEstimated":1,"rosterOnly":1,"verifiedAllStartingPositions":false},"app-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"arizona":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"arizona-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"arkansas":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"arkansas-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"army":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"auburn":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"ball-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"baylor":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"boise-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"boston-college":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"bowling-green":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"buffalo":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"byu":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"california":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"central-michigan":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"charlotte":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"cincinnati":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"clemson":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"coastal-carolina":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"colorado":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"colorado-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"delaware":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"duke":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"east-carolina":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"eastern-michigan":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"florida":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"florida-atlantic":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"florida-international":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":4,"rosterOnly":2,"verifiedAllStartingPositions":false},"florida-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"fresno-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"georgia":{"testedRoles":6,"sourceReferenced":4,"usageEstimated":1,"rosterOnly":1,"verifiedAllStartingPositions":false},"georgia-southern":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"georgia-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"georgia-tech":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"hawaii":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"houston":{"testedRoles":6,"sourceReferenced":1,"usageEstimated":5,"rosterOnly":0,"verifiedAllStartingPositions":false},"illinois":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"indiana":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"iowa":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"iowa-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"jacksonville-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"james-madison":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"kansas":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"kansas-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"kennesaw-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"kent-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"kentucky":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"liberty":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"louisiana":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":4,"rosterOnly":2,"verifiedAllStartingPositions":false},"louisiana-tech":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"louisville":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"lsu":{"testedRoles":6,"sourceReferenced":4,"usageEstimated":1,"rosterOnly":1,"verifiedAllStartingPositions":false},"marshall":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"maryland":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"massachusetts":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"memphis":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"miami":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"miami-oh":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"michigan":{"testedRoles":6,"sourceReferenced":1,"usageEstimated":5,"rosterOnly":0,"verifiedAllStartingPositions":false},"michigan-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"middle-tennessee":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":4,"rosterOnly":2,"verifiedAllStartingPositions":false},"minnesota":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"mississippi-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"missouri":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"missouri-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"navy":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"nc-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"nebraska":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"nevada":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"new-mexico":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"new-mexico-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"north-carolina":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":4,"rosterOnly":2,"verifiedAllStartingPositions":false},"north-dakota-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"north-texas":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"northern-illinois":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"northwestern":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"notre-dame":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"ohio":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"ohio-state":{"testedRoles":6,"sourceReferenced":3,"usageEstimated":2,"rosterOnly":1,"verifiedAllStartingPositions":false},"oklahoma":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"oklahoma-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"old-dominion":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"ole-miss":{"testedRoles":6,"sourceReferenced":4,"usageEstimated":2,"rosterOnly":0,"verifiedAllStartingPositions":false},"oregon":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"oregon-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"penn-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"pittsburgh":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"purdue":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"rice":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":4,"rosterOnly":2,"verifiedAllStartingPositions":false},"rutgers":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"sacramento-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"sam-houston":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"san-diego-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"san-jose-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"smu":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"south-alabama":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"south-carolina":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"south-florida":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"southern-miss":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"stanford":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"syracuse":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":4,"rosterOnly":2,"verifiedAllStartingPositions":false},"tcu":{"testedRoles":6,"sourceReferenced":1,"usageEstimated":4,"rosterOnly":1,"verifiedAllStartingPositions":false},"temple":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"tennessee":{"testedRoles":6,"sourceReferenced":4,"usageEstimated":1,"rosterOnly":1,"verifiedAllStartingPositions":false},"texas":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"texas-am":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"texas-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"texas-tech":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"toledo":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"troy":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"tulane":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"tulsa":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"uab":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"ucf":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"ucla":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"uconn":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"ul-monroe":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"unlv":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"usc":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"utah":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"utah-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"utep":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"utsa":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"vanderbilt":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"virginia":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"virginia-tech":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"wake-forest":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":4,"rosterOnly":2,"verifiedAllStartingPositions":false},"washington":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"washington-state":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"west-virginia":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"western-kentucky":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"western-michigan":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false},"wisconsin":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":6,"rosterOnly":0,"verifiedAllStartingPositions":false},"wyoming":{"testedRoles":6,"sourceReferenced":0,"usageEstimated":5,"rosterOnly":1,"verifiedAllStartingPositions":false}}}
+{
+  "schemaVersion": 1,
+  "season": 2026,
+  "generatedOn": "2026-11-22",
+  "classification": "modeled-role-integrity-NOT-confirmed-138-team-depth-charts",
+  "pass": true,
+  "summary": {
+    "schools": 138,
+    "schoolChecks": 138,
+    "checkedRoleSlots": 828,
+    "reportedGameDayStarterRoles": 4,
+    "depthChartListed": 4,
+    "depthChartProjected": 19,
+    "usageEstimated": 718,
+    "rosterOnly": 83,
+    "allIndependentlyVerifiedStarters": false
+  },
+  "errors": [],
+  "teams": {
+    "air-force": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "akron": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "alabama": {
+      "testedRoles": 6,
+      "sourceReferenced": 4,
+      "usageEstimated": 1,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "app-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "arizona": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "arizona-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "arkansas": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "arkansas-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "army": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "auburn": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "ball-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "baylor": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "boise-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "boston-college": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "bowling-green": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "buffalo": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "byu": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "california": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "central-michigan": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "charlotte": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "cincinnati": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "clemson": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "coastal-carolina": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "colorado": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "colorado-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "delaware": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "duke": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "east-carolina": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "eastern-michigan": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "florida": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "florida-atlantic": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "florida-international": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 4,
+      "rosterOnly": 2,
+      "verifiedAllStartingPositions": false
+    },
+    "florida-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "fresno-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "georgia": {
+      "testedRoles": 6,
+      "sourceReferenced": 4,
+      "usageEstimated": 1,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "georgia-southern": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "georgia-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "georgia-tech": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "hawaii": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "houston": {
+      "testedRoles": 6,
+      "sourceReferenced": 1,
+      "usageEstimated": 5,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "illinois": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "indiana": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "iowa": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "iowa-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "jacksonville-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "james-madison": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "kansas": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "kansas-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "kennesaw-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "kent-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "kentucky": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "liberty": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "louisiana": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 4,
+      "rosterOnly": 2,
+      "verifiedAllStartingPositions": false
+    },
+    "louisiana-tech": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "louisville": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "lsu": {
+      "testedRoles": 6,
+      "sourceReferenced": 4,
+      "usageEstimated": 1,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "marshall": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "maryland": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "massachusetts": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "memphis": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "miami": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "miami-oh": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "michigan": {
+      "testedRoles": 6,
+      "sourceReferenced": 1,
+      "usageEstimated": 5,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "michigan-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "middle-tennessee": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 4,
+      "rosterOnly": 2,
+      "verifiedAllStartingPositions": false
+    },
+    "minnesota": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "mississippi-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "missouri": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "missouri-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "navy": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "nc-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "nebraska": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "nevada": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "new-mexico": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "new-mexico-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "north-carolina": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 4,
+      "rosterOnly": 2,
+      "verifiedAllStartingPositions": false
+    },
+    "north-dakota-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "north-texas": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "northern-illinois": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "northwestern": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "notre-dame": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "ohio": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "ohio-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 3,
+      "usageEstimated": 2,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "oklahoma": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "oklahoma-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "old-dominion": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "ole-miss": {
+      "testedRoles": 6,
+      "sourceReferenced": 4,
+      "usageEstimated": 2,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "oregon": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "oregon-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 1,
+      "usageEstimated": 5,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "penn-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "pittsburgh": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "purdue": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "rice": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 4,
+      "rosterOnly": 2,
+      "verifiedAllStartingPositions": false
+    },
+    "rutgers": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "sacramento-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "sam-houston": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "san-diego-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "san-jose-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "smu": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "south-alabama": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "south-carolina": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "south-florida": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "southern-miss": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "stanford": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "syracuse": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 4,
+      "rosterOnly": 2,
+      "verifiedAllStartingPositions": false
+    },
+    "tcu": {
+      "testedRoles": 6,
+      "sourceReferenced": 1,
+      "usageEstimated": 4,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "temple": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "tennessee": {
+      "testedRoles": 6,
+      "sourceReferenced": 4,
+      "usageEstimated": 1,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "texas": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "texas-am": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "texas-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "texas-tech": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "toledo": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "troy": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "tulane": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "tulsa": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "uab": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "ucf": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "ucla": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "uconn": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "ul-monroe": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "unlv": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "usc": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "utah": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "utah-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "utep": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "utsa": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "vanderbilt": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "virginia": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "virginia-tech": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "wake-forest": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 4,
+      "rosterOnly": 2,
+      "verifiedAllStartingPositions": false
+    },
+    "washington": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "washington-state": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "west-virginia": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "western-kentucky": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "western-michigan": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    },
+    "wisconsin": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 6,
+      "rosterOnly": 0,
+      "verifiedAllStartingPositions": false
+    },
+    "wyoming": {
+      "testedRoles": 6,
+      "sourceReferenced": 0,
+      "usageEstimated": 5,
+      "rosterOnly": 1,
+      "verifiedAllStartingPositions": false
+    }
+  }
+}

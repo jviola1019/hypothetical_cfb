@@ -153,7 +153,8 @@ function personnelDesk(){
   const note=p.roleVerified?'Current-week depth-chart or published starter evidence':p.selectionBasis==='depth-chart-projected'?'Third-party projected role, not a confirmed kickoff starter':p.selectionBasis==='historical-role-not-reverified'?'Last reported role retained, verification expired':p.eventGames?'Current 2026 recorded-stat workload, not a confirmed starter':'Roster-listed position, no verified usage';
   const link=p.sourceUrl?`<a href="${esc(p.sourceUrl)}" rel="noopener noreferrer" target="_blank">Source ↗</a>`:'';
   const avg=p.observedMean!==null&&p.observedMean!==undefined?`<span class="person-avg">${fmt(p.observedMean)} ${role==='QB'?'pass':role==='RB'?'rush':'receiving'} yds per recorded-stat game</span>`:'';
-  return `<div class="personnel-row"><div><small class="person-role">${esc(role)}</small><strong>${esc(p.name)}</strong>${avg}</div><div class="person-proof"><b class="${p.roleVerified?'verified':''}">${grade}</b><small>${esc(note)}</small>${link}</div></div>`;
+  const sourceNote=e?.note?`<small class="personnel-source-note">${esc(e.note)}</small>`:'';
+  return `<div class="personnel-row"><div><small class="person-role">${esc(role)}</small><strong>${esc(p.name)}</strong>${avg}</div><div class="person-proof"><b class="${p.roleVerified?'verified':''}">${grade}</b><small>${esc(note)}</small>${sourceNote}${link}</div></div>`;
  }).filter(Boolean);
  return `<div class="personnel-team"><div class="personnel-team-title"><h3>${esc(name(id))}</h3><small>${picks.filter(x=>x.includes('SOURCE-REFERENCED')).length} roles source-referenced</small></div>${picks.join('')}</div>`;
  }).join('');
