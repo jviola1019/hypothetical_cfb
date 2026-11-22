@@ -1,0 +1,82 @@
+/* GRIDIRON LAB / CHAMPIONSHIP BROADCAST — original independent visual language.
+   No publisher game assets, NCAA logos, protected artwork, or misleading affiliation. */
+:root{--broadcast-navy:#071a32;--broadcast-mid:#103b64;--broadcast-gold:#f2b544}
+body{background:#edf2f7;color:#183653}
+.topbar{background:#051629;border-bottom:3px solid var(--broadcast-gold);box-shadow:0 7px 25px rgba(6,24,46,.22)}
+.brand-copy strong{letter-spacing:-.035em}
+.navigation .nav-item{position:relative;min-height:50px}
+.nav-item.active{background:#174a78;border-bottom-color:var(--broadcast-gold);color:#fff}
+.page-intro{
+ min-height:246px;
+ background:radial-gradient(ellipse at 88% 8%,rgba(246,199,100,.16),transparent 30%),
+   repeating-linear-gradient(90deg,transparent 0 11.9%,rgba(255,255,255,.065) 12%,transparent 12.1%),
+   linear-gradient(116deg,#061629 0%,#123c68 66%,#0d2e4e 100%);
+ border-bottom:5px solid var(--broadcast-gold)
+}
+.page-intro:after{border:18px solid rgba(253,219,148,.09);transform:rotate(-18deg)}
+.page-intro h1{letter-spacing:-.025em;text-wrap:balance}
+.page-intro h1 em{color:#ffe19b;text-decoration:none}
+.hero-edition{letter-spacing:.16em;color:#ffdf94}
+.intro-symbol{border:2px solid #7399bd;background:radial-gradient(circle at center,#295b89,#102e50)}
+.intro-monogram{text-shadow:0 5px 0 rgba(0,0,0,.24)}
+.intro-stripes{height:5px}
+.play-console,.playoff-console{border-radius:3px;border-color:#c4d2df;box-shadow:0 14px 29px rgba(8,33,59,.09)}
+.console-intro{border-top:5px solid var(--broadcast-mid);padding-top:17px}
+.console-intro h2{font-size:clamp(29px,3.3vw,41px)}
+.team-control,.venue-control{min-width:0}
+.team-control select,.venue-control select{font-variant-numeric:lining-nums}
+.console-footer{background:#f4f8fc}
+.action.primary{border-radius:3px;font-weight:900;letter-spacing:.045em;box-shadow:0 3px 0 #064475}
+.action.primary:active{transform:translateY(2px);box-shadow:0 1px 0 #064475}
+.game-canvas{margin-top:26px}
+.fixture-score{
+ border-radius:3px;border:1px solid #234f77;border-top:5px solid var(--broadcast-gold);
+ background:linear-gradient(124deg,#061527 0%,#0b2d4b 52%,#061527 100%);
+ box-shadow:0 22px 38px rgba(3,18,36,.19)
+}
+.fixture-score:before{
+ background:repeating-linear-gradient(90deg,transparent 0 9.9%,rgba(235,246,255,.065) 10%,transparent 10.1%),
+ radial-gradient(ellipse at center,rgba(17,83,130,.28),transparent 64%)
+}
+.fixture-meta{background:rgba(1,14,28,.55);color:#e1efff}
+.fixture-center{padding-top:clamp(29px,5vw,60px);padding-bottom:clamp(37px,5vw,64px)}
+.fixture-team strong{color:#fff;text-wrap:balance}
+.fixture-score-number{color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.17)}
+.fixture-score-number span{color:var(--broadcast-gold)}
+.fixture-summary{background:#092944}
+.field-ruler{background:#061b31;color:#accbe5}
+.sheet{background:#fff;border:1px solid #cedde9;border-top:4px solid #0f6ead;border-radius:3px;color:#153654}
+.sheet h3{color:#0e3458}
+.game-tape{background:#0b2338;color:#eef5fc;border-color:#43607b}
+.game-tape>summary{background:#103455;color:#f7fbff}
+.game-tape .drive-ledger h3,.game-tape .viz-head h3{color:#f7fbff}
+.game-tape .svg-text{fill:#d4e8fc}
+.game-tape .gridline{stroke:#3b5873}
+.market-ledger{border-top:5px solid var(--broadcast-gold)}
+.bracket-atlas{background:#e4eef8}
+.fixture-bracket{transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease}
+.fixture-bracket:hover:not(:disabled){box-shadow:0 5px 14px rgba(9,43,79,.13)}
+.champion-banner{background:linear-gradient(110deg,#061b32,#194b79);border-top-color:var(--broadcast-gold)}
+button:focus-visible,select:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #dc9c25;outline-offset:3px}
+@media(max-width:780px){
+ .page-intro{min-height:0}
+ .fixture-center{gap:9px}
+ .fixture-team strong{font-size:clamp(22px,5vw,38px)}
+ .fixture-score-number{font-size:clamp(58px,10.5vw,88px)}
+ .console-controls{gap:0}
+}
+@media(max-width:480px){
+ .page-intro{padding-top:18px;padding-bottom:20px}
+ .page-intro h1{font-size:clamp(40px,10.5vw,57px);line-height:.94}
+ .page-intro p{font-size:13px}
+ .play-console{margin-top:15px}
+ .fixture-center{grid-template-columns:minmax(0,1fr) minmax(108px,1.18fr) minmax(0,1fr);gap:3px;padding:25px 9px 31px}
+ .fixture-team strong{font-size:clamp(19px,4.85vw,25px);line-height:1.05}
+ .fixture-score-number{font-size:clamp(40px,11vw,59px);letter-spacing:-.045em}
+ .fixture-summary{gap:9px;flex-wrap:wrap}
+ .nav-item{min-width:0;font-size:11px}
+ .team-control,.venue-control{padding:17px 15px}
+ .console-intro,.console-footer{padding-left:17px;padding-right:17px}
+ .sheet{padding:16px 12px}
+}
+@media(prefers-reduced-motion:reduce){.fixture-bracket,.action.primary{transition:none!important;animation:none!important}}

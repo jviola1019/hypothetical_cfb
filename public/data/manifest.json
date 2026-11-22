@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "releaseDate": "2026-11-21",
   "model": "neutral-fallback-with-historical-team-profile-when-loaded",
   "calibration": "game-generator-not-calibrated-player-props-not-calibrated",
@@ -13,9 +13,9 @@
     "data/season-2025.json",
     "data/rosters-2025.json"
   ],
-  "scoringSourceCutoffUtc": "2026-11-15T18:00:00.000Z",
+  "scoringSourceCutoffUtc": "2026-11-21T19:00:00.000Z",
   "rosterUpstreamWeeklyRelease": "2026-11-16",
-  "sourceRefreshStatus": "Verified on GitHub Actions 44878009382; 2026 138/138 roster schools, 15187 names (101 quality-vetted weekly, 37 CFBD); 2025 136/136 schools, 15415 names; source scores current through 2026-11-15.",
+  "sourceRefreshStatus": "Checked-in 2026 source files: 138 FBS rosters, 15187 roster-listed names (101 supplemental school snapshots, 37 CFBD schools). Season scores through 2026-11-21T19:00:00.000Z; research ratings through 2026-11-21T18:00:00.000Z. These are not 138 confirmed game-day depth charts.",
   "fittedPlayerPropModels": 0,
   "fittedGameModels": 1,
   "notice": "Source-backed historical team references and empirical pregame models remain distinct from uncalibrated fictional scores, drives and named-player props. No external historical record -> neutral power, not invented school-specific ratings. Defense score-allowance influence corrected; illustrative game scale tuned only to unconditional 2025 reference.",
@@ -45,7 +45,7 @@
   "bracketFormats": "2,4,8,12,16,24,32,48,64,68,96,128,138",
   "defaultSeeding": "2026 Elo research snapshot as of last scored game, or explicitly labeled observed/unranked fallback",
   "simulatedAthleteIdentity": "2026 roster matched; bounded source-verified weekly depth chart where available, seasonal workload estimate elsewhere; no automatic nationwide verified depth chart.",
-  "researchSourceCutoffUtc": "2026-11-15T18:00:00.000Z",
+  "researchSourceCutoffUtc": "2026-11-21T18:00:00.000Z",
   "realismNotice": "Score/drive and player prop simulations remain synthetic and uncalibrated; 2026 player-event histories are retrospective conditionally observed data",
   "weeklyLineupSource": "data/weekly-lineups-2026.json",
   "weeklyLineupStatus": "Manual Nov 21 2026 evidence for four named 2026 roles; weekly GitHub refresh rebuilds 138 roster-linked role projections. Nonverified schools explicitly remain usage-projected or roster-only."

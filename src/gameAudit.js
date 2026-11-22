@@ -19,7 +19,7 @@ export function auditGeneratedGame(game) {
   let clock = 3600;
   for (const [index, drive] of game.drives.entries()) {
     demand(Object.hasOwn(possessions, drive.offense), `unknown offense at drive ${index}`);
-    demand(drive.defense !== drive.offense, `self-defending drive ${index}`);
+    demand(drive.defense === (drive.offense === first.team ? second.team : first.team), `invalid opponent at drive ${index}`);
     demand(Number.isInteger(drive.points) && drive.points >= 0 && drive.points <= 8, 'invalid drive score');
     demand(Number.isInteger(drive.plays) && drive.plays >= 1 && drive.plays <= 20, 'invalid play count');
     demand(Number.isInteger(drive.start) && drive.start >= 5 && drive.start <= 97, 'invalid field position');
