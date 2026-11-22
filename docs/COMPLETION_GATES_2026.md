@@ -26,3 +26,7 @@ Date: 2026-11-22. Repository enhancement target: 2026 FBS season, 138 programs.
 - SportsDataverse CFB data: https://github.com/sportsdataverse/cfbfastR-data
 - Who's Starting usage terms: https://whosstarting.com/terms/
 - TWO·DEEP usage terms: https://www.thetwodeep.com/terms
+
+## November 22 historical acceptance outcome
+
+2024 chose base 27, 0.15 per-team volatility and zero differential margin volatility. On 808 already-consulted 2025 games, replay score MAE was 10.167 (10.749 flat baseline), Brier 0.2194, nominal-80% margin coverage 71.16% and total coverage 77.85%. Margin coverage failed the 74% gate. Conditioned replay stays DISABLED. 2025 is not a pristine untouched holdout, and neither is 2026. See [full numerical report](REPLAY_VALIDATION_2026-11-22.md).
