@@ -7,6 +7,7 @@ export function installPlayableCalibration(x){
     x.classification!=='2024-fit-2025-gate-2026-previously-inspected-check'||
     !Number.isFinite(x.base)||x.base<20||x.base>40||
     !Number.isFinite(x.volatility)||x.volatility<0||x.volatility>.6||
+    !Number.isFinite(x.marginVolatility)||x.marginVolatility<0||x.marginVolatility>.6||
     !Number.isInteger(x.fitGames)||x.fitGames<400||
     !Number.isInteger(x.validation2025?.n)||x.validation2025.n<400||
     !Number.isInteger(x.evaluation2026?.n)||x.evaluation2026.n<300||
@@ -27,7 +28,7 @@ export function pregameScoringFor(config){
  if(!current?.enabled||Number(config?.seasonA)!==2026||Number(config?.seasonB)!==2026)return null;
  const e=evaluatedMatchup(config.a,config.b,config.venue);
  if(!e||![e.expectedA,e.expectedB].every(n=>Number.isFinite(n)&&n>=3&&n<=80))return null;
- return {a:e.expectedA,b:e.expectedB,base:current.base,volatility:current.volatility};
+ return {a:e.expectedA,b:e.expectedB,base:current.base,volatility:current.volatility,marginVolatility:current.marginVolatility};
 }
 export async function loadPlayableCalibration(url='./public/data/playable-calibration-2026.json'){
  try{

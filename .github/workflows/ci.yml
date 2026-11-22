@@ -90,6 +90,7 @@ jobs:
           assert d['validation2025']['n']>=400 and d['evaluation2026']['n']>=300
           assert d['base'] in [23,25,27,29,31,33]
           assert d['volatility'] in [0,.15,.3,.45]
+          assert d['marginVolatility'] in [0,.15,.3]
           assert d['modelVersion']=='temporal-drive-intensity-v2'
           if d['enabled']:
               assert d['validation2025']['brier']<=.25
