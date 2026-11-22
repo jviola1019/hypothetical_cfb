@@ -54,7 +54,7 @@ assert.equal(weekly.generatedOn,personnel.generatedOn);
 let basis={},roleSlots=0;
 for(const id of ids){
  const chart=weekly.teams[id];
- assert.ok(chart&&Object.keys(chart.roles).length===6,'Every school's six *model role slots* must be populated: '+id);
+ assert.ok(chart&&Object.keys(chart.roles).length===6,"All six modeled role slots must be populated: "+id);
  const names=new Set(rosters.schools[id].map(p=>p.name.normalize('NFKD').toLowerCase()));
  const used=new Set();
  for(const r of Object.values(chart.roles)){
