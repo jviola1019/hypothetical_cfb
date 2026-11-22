@@ -49,9 +49,7 @@ body{background:#edf2f7;color:#183653}
 .sheet h3{color:#0e3458}
 .game-tape{background:#0b2338;color:#eef5fc;border-color:#43607b}
 .game-tape>summary{background:#103455;color:#f7fbff}
-.game-tape .drive-ledger h3,.game-tape .viz-head h3{color:#f7fbff}
-.game-tape .svg-text{fill:#d4e8fc}
-.game-tape .gridline{stroke:#3b5873}
+.game-tape .drive-ledger h3,.game-tape .position-sheet .viz-head h3{color:#f7fbff}
 .market-ledger{border-top:5px solid var(--broadcast-gold)}
 .bracket-atlas{background:#e4eef8}
 .fixture-bracket{transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease}

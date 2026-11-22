@@ -1,6 +1,6 @@
 {
   "version": "1.2.0",
-  "releaseDate": "2026-11-21",
+  "releaseDate": "2026-11-22",
   "model": "neutral-fallback-with-historical-team-profile-when-loaded",
   "calibration": "game-generator-not-calibrated-player-props-not-calibrated",
   "primarySeason": 2026,
