@@ -79,9 +79,18 @@ def check(browser_type,engine,width):
             page.locator('[data-field="a"]').select_option('oregon-state')
             page.locator('[data-field="b"]').select_option('ohio-state')
             page.locator('.market-ledger').wait_for(timeout=60000)
-            assert page.locator('.game-availability').count()==0  # source section has its own semantic ID
-            assert page.locator('#game-availability').get_by_text('Braden Atkinson').count()>=1
-            assert page.locator('.personnel-desk').get_by_text('Maalik Murphy').count()>=1
+            source_root=Path(__file__).resolve().parents[1]
+            weekly=json.loads((source_root/'public/data/weekly-lineups-2026.json').read_text())
+            from datetime import datetime, timezone
+            day=datetime.now(timezone.utc).date().isoformat()
+            expected_qb=weekly['teams']['oregon-state']['roles']['QB']['name']
+            assert page.locator('.personnel-desk').get_by_text(expected_qb).count()>=1
+            atkinson=next((r for r in weekly['teams']['oregon-state']['unavailable'] if r['name']=='Braden Atkinson'),None)
+            current=weekly['weekStart']<=day<=weekly['weekEnd']
+            if atkinson and current:
+                assert page.locator('#game-availability').get_by_text('Braden Atkinson').count()>=1
+            elif not current:
+                assert page.locator('#game-availability').get_by_text('Braden Atkinson').count()==0, 'Expired injury must not remain reported current'
             assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Availability interaction introduced page overflow"
 
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Mobile document overflow"

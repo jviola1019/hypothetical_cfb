@@ -5,7 +5,7 @@
 
 **A free, offline-first college-football game and playoff simulator.** Pick two FBS teams and a venue, then see one replayable generated game: scoring by quarter, gameplay/drive timeline, full team and named-athlete box, player stat threshold frequencies, empirical *research* estimate where available, and readable probability distributions. The **Playoffs** tab builds 2–138-team hypothetical brackets with individual game inspection. The **Model & Validation** tab holds all technical statistics, model diagnostics, source cutoffs and caveats.
 
-**Playable game backtest:** [2024 fit, 2025 check, 2026 forward diagnostics](docs/REPLAY_VALIDATION_2026-11-22.md). The conditioned replay adapter currently fails its historical margin-uncertainty gate and remains disabled. Source-ranked 2026 role identities are not all game-day verified starters.
+**November 22 matchup and injury audit:** [16 neutral/home matchup pairs, 14,400-drive-game reference checks, real-vs-generated player means, current-week replacements, and limitations](docs/MATCHUP_AND_AVAILABILITY_AUDIT_2026-11-22.md). 2026 opponent-adjusted Elo now guides **fictional gameplay**. It is not historical score calibration or a valid athlete-prop prediction.\n\n**Playable game backtest:** [2024 fit, 2025 check, 2026 forward diagnostics](docs/REPLAY_VALIDATION_2026-11-22.md). The conditioned replay adapter currently fails its historical margin-uncertainty gate and remains disabled. Source-ranked 2026 role identities are not all game-day verified starters.
 
 **November 22 release audit:** [prioritized defects, fixes and remaining limitations](docs/RELEASE_AUDIT_2026-11-22.md). Simulated drives and player props are still synthetic and uncalibrated.
 
