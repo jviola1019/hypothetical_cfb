@@ -8,7 +8,7 @@ test('generated histogram bins conserve sample frequency and marker is legible',
  const percentages=[...h.matchAll(/<title>[^<]*: ([0-9]+[.][0-9]+)% of simulations<[/]title>/g)].map(v=>Number(v[1]));
  assert.ok(percentages.length>=2);
  assert.ok(Math.abs(percentages.reduce((a,b)=>a+b,0)-100)<percentages.length*.06);
- assert.ok(h.includes('stroke="#d5ef67"'));
+ assert.ok(h.includes('stroke="#a95d0c"'));
  assert.ok(histogram(x.total,x.markets.reference.totalLine,'total').includes('LINE '+x.markets.reference.totalLine.toFixed(1)));
 });
 test('player bins disclose open-ended outliers and conserve observations',()=>{
@@ -17,7 +17,7 @@ test('player bins disclose open-ended outliers and conserve observations',()=>{
  assert.ok(html.includes('≥'));
  const counts=[...html.matchAll(/<title>Bin [^<]*: ([0-9]+) games<[/]title>/g)].map(v=>Number(v[1]));
  assert.equal(counts.reduce((a,b)=>a+b,0),values.length);
- assert.ok(html.includes('stroke="#d5ef67"'));
+ assert.ok(html.includes('stroke="#a95d0c"'));
 });
 test('heatmap and possession chart use generated scores and games',()=>{
  const d=simulateBatch(DEFAULT_CONFIG,75);
