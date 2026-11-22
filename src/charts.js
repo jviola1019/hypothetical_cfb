@@ -15,7 +15,7 @@ export function histogram(values,threshold,kind='margin'){
  const bars=bins.map((v,i)=>`<rect class="outcome-bar" x="${x(i)+1}" y="${y(v)}" width="${Math.max(1,bw-2)}" height="${T+ph-y(v)}" fill="${kind==='total'?C.jade:C.red}"><title>${min+i*step}–${min+(i+1)*step-1} points: ${(v/values.length*100).toFixed(1)}% of simulations</title></rect>`).join('');
  const horizontal=[0,.5,1].map(p=>line(L,y(peak*p),w-R,y(peak*p))+axis(L-7,y(peak*p)+4,(peak*p/values.length*100).toFixed(0)+'%','end')).join('');
  const mx=L+(threshold-min)/(max-min)*pw;
- const cut=Number.isFinite(threshold)&&mx>=L&&mx<=w-R?`<line x1="${mx}" x2="${mx}" y1="${T-5}" y2="${T+ph}" stroke="${C.ink}" stroke-width="1.8" stroke-dasharray="5 5"/>${axis(Math.min(w-40,Math.max(40,mx)),15,'LINE '+n1(threshold))}`:'';
+ const cut=Number.isFinite(threshold)&&mx>=L&&mx<=w-R?`<line x1="${mx}" x2="${mx}" y1="${T-5}" y2="${T+ph}" stroke="${C.mint}" stroke-width="1.8" stroke-dasharray="5 5"/>${axis(Math.min(w-40,Math.max(40,mx)),15,'LINE '+n1(threshold))}`:'';
  return `<svg class="viz" viewBox="0 0 ${w} ${h}" role="img" aria-label="Sampled ${kind} histogram with ${values.length} synthetic simulations"><title>Simulated ${kind} distribution</title>${horizontal}${bars}${cut}${axis(L,h-13,min,'start')}${axis(w-R,h-13,max,'end')}${axis(w/2,h-13,kind==='total'?'TOTAL POINTS':'MARGIN — TEAM A MINUS B')}</svg>`;
 }
 export function atlas(scores,n){
@@ -47,6 +47,12 @@ export function driveStrip(g){if(!g)return '';
 export function propBars(values,line){if(!values?.length)return '';const sorted=[...values].sort((a,b)=>a-b),top=Math.max(1,sorted[Math.floor(sorted.length*.99)],line)*1.12;
  const N=30,bins=Array(N).fill(0);for(const v of values)bins[Math.min(N-1,Math.floor(v/top*N))]++;
  const peak=Math.max(1,...bins),w=680,h=180,L=20,T=14,R=10,B=32,pw=w-L-R,ph=h-T-B;
- const rectangles=bins.map((n,i)=>{const x=L+i/N*pw,y=T+ph-n/peak*ph;return `<rect x="${x+1}" y="${y}" width="${pw/N-2}" height="${T+ph-y}" fill="${i/N*top>line?C.red:C.jade}" opacity=".9"><title>Bin ${(i/N*top).toFixed(0)}–${((i+1)/N*top).toFixed(0)}: ${n} games</title></rect>`}).join('');
- const lx=L+Math.min(1,line/top)*pw;return `<svg class="viz" viewBox="0 0 ${w} ${h}" role="img" aria-label="Simulated player statistic distribution and line ${line}"><title>Player prop probability distribution</title>${rectangles}<line x1="${lx}" x2="${lx}" y1="${T}" y2="${T+ph}" stroke="${C.ink}" stroke-dasharray="4 4" stroke-width="2"/>${axis(lx,12,'LINE '+line)}${axis(L,h-6,'0','start')}${axis(w-R,h-6,top.toFixed(0),'end')}</svg>`;
+ const rectangles=bins.map((n,i)=>{const x=L+i/N*pw,y=T+ph-n/peak*ph,low=i/N*top,high=(i+1)/N*top;
+  // Threshold-crossing bins contain both under and over outcomes: use a neutral shade.
+  // The last bin also contains all observations above the clipped 99th percentile.
+  const mixed=line>=low&&line<high;
+  const shade=mixed?C.steel:low>line?C.red:C.jade;
+  const label=i===N-1?`≥${low.toFixed(0)}`:`${low.toFixed(0)}–${high.toFixed(0)}`;
+  return `<rect x="${x+1}" y="${y}" width="${pw/N-2}" height="${T+ph-y}" fill="${shade}" opacity=".9"><title>Bin ${label}: ${n} games</title></rect>`}).join('');
+ const lx=L+Math.min(1,line/top)*pw;return `<svg class="viz" viewBox="0 0 ${w} ${h}" role="img" aria-label="Simulated player statistic distribution and line ${line}"><title>Player prop probability distribution</title>${rectangles}<line x1="${lx}" x2="${lx}" y1="${T}" y2="${T+ph}" stroke="${C.mint}" stroke-dasharray="4 4" stroke-width="2"/>${axis(lx,12,'LINE '+line)}${axis(L,h-6,'0','start')}${axis(w-R,h-6,top.toFixed(0),'end')}</svg>`;
 }

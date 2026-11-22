@@ -40,3 +40,10 @@ Let `p` be the externally evaluated Elo winner-probability estimate and `[q10,q9
 3. Player-prop simulations are fictional, not conditional full-participation models. Missing recorded events and unknown availability still limit all 138 schools.
 4. The game generator is not a calibrated *joint* score/drive/athlete simulator; interval validation in the research tab applies to a separate score-residual model.
 5. GitHub Pages and real native iOS Safari require separate release evidence.
+
+### Visual chart audit follow-up
+
+- Histogram and player-prop threshold markers were dark on dark and are now rendered with the high-contrast lime line used elsewhere in the product.
+- Player-prop final bins included values exceeding the 99th-percentile plot range but were labeled as if they had a finite upper bound; they now use an open-ended `≥` label.
+- If the player threshold falls inside a histogram bin, that bin is now neutral rather than claiming every observation in the bin is above/below. Exact threshold percentages always use the raw individual values, not visual color approximations.
+- `tests/chart_contract.test.js` checks bin reconciliation, open-ended labeling and source-based chart claims.
