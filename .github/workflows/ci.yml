@@ -89,9 +89,13 @@ jobs:
           assert d['fitGames']>=400
           assert d['validation2025']['n']>=400 and d['evaluation2026']['n']>=300
           assert d['base'] in [23,25,27,29,31,33]
+          assert d['volatility'] in [0,.15,.3,.45]
+          assert d['modelVersion']=='temporal-drive-intensity-v2'
           if d['enabled']:
               assert d['validation2025']['brier']<=.25
               assert d['validation2025']['scoreMAE']<=d['validation2025']['flatScoreMAE']
+              assert d['validation2025']['coverage80Margin']>=.74
+              assert d['validation2025']['coverage80Total']>=.74
           print('Temporal replay acceptance gate:',d['enabled'])
           PY
       - uses: actions/upload-artifact@v4

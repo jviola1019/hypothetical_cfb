@@ -4,10 +4,10 @@ Date: 2026-11-22. Repository enhancement target: 2026 FBS season, 138 programs.
 
 ## What is newly measurable
 
-- The *actual canonical JavaScript drive simulator* can now be exercised on time-safe historical games: 2023 warms up season state, **2024 fits one scoring denominator**, **2025 gates activation**, and **2026 is a previously-inspected forward diagnostic**. No current-season full-year team rate or later result is used for a historical kickoff.
-- 2024 fit ranks a small preregistered set of denominator parameters by team-score center MAE. The fixed 2025 rule requires improved score MAE over a flat 27-point baseline and winner Brier <=0.25; **2026 is not used to enable the replay mode**.
+- The *actual canonical JavaScript drive simulator* can now be exercised on time-safe historical games: 2023 warms up season state, **2024 fits a scoring denominator and game-level dispersion jointly by a proper score (CRPS)**, **2025 gates activation**, and **2026 is a previously-inspected forward diagnostic**. No current-season full-year team rate or later result is used for a historical kickoff.
+- 2024 fit ranks a bounded parameter grid by the sum of proper CRPS scores for margin and total distributions. The fixed 2025 rule requires improved score MAE over a flat 27-point baseline, winner Brier <=0.25, and simulated nominal-80% interval coverage of at least 74% for both margin and total; **2026 is not used to enable the replay mode**.
 - Runtime reads the same source-backed conditioning artifact on main thread and Web Worker. The engine still builds real simulated drives, play totals, player aggregates and overtime, with conservation checks rather than replacing the final score after the fact.
-- Evaluation exposes score MAE, total/margin MAE, winner Brier/log loss, simulated 80%-interval coverage, unsupported-team count and actual replay count. These are model diagnostics, not proof of game-day starter or individual prop accuracy.
+- Evaluation exposes score MAE, total/margin MAE, margin/total CRPS, winner Brier/log loss, simulated 80%-interval coverage, unsupported-team count and actual replay count. These are model diagnostics, not proof of game-day starter or individual prop accuracy.
 
 ## Why the remaining claims cannot be certified from these data
 
