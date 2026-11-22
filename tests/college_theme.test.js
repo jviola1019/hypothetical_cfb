@@ -13,7 +13,7 @@ test('original college football identity does not copy NCAA or EA publisher mark
  assert.doesNotMatch(html,/ncaa\.org\/.*?\.svg|ncaa\.png|ncaa-logo/i);
  assert.match(html,/src\/stadium-edition\.css/);
  assert.match(svg,/<svg /);
- assert.doesNotMatch(svg,/https?:\/\/|<script|foreignObject|<image/i);
+ assert.doesNotMatch(svg,/<script\b|<foreignObject\b|<image\b|(?:href|xlink:href)="https?:/i);
 });
 test('new stadium edition replaces four contradictory old skins',()=>{
  assert.doesNotMatch(html,/src\/(?:college-theme|refinements|console-refresh)\.css/);

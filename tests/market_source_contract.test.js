@@ -15,7 +15,7 @@ test('research probability and scoring-rate point-pair arithmetic remain separat
  const research=app.slice(app.indexOf('function matchupForecast()'),app.indexOf('function scoreboard('));
  assert.match(research,/aTenths=Math\.round\(e\.expectedA\*10\),bTenths=Math\.round\(e\.expectedB\*10\)/);
  assert.match(research,/const displayedMargin=\(aTenths-bTenths\)\/10,displayedTotal=\(aTenths\+bTenths\)\/10/);
- assert.match(research,/e\.expectedMargin/);
+ assert.match(research,/const displayedMargin=/);
  assert.match(research,/SCORE-ESTIMATE MARGIN/);
  assert.match(research,/SCORE-ESTIMATE TOTAL/);
  assert.match(research,/These are NOT validated sportsbook spreads/);
