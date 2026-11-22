@@ -59,3 +59,8 @@ Open `http://localhost:4173`. `python3 tests/pressbox_browser.py` runs the Chrom
 - Data limitations and provider usage rights: `docs/DATA_PROVENANCE.md`.
 
 Original source MIT licensed; source-data licenses, team branding, and NIL rights remain separate.
+
+
+### v1.4 — exact simulated game-market accounting
+
+Game Simulation now reports **N exact wins, covers, overs, unders, and pushes out of N generated games**. The reference lines are retrospective, synthetic sample summaries—not sportsbook prices. An independently evaluated Elo winner estimate is labeled separately from the fictional game engine; any spread translated from Elo is explicitly an illustrative conversion, not a validated handicap. The model/graph arithmetic and limitations are recorded in [`docs/PROBABILITY_CONSISTENCY_AUDIT.md`](docs/PROBABILITY_CONSISTENCY_AUDIT.md).

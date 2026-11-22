@@ -160,3 +160,12 @@ See `docs/ARCHITECTURE_V10.md`, `docs/VALIDATION_V10.md`, `docs/QA_GAUNTLET_V10.
 ## Evidence
 
 See `docs/VALIDATION.md`, `docs/AUDIT_REPORT.md`, `docs/ARCHITECTURE_V07.md`, `docs/DATA_PROVENANCE.md` and `docs/MODEL_CARD.md`. Each GitHub Actions success and actual refreshed artifact must be inspected before upgrading a pending item to verified.
+
+
+## v1.4 — spread/total and chart-consistency correction (2026-11-21)
+
+- The same generated game sample now supplies exact wins, cover/over/under/push counts, joint win-cover reconciliation, and the histogram reference markers. See `docs/PROBABILITY_CONSISTENCY_AUDIT.md`.
+- Synthetic spreads and totals are **in-sample reference lines**, never bookmaker data or empirically validated betting projections.
+- Elo-implied spread is a clearly labeled illustrative logistic translation of evaluated win probability using historical 2024 residual width; **it is not fitted or backtested as a spread forecast**.
+- The old display combined an independent Elo win percentage with an independent margin estimate; a 28,359-configuration scan found 2,301 material directional contradictions. The revised presentation removes that misleading linkage.
+- Added market conservation, push, joint outcome, matchup identity, and browser DOM tests; physical Safari and genuine native Worker tests remain unverified.

@@ -130,3 +130,20 @@ a{color:inherit;text-underline-offset:4px}a:hover{color:var(--lime)}::selection{
 .person-proof a{font:600 10px var(--mono);color:var(--cream);text-underline-offset:3px}
 @media(max-width:680px){.personnel-columns{grid-template-columns:1fr}.personnel-desk summary{padding:15px}.personnel-sheet{padding:17px 15px}.personnel-team-title h3{font-size:23px}.personnel-row{grid-template-columns:1fr .9fr}.personnel-desk summary b{font-size:23px}}
 @media(prefers-reduced-motion:reduce){.personnel-desk *{scroll-behavior:auto;transition:none!important}}
+
+
+/* CONSISTENT MARKET LEDGER — read-only counts from one simulation sample. */
+.market-ledger{background:#101b16;border:1px solid var(--rule-bright);border-left:3px solid var(--lime);margin:28px 0 32px;padding:clamp(18px,2.4vw,30px)}
+.ledger-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,230px);gap:26px;align-items:start;border-bottom:1px solid var(--rule);padding-bottom:23px}
+.ledger-intro h3{font:800 clamp(35px,4.7vw,57px)/.94 var(--display);color:var(--cream);text-transform:uppercase;margin:9px 0}.ledger-intro p{color:var(--sub);max-width:660px;font-size:13px;line-height:1.65;margin:9px 0}.ledger-intro p b{color:var(--cream)}
+.ledger-reference{display:grid;grid-template-columns:1fr auto;column-gap:13px;row-gap:10px;padding:15px;border:1px solid #516450}.ledger-reference span{color:var(--sub);font:600 10px/1.45 var(--mono)}.ledger-reference b{text-align:right;color:var(--lime);font:700 23px/1 var(--display);font-variant-numeric:tabular-nums}
+.market-table-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:25px}.ledger-scroll{min-width:0;overflow-x:auto}.ledger-scroll:focus-visible{outline:2px solid var(--lime);outline-offset:3px}.ledger-scroll table{width:100%;border-collapse:collapse;min-width:290px}.ledger-scroll caption{text-align:left;padding:0 0 12px;font:700 21px/1.1 var(--display);color:var(--cream);text-transform:uppercase}.ledger-scroll th,.ledger-scroll td{border-top:1px solid var(--rule);padding:11px 8px;text-align:left;vertical-align:middle}.ledger-scroll thead th{font:600 10px/1.35 var(--mono);letter-spacing:.04em;color:var(--sub)}.ledger-scroll tbody th{font:500 13px/1.35 var(--font);color:var(--text)}.ledger-scroll tbody td{text-align:right;white-space:nowrap}.ledger-scroll td strong{display:block;font:600 13px var(--mono);color:var(--cream);font-variant-numeric:tabular-nums}.ledger-scroll td small{color:var(--lime-soft);font:500 11px var(--mono)}.ledger-method{margin-top:15px}.ledger-method p{font-size:12px;color:var(--sub)}
+@media(max-width:760px){.ledger-intro,.market-table-pair{grid-template-columns:1fr}.ledger-reference{grid-template-columns:1fr auto}.market-ledger{padding:16px}.market-table-pair{gap:25px}.ledger-scroll table{min-width:270px}}
+@media(prefers-reduced-motion:reduce){.market-ledger *, .market-ledger *:before,.market-ledger *:after{transition:none!important;animation:none!important}}
+/* Mobile layout integrity: prevent evidence badges from widening the full page. */
+.snapshot-head{flex-wrap:wrap}
+.snapshot-head>.evidence-label{white-space:normal;overflow-wrap:anywhere;max-width:100%;min-width:0}
+.game-canvas,.research-snapshot,.sample-outlook{min-width:0;max-width:100%}
+@media(max-width:400px){.snapshot-head{align-items:flex-start;flex-direction:column;gap:8px}.ledger-intro h3{font-size:34px}}
+
+.ledger-cross{display:flex;gap:8px 19px;flex-wrap:wrap;margin-top:19px;padding:12px 0 0;border-top:1px solid var(--rule);color:var(--sub);font:500 12px/1.45 var(--font)}.ledger-cross>b{color:var(--cream);font-weight:700;min-width:100%}.ledger-cross strong{color:var(--lime);font:600 11px var(--mono)}

@@ -6,7 +6,7 @@ lexical scope and explicit exports are made available to following modules.
 from pathlib import Path
 import re
 
-ORDER=['catalog.js','weeklyLineup.js','playerEvidence.js','observed.js','usage.js','research.js','playerModel.js','scoreEvidence.js','modelCompare.js','cfpSelection.js','engine.js','tournament.js','charts.js']
+ORDER=['catalog.js','weeklyLineup.js','playerEvidence.js','observed.js','usage.js','research.js','playerModel.js','scoreEvidence.js','modelCompare.js','cfpSelection.js','marketAudit.js','engine.js','tournament.js','charts.js']
 
 def make_bundle(root: Path, extra: str = '', stub: str = '') -> str:
     parts=[]
