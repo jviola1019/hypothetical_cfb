@@ -21,7 +21,7 @@ There is no substituted outcome or decorative delay with tournament precomputed 
 
 ## Seed lifecycle and replay-diversity evidence
 
-- A new page load, one-game replay, team/venue change, tournament format change, manual reset, restored ranked field, or newly started tournament after a champion now draws a fresh 32-bit simulation seed using browser `crypto.getRandomValues` (nonsecurity gameplay fallback for legacy browsers). Adjacent run seed collisions are explicitly rejected.
+- A new page load, one-game replay, team/venue change, tournament format change, manual reset, restored ranked field, newly started tournament after a champion, **or a new Monte Carlo title-share study** now draws a fresh 32-bit simulation seed using browser `crypto.getRandomValues` (nonsecurity gameplay fallback for legacy browsers). Adjacent run seed collisions are explicitly rejected.
 - Continuing the same unfinished tournament deliberately retains its original seed, preserving the legitimacy of already played games. Round match seeds derive deterministically from the *tournament seed, round and matchup index*; independent matches cannot inherit stale scoreboxes from other run seeds.
 - The UI prints the single-game seed and tournament seed to make outputs traceable. Replaying the same scenario with the same explicit seed reproduces **the exact scores, drive events, player statistics, bracket and award ledger**.
 - `tests/seeded_replay_diversity.test.js` validates 64 game seeds, 16 full 12-team tournament seeds, a 138-school per-match-seed audit, exact stat aggregation into MVP/OPOY/title MVP, defensive-source caveats, and rejection of stale game/award evidence.
