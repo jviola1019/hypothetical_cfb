@@ -2,7 +2,7 @@ import {TEAM_MAP,TEAMS,DEFAULT_CONFIG,ENGINE_VERSION,hash32,rng,validateConfig,s
 import {selectCFPField} from './cfpSelection.js';
 import {evaluatedFbsRankings} from './research.js';
 import {observed,sourceStatus} from './observed.js';
-import {COMMITTEE_2026,committeeOrderedField} from './committee2026.js';
+import {COMMITTEE_2026,committeeOrderedField,provisional12Field} from './committee2026.js';
 export const FORMATS=[
 {id:'fbs12',label:'CFP 12 · 2026–27',size:12,kind:'official-fbs',byes:4,season:'2026–27'},
 {id:'fbs24',label:'CFP 24 · 2027–28',size:24,kind:'official-fbs',byes:8,season:'2027–28'},
@@ -67,7 +67,7 @@ export function defaultParticipants(formatId){
  const researchIds=ranked2026Field().ids;
  // Official interim top 25 leads the 2026 CFP *preview* field, but we do not
  // invent Selection Day conference champions or infer 2027 committee rankings.
- const ids=f.kind==='fcs-inspired'?researchIds:committeeOrderedField(researchIds);
+ const ids=f.id==='fbs12'?provisional12Field():f.kind==='fcs-inspired'?researchIds:committeeOrderedField(researchIds);
  if(f.kind==='fcs-inspired')return TEAMS.filter(x=>x.division==='fcs').map(x=>x.id).concat(ids).slice(0,f.size);
  if(f.size>ids.length)throw Error('Not enough FBS teams for this field');
  return ids.slice(0,f.size);
@@ -83,7 +83,7 @@ export function swapTournamentSeeds(t,from,to){
 }
 
 export function createTournament(formatId='fbs12',participants=defaultParticipants(formatId),seed=20261120){validateParticipants(participants,formatId);if(!Number.isSafeInteger(+seed)||+seed<0||+seed>4294967295)throw Error('Invalid seed');const f=FORMAT_MAP[formatId];const order=rulesOrder(f);const slots=order.map(i=>i<=f.size?participants[i-1]:null);return {formatId,participants:participants.slice(),seed:+seed,slots,stage:0,rounds:[],played:{},champion:null,version:ENGINE_VERSION,
-  seedingSource:formatId==='fbs12'?`2026 CFP interim top 25 (Nov 17), then provisional Elo; NOT final qualifiers`:formatId==='fbs24'?`2026 CFP interim top 25 preview for 2027 format; not 2027 rankings`:`2026 Nov 17 CFP Top25 then research Elo for unranked fantasy seeds; not official bracket`};}
+  seedingSource:formatId==='fbs12'?`2026 CFP interim top 25 + assumed five conference delegates incl Boise State; NOT final qualifiers`:formatId==='fbs24'?`2026 CFP interim top 25 preview for 2027 format; not 2027 rankings`:`2026 Nov 17 CFP Top25 then research Elo for unranked fantasy seeds; not official bracket`};}
 /** Builds an official-geometry bracket only after explicit qualification inputs pass.
  * The returned bracket is still hypothetical until committee rankings/champions
  * have been independently verified against an official Selection Day release.
