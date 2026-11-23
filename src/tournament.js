@@ -31,7 +31,18 @@ function validSimulatedWinner(game,a,b){return !!game&&game.config?.a===a&&game.
  game.total===game.final[0]+game.final[1]&&game.margin===game.final[0]-game.final[1];}
 
 export function seedOrder(n){if(n<2||(n&(n-1))!==0)throw Error('Power-of-two bracket required');let a=[1,2];for(let m=4;m<=n;m*=2)a=a.flatMap(v=>[v,m+1-v]);return a;}
-export function rulesOrder(format){let n=1;while(n<format.size)n*=2;let order=seedOrder(n);if(format.id==='fbs24')order=[1,32,16,17,8,25,9,24,5,28,12,21,4,29,13,20,6,27,11,22,3,30,14,19,7,26,10,23,2,31,15,18];if(format.id==='fbs12')order=[1,16,8,9,4,13,5,12,2,15,7,10,3,14,6,11];return order;}
+export function rulesOrder(format){let n=1;while(n<format.size)n*=2;let order=seedOrder(n);
+ // March Mayhem models 4 regional 16-team ladders after a four-game First Four.
+ // Instead of placing all four play-in games among the bottom eight national seeds,
+ // place two at the global 11-seed line (approx. ranks 41-44) and two at
+ // the 16-seed line (ranks 61-64). Four extra qualifiers #65-68 enter
+ // those lanes; survivors retain their lane through the main 64-team field.
+ // This is an NCAA-style HYPOTHETICAL seeding model, not NCAA basketball rules.
+ if(format.id==='custom68'){
+   const opponents={42:65,43:66,63:67,64:68};
+   order=seedOrder(64).flatMap(rank=>[rank,opponents[rank]||128]);
+ }
+ if(format.id==='fbs24')order=[1,32,16,17,8,25,9,24,5,28,12,21,4,29,13,20,6,27,11,22,3,30,14,19,7,26,10,23,2,31,15,18];if(format.id==='fbs12')order=[1,16,8,9,4,13,5,12,2,15,7,10,3,14,6,11];return order;}
 export function validateParticipants(ids,formatId){const f=FORMAT_MAP[formatId];if(!f)throw Error('Unsupported bracket format');if(!Array.isArray(ids)||ids.length!==f.size)throw Error(`Expected ${f.size} participants`);if(new Set(ids).size!==ids.length)throw Error('Duplicate participant');if(ids.some(x=>!TEAM_MAP[x]))throw Error('Unknown team');return true;}
 /** Order is a 2026 *research seeding*, not a claim about CFP rankings. */
 export function ranked2026Field() {
