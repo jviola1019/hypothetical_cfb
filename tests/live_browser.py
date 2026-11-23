@@ -94,7 +94,17 @@ def check(browser_type,engine,width):
                 assert page.locator('#game-availability').get_by_text('Braden Atkinson').count()==0, 'Expired injury must not remain reported current'
             assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Availability interaction introduced page overflow"
 
-        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Mobile document overflow"
+        if not page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"):
+            trace=page.evaluate("""() => ({
+              viewport:innerWidth,scroll:document.documentElement.scrollWidth,
+              offenders:[...document.querySelectorAll('body *')]
+                .map(e=>({tag:e.tagName,cls:String(e.className?.baseVal||e.className||'').slice(0,100),
+                           text:(e.textContent||'').trim().slice(0,45),right:Math.round(e.getBoundingClientRect().right),
+                           width:Math.round(e.getBoundingClientRect().width)}))
+                .filter(x=>x.right>innerWidth+2 || x.width>innerWidth+16)
+                .slice(0,22)
+            })""")
+            raise AssertionError(f"Mobile document overflow {engine} {width}: {json.dumps(trace)}")
         page.screenshot(path=str(OUT/f"{engine}-{width}-game.png"),full_page=width<1100,animations="disabled")
         # Full tournament must NOT instantly disclose the result: a genuinely
         # timed, deterministic, multi-stage broadcast runs before champion reveal.
