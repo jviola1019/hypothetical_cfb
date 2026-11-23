@@ -15,6 +15,8 @@ const sortMetric=(a,b)=>b.impact-a.impact||b.games-a.games||a.team.localeCompare
 export function scoreboxFor(game){
  const errors=[];
  try{auditGeneratedGame(game)}catch(e){errors.push(e.message)}
+ // simulateGame(config, overrideSeed) explicitly accepts an effective seed different
+ // from config.seed; only tournamentReport can enforce bracket seed provenance.
  if(!game||!Array.isArray(game.teams)||game.teams.length!==2||!Array.isArray(game.final))
   return {ok:false,errors:['Missing canonical game structure'],checks:0};
  for(let i=0;i<2;i++){
@@ -62,6 +64,8 @@ export function tournamentReport(t){
    if(!g)continue;
    if(ids.has(g.id))throw Error('Duplicate game identity');ids.add(g.id);
    if(g.config.a!==m.a||g.config.b!==m.b||g.winner!==m.winner)throw Error('Bracket winner/teams contradiction');
+   const expectedSeed=hash32(`${t.seed}|round:${ri}|pair:${mi}`);
+   if(g.seed!==expectedSeed||g.config.seed!==expectedSeed)throw Error('Tournament game seed provenance mismatch');
    const box=scoreboxFor(g);if(!box.ok)throw Error('Scorebox validation failed: '+box.errors.join('; '));
    scores.push({round:ri,index:mi,roundName:round.name,a:m.a,b:m.b,game:g,box});
    games.push(g);
