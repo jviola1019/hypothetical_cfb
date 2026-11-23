@@ -25,7 +25,7 @@ const firstGameSeed=freshSimulationSeed();
 const firstBracketSeed=freshSimulationSeed(firstGameSeed);
 const state={tournamentRuns:0,tab:'game',config:{...DEFAULT_CONFIG,seed:firstGameSeed},game:null,forecast:null,runNumber:1,running:false,progress:0,
   worker:null,task:0,error:'',loading:true,datasets:[],selectedProp:null,format:'fbs12',
-  tournament:createTournament('fbs12',undefined,firstBracketSeed),tournamentMC:null,selectedMatch:null,playoffBusy:false,mcBusy:false,
+  tournament:createTournament('fbs12',undefined,firstBracketSeed),tournamentMC:null,lastTitleStudySeed:null,selectedMatch:null,playoffBusy:false,mcBusy:false,
   sourcesReady:false,bracketViewRound:0,bracketViewPage:0,bracketQuadrant:'all',seedFrom:0,seedTo:1,finale:null,finaleTimer:null,bracketMode:'atlas',showcase:null,showcaseToken:0,showcaseTimers:[],showcaseTicker:null,report:null};
 const fbs=TEAMS.filter(t=>t.division==='fbs');
 const esc=x=>String(x??'').replace(/[&<>"']/g,y=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[y]));
@@ -211,7 +211,7 @@ function roundNameForView(id,stage){const f=FORMAT_MAP[id];const rounds=Math.cei
  if(stage===0&&f.size!==width)return 'Qualifying round';
  return width===128?'Round of 128':width===64?'Round of 64':width===32?'Round of 32':width===16?'Round of 16':'First round';
 }
-function titleLeaderboard(){const r=state.tournamentMC;if(!r)return `<div class="empty-panel"><strong>Want to see the most common champion?</strong><p>Run a title study to compare many hypothetical brackets. Sample counts depend on available browser capabilities.</p></div>`;const ranking=Object.entries(r.probabilities).sort((a,b)=>b[1]-a[1]);return `<div class="table-scroll"><table class="stat-table odds-table"><thead><tr><th>SCHOOL</th><th>CHAMPIONSHIP SHARE</th><th>SIMULATION ERROR</th></tr></thead><tbody>${ranking.map(([id,p],i)=>`<tr><th><span class="ranking-num">${String(i+1).padStart(2,'0')}</span>${esc(name(id))}</th><td><div class="odds-bar"><span style="width:${(100*p).toFixed(2)}%"></span></div><b>${percent(p)}</b></td><td>±${percent(Math.sqrt(p*(1-p)/r.n))}</td></tr>`).join('')}</tbody></table></div><p class="subcaption">Entire brackets were simulated together. These are fictional championship frequencies, not empirically calibrated odds.</p>`;}
+function titleLeaderboard(){const r=state.tournamentMC;if(!r)return `<div class="empty-panel"><strong>Want to see the most common champion?</strong><p>Run a title study to compare many hypothetical brackets. Sample counts depend on available browser capabilities.</p></div>`;const ranking=Object.entries(r.probabilities).sort((a,b)=>b[1]-a[1]);return `<div class="table-scroll"><table class="stat-table odds-table"><thead><tr><th>SCHOOL</th><th>CHAMPIONSHIP SHARE</th><th>SIMULATION ERROR</th></tr></thead><tbody>${ranking.map(([id,p],i)=>`<tr><th><span class="ranking-num">${String(i+1).padStart(2,'0')}</span>${esc(name(id))}</th><td><div class="odds-bar"><span style="width:${(100*p).toFixed(2)}%"></span></div><b>${percent(p)}</b></td><td>±${percent(Math.sqrt(p*(1-p)/r.n))}</td></tr>`).join('')}</tbody></table></div><p class="subcaption">Entire brackets were simulated together. These are fictional championship frequencies, not empirically calibrated odds. Study seed: ${esc(r.seed??'not recorded')} · ${r.n} independently sampled brackets. Repeating the study draws a new sample.</p>`;}
 function playoffGameInspector(){const item=state.selectedMatch;if(!item)return '';const g=item.game;return `<section class="inspector-view" id="game-inspector" tabindex="-1">${subtitle('03','Inside the playoff game',`${esc(item.round)} · Every number below is generated from one game.`)}${button('close-inspector','Close report','subtle')}${scoreboard(g,'playoff')}${quarterTable(g)}${gameScorebox(g)}${gameDetail(g,'inspected-game-details')}<section class="player-desk">${subtitle('04','Player notes','Generated roster-linked statistics and historical evidence are not the same thing.')} ${playerBoxes(g)}</section></section>`;}
 function seedEditor(){
  const t=state.tournament,f=FORMAT_MAP[t.formatId],source=ranked2026Field();
@@ -460,8 +460,8 @@ function runTournament(roundOnly=false){
   state.playoffBusy=false;showTournamentResult('round');render();
  }catch(e){state.playoffBusy=false;state.error='Round failed validation: '+e.message;render()}
 }
-function titleMC(){if(state.mcBusy)return;state.mcBusy=true;state.error='';const task=++state.task;const base={seasonA:2026,seasonB:2026};const t=createTournament(state.format,state.tournament.participants,hash32('title:'+state.tournament.seed));render();
- if(typeof Worker!=='undefined')try{const w=new Worker(new URL('./worker.js',import.meta.url),{type:'module'});state.worker=w;w.onmessage=e=>{if(task!==state.task)return;const d=e.data;if(d.type==='progress'){const btn=root.querySelector('[data-action="playoff-mc"]');if(btn)btn.textContent=`Simulating ${Math.round(d.current/d.total*100)}%`;return;}w.terminate();state.worker=null;state.mcBusy=false;if(d.type==='result')state.tournamentMC=d.value;else state.error=d.message;render();};w.onerror=()=>{if(task!==state.task)return;w.terminate();state.worker=null;titleMCFallback(task,t,base);};w.postMessage({task,type:'tournament',n:400,tournament:t,config:base,datasets:state.datasets});return;}catch{}
+function titleMC(){if(state.mcBusy)return;state.mcBusy=true;state.error='';const task=++state.task;const base={seasonA:2026,seasonB:2026};state.lastTitleStudySeed=freshSimulationSeed(state.lastTitleStudySeed??state.tournament.seed);const t=createTournament(state.format,state.tournament.participants,state.lastTitleStudySeed);state.tournamentMC=null;render();
+ if(typeof Worker!=='undefined')try{const w=new Worker(new URL('./worker.js',import.meta.url),{type:'module'});state.worker=w;w.onmessage=e=>{if(task!==state.task)return;const d=e.data;if(d.type==='progress'){const btn=root.querySelector('[data-action="playoff-mc"]');if(btn)btn.textContent=`Simulating ${Math.round(d.current/d.total*100)}%`;return;}w.terminate();state.worker=null;state.mcBusy=false;if(d.type==='result')state.tournamentMC={...d.value,seed:t.seed};else state.error=d.message;render();};w.onerror=()=>{if(task!==state.task)return;w.terminate();state.worker=null;titleMCFallback(task,t,base);};w.postMessage({task,type:'tournament',n:400,tournament:t,config:base,datasets:state.datasets});return;}catch{}
  setTimeout(()=>titleMCFallback(task,t,base),0);
 }
 function titleMCFallback(task,t,base){
@@ -486,7 +486,7 @@ function titleMCFallback(task,t,base){
    combined.probabilities=Object.fromEntries(Object.entries(combined.counts).map(([id,c])=>[id,c/count]));
    combined.gamesPlayed=Object.fromEntries(Object.entries(combined.gamesPlayed).map(([id,total])=>[id,total/count]));
    combined.finalMatchups=[...finals].sort((a,b)=>b[1]-a[1]).slice(0,10);
-   state.tournamentMC=combined;
+   state.tournamentMC={...combined,seed:t.seed};
   }catch(e){state.error=e.message;}
   state.mcBusy=false;render();
  };
