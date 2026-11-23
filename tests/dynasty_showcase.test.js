@@ -51,7 +51,7 @@ test('complete staged and one-click tournaments have identical award ledgers and
   const a=tournamentReport(completed),b=tournamentReport(progressive);
   assert.deepEqual(a.awards,b.awards);
   assert.deepEqual(a.scores.map(x=>[x.round,x.index,x.game.final]),b.scores.map(x=>[x.round,x.index,x.game.final]));
- });
+ }
 });
 test('scorebox pass is truthful and catches tampered quarters, drive scores, turnovers, bracket winner and advancement',()=>{
  const g=simulateGame(DEFAULT_CONFIG,12551);
