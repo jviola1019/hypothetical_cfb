@@ -74,6 +74,15 @@ def check(browser_type,engine,width):
         assert abs(a-b-margin)<.051, f"Displayed score margin inconsistency: {estimates}"
         assert abs(a+b-total)<.051, f"Displayed score total inconsistency: {estimates}"
 
+        original_game_seed=page.locator('.game-canvas .fixture-score').get_attribute('data-game-seed')
+        original_game_stats=page.locator('#game-details .stat-table').first.inner_text()
+        page.locator('[data-action="new-game"]').click()
+        replay_game_seed=page.locator('.game-canvas .fixture-score').get_attribute('data-game-seed')
+        replay_game_stats=page.locator('#game-details .stat-table').first.inner_text()
+        assert replay_game_seed!=original_game_seed, f"Single-game replay reused its prior seed ({replay_game_seed})"
+        assert replay_game_stats!=original_game_stats, "Fresh game seed reproduced the identical complete team stat box"
+        assert page.locator('.game-canvas .scorebox-verification.passed').count()==1, "Replayed game failed scorebook reconciliation"
+
         if engine=='chromium' and width==390:
             # Dated injury is game-specific, not a lifetime state. Select OSU
             # and confirm 2026 roster-linked QB replacement is source-graded.
@@ -110,6 +119,8 @@ def check(browser_type,engine,width):
         # timed, deterministic, multi-stage broadcast runs before champion reveal.
         page.locator('[data-action="tab-playoff"]').click()
         page.locator('[data-field="format"]').select_option("fullFbs138")
+        initial_tournament_seed=page.locator('.tournament-overview').get_attribute('data-tournament-seed')
+        assert initial_tournament_seed and initial_tournament_seed.isdigit()
         assert page.locator('.playoff-theater').count()==1
         assert page.locator('[data-action="playoff-next"]').count()==1
         start_clock=time.monotonic()
@@ -142,6 +153,7 @@ def check(browser_type,engine,width):
         page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').click()
         assert page.locator('#dynasty-showcase').count()==0
         assert '137 / 137' in page.locator('.tournament-overview').inner_text(), "Not all 138-team games completed"
+        assert page.locator('.tournament-overview').get_attribute('data-tournament-seed')==initial_tournament_seed, "Run changed seeds during its own rounds"
         assert page.locator('.awards-showcase .award-card').count()==4
         assert '137 / 137' in page.locator('.scorebox-audit-title').inner_text(), "Every scorebox must reconcile"
         assert page.locator('.scorebox-audit.failed').count()==0
@@ -152,16 +164,31 @@ def check(browser_type,engine,width):
         assert page.locator('.full-bracket-scroll').evaluate("(e)=>e.scrollWidth>e.clientWidth"), "Full tree must be independently horizontally scrollable"
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Full bracket caused body overflow"
         if engine=='chromium' and width==390:
+            first_honors=page.locator('.titles-section .award-card .award-stat').all_text_contents()
+            first_round_scorebook=page.locator('.scorebox-directory tbody tr').all_text_contents()[:10]
             page.locator('[data-action="playoff-reset"]').click()
+            reset_seed=page.locator('.tournament-overview').get_attribute('data-tournament-seed')
+            assert reset_seed!=initial_tournament_seed, "Reset recreated the old deterministic bracket instead of a new seeded run"
             page.locator('[data-action="playoff-next"]').click()
             assert '10 / 137' in page.locator('.tournament-overview').inner_text(), "Incorrect 138-team opening play-in"
+            second_round_scorebook=page.locator('.scorebox-directory tbody tr').all_text_contents()
+            assert second_round_scorebook!=first_round_scorebook, "Reseeded first-round scorebook did not change"
+            assert page.locator('.tournament-overview').get_attribute('data-tournament-seed')==reset_seed, "Seed changed during a stepwise tournament"
             page.locator('[data-action="playoff-next"]').click()
             assert '74 / 137' in page.locator('.tournament-overview').inner_text(), "Incorrect 64-game second stage"
             page.locator('[data-action="playoff-run"]').click()
             page.locator('#dynasty-showcase.stage-finish').wait_for(timeout=25000)
             page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').click()
             assert '137 / 137' in page.locator('.tournament-overview').inner_text(), "Resume-from-round full tournament failed"
+            replay_honors=page.locator('.titles-section .award-card .award-stat').all_text_contents()
+            assert replay_honors!=first_honors, "New tournament awards reused stale player statistics"
+            assert page.locator('.tournament-overview').get_attribute('data-tournament-seed')==reset_seed
         page.screenshot(path=str(OUT/f"{engine}-{width}-playoffs.png"),full_page=width<1100,animations="disabled")
+        if engine=='chromium' and width==390:
+            previous_complete_seed=page.locator('.tournament-overview').get_attribute('data-tournament-seed')
+            page.locator('[data-action="playoff-next"]').click()
+            next_title_seed=page.locator('.tournament-overview').get_attribute('data-tournament-seed')
+            assert next_title_seed!=previous_complete_seed, "New round after a completed title reused the previous tournament seed"
         page.locator('[data-action="tab-research"]').click()
         page.locator(".audit-section").first.wait_for(timeout=30000)
         assert page.locator('.coverage-intro').evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(32, 41, 53)', "Old dark olive uncertainty metric panel"
