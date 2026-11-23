@@ -121,3 +121,25 @@ test('a previous tournament game or award ledger cannot pass as a new-seed repla
  }
  assert.deepEqual(tournamentReport(staged).awards,report.awards);
 });
+
+test('all six tournament sizes regenerate distinct seeded score/player ledgers and rerun-specific award statistics',()=>{
+ const formats=['custom2','custom4','fbs12','fbs24','custom68','fullFbs138'];
+ for(const [formatIndex,id] of formats.entries()){
+  const scorebooks=new Set(),statLedgers=new Set(),honors=new Set();
+  for(let iteration=0;iteration<6;iteration++){
+   const seed=1000000+formatIndex*250000+iteration*311;
+   const t=simulateTournament(createTournament(id,defaultParticipants(id),seed),base);
+   const r=tournamentReport(t);
+   assert.equal(r.complete,true);
+   assert.equal(r.audited,t.participants.length-1);
+   assert.equal(r.awards.mvp.team,t.champion);
+   scorebooks.add(r.scores.map(x=>x.game.final.join('-')).join('|'));
+   statLedgers.add(r.scores.map(x=>x.game.teams.map(y=>
+    [y.passYards,y.rushYards,y.players.QB.passingYards,y.players.RB.rushYards,y.turnovers].join(':')).join('/')).join('|'));
+   honors.add(JSON.stringify(r.awards));
+  }
+  assert.equal(statLedgers.size,6,`${id}: six different tournament seeds should not have identical game/stat ledgers`);
+  assert.ok(scorebooks.size>=4,`${id}: six distinct seeds show insufficient score variation (${scorebooks.size})`);
+  assert.ok(honors.size>=5,`${id}: awards failed to react to the newly simulated player stats (${honors.size})`);
+ }
+});
