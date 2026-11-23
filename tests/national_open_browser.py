@@ -33,10 +33,10 @@ with sync_playwright() as p:
   assert page.locator('.seed-leaders .seed-row').count()==16
   assert '138' in page.locator('.seed-intro h3').inner_text()
   assert page.locator('.bracket-grid .fixture-bracket').count()==10, '10 play-ins, not 128 empty cards'
-  assert '2026 Elo' in page.locator('.seed-intro p').inner_text()
+  assert 'CFP Top25' in page.locator('.seed-intro p').inner_text() or 'CFP' in page.locator('.seed-intro p').inner_text()
   high=page.locator('.seed-row span').first.inner_text()
-  # Last synthetic fixture rating belongs to FBS_TEAMS[-1] (Wyoming).
-  assert high=='Wyoming',f'2026 rank fixture should put Wyoming first, got {high}'
+  # Published committee order takes precedence; model-only Elo orders unranked programs.
+  assert high=='Georgia',f'published CFP interim top seed should be Georgia, got {high}'
   page.locator('[data-field="swap-from"]').select_option('0')
   page.locator('[data-field="swap-to"]').select_option('137')
   page.locator('[data-action="swap-seeds"]').click()
