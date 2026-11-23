@@ -1,7 +1,7 @@
 {
   "name": "gridiron-lab",
   "private": true,
-  "version": "1.3.0",
+  "version": "1.2.0",
   "type": "module",
   "description": "2026 FBS roster-linked simulator with nationwide role integrity checks and dated starter-source grading",
   "license": "MIT",
