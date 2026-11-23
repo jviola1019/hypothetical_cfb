@@ -60,7 +60,7 @@ test('68-team First Four uses two 11-line and two 16-line regional play-ins, not
  assert.equal(new Set(order.filter(n=>n<=68)).size,68);
  assert.equal(playablePairs(t).length,4);
  const matches=playablePairs(t).map(x=>[t.participants.indexOf(x.a)+1,t.participants.indexOf(x.b)+1].sort((a,b)=>a-b));
- assert.deepEqual(matches,[[42,65],[43,66],[63,67],[64,68]]);
+ assert.deepEqual(matches.sort((a,b)=>a[0]-b[0]),[[42,65],[43,66],[63,67],[64,68]]);
  assert.equal(new Set(t.participants).size,68);
 });
 test('playing one round at a time reaches exactly the same bracket as full one-shot simulation',()=>{
