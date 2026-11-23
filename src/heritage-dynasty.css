@@ -282,3 +282,6 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible,su
 @media(max-width:410px){.awards-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.award-card{padding:11px 5px}.award-card h4{font-size:12px}.full-bracket-column{width:210px;flex-basis:210px}.scorebox-audit-title{padding:10px}.scorebox-audit-title h3{font-size:16px}.scorebox-audit-title strong{font-size:13px}.showcase-scorestrip span:last-child{display:none}.showcase-copy{padding:5px 0}.showcase-spotlight{height:65px}.showcase-trophy{font-size:50px}.showcase-progress-track{height:13px}}
 @media(min-width:1600px){.site-width{max-width:1550px}.page-intro{min-height:360px}.page-intro h1{font-size:75px}}
 @media(prefers-reduced-motion:reduce){.showcase-light,.showcase-trophy,.showcase-copy h2,.showcase-winner,.showcase-confetti i,.awards-in-ceremony,.theater-final-reveal .theater-copy h3{animation:none!important}.showcase-confetti{display:none!important}.showcase-progress-track span{transition:none}.playoff-theater:after{animation:none!important}}
+
+/* Winning specificity against legacy video-game skins for verified scorebox contrast. */
+.score-table tbody tr td,.score-table tbody tr th{background-color:#23364b!important;color:#faf1da!important}
