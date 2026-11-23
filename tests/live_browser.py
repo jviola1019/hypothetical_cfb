@@ -76,7 +76,7 @@ def check(browser_type,engine,width):
 
         original_game_seed=page.locator('.game-canvas .fixture-score').get_attribute('data-game-seed')
         original_game_stats=page.locator('#game-details .stat-table').first.inner_text()
-        page.locator('[data-action="new-game"]').click()
+        page.locator('.game-canvas [data-action="new-game"]').click()
         replay_game_seed=page.locator('.game-canvas .fixture-score').get_attribute('data-game-seed')
         replay_game_stats=page.locator('#game-details .stat-table').first.inner_text()
         assert replay_game_seed!=original_game_seed, f"Single-game replay reused its prior seed ({replay_game_seed})"
