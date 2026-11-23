@@ -50,6 +50,7 @@ test('64 seeded game replays reproduce exactly when reused and yield diverse leg
  assert.ok(teamBoxes.size>=60,`Team stat lines repeated unexpectedly: ${teamBoxes.size}/64`);
  assert.ok(playerBoxes.size>=60,`Player stats repeated unexpectedly: ${playerBoxes.size}/64`);
  assert.ok(winners.size>1,'The matchup must be able to swing across seeds');
+ console.log(`[DIVERSITY GAME] trials=64 distinctSeeds=64 uniqueFinals=${scorelines.size} uniqueTeamBoxes=${teamBoxes.size} uniquePlayerLines=${playerBoxes.size} uniqueWinners=${winners.size}`);
 });
 
 test('every match in the 138-school bracket derives its own independent seed from tournament seed, stage and pairing',()=>{
@@ -65,6 +66,7 @@ test('every match in the 138-school bracket derives its own independent seed fro
   assert.equal(scoreboxFor(m.game).ok,true);
  }
  assert.equal(seeds.size,137);
+ console.log(`[DIVERSITY FBS138] tournamentSeed=${t.seed} uniqueGameSeeds=${seeds.size} reconciledScoreboxes=${r.audited}`);
  assert.equal(r.audited,137);
  assert.equal(r.awards.mvp.team,t.champion);
 });
@@ -103,6 +105,7 @@ test('16 fresh 12-team tournament seeds yield different scorebooks, player aggre
  assert.equal(playerLedgers.size,16);
  assert.ok(awardLedgers.size>=8,`Award statistics unexpectedly static across seeds: ${awardLedgers.size}`);
  assert.ok(champions.size>=2,`All 16 titles went to the identical school; inspect model calibration and seed use`);
+ console.log(`[DIVERSITY CFP12] trials=16 scorebooks=${scorebooks.size} playerLedgers=${playerLedgers.size} awardLedgers=${awardLedgers.size} distinctChampions=${champions.size}`);
 });
 
 test('a previous tournament game or award ledger cannot pass as a new-seed replay, and staged rounds preserve original seed',()=>{
@@ -141,5 +144,6 @@ test('all six tournament sizes regenerate distinct seeded score/player ledgers a
   assert.equal(statLedgers.size,6,`${id}: six different tournament seeds should not have identical game/stat ledgers`);
   assert.ok(scorebooks.size>=4,`${id}: six distinct seeds show insufficient score variation (${scorebooks.size})`);
   assert.ok(honors.size>=5,`${id}: awards failed to react to the newly simulated player stats (${honors.size})`);
+  console.log(`[DIVERSITY FORMAT] ${id} trials=6 scorebooks=${scorebooks.size} teamPlayerLedgers=${statLedgers.size} awardLedgers=${honors.size}`);
  }
 });
