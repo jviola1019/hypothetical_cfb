@@ -4,6 +4,7 @@ import {evaluatedMatchup} from './research.js';
 import {receivingWeights,primaryRusherShare} from './usage.js';
 import {observed,namedPlayer} from './observed.js';
 import {FBS_TEAMS,FCS_REFERENCE} from './catalog.js';
+import {provisionalEliteGap} from './committee2026.js';
 /* GRIDIRON LAB 0.4 — reproducible, synthetic, drive-level football lab.
    THESE PARAMETERS ARE NOT FITTED TO HISTORICAL RESULTS. */
 export const ENGINE_VERSION='1.0-roster-matched-hypothetical';
@@ -46,13 +47,17 @@ export function gameplayBalanceFor(config,profiles){
  const homeElo=config.venue==='a'?55:config.venue==='b'?-55:0;
  // Ratio calibration is a declared gameplay heuristic. The coefficients have
  // NOT passed an untouched-season player/game calibration holdout.
- const opponentLog=clamp(2*(e.ratingA-e.ratingB+homeElo)/400,-1.9,1.9);
+ const rawGap=e.ratingA-e.ratingB;
+ const effectiveGap=provisionalEliteGap(config.a,config.b,rawGap);
+ const contextAdjusted=effectiveGap!==rawGap;
+ const opponentLog=clamp(2*(effectiveGap+homeElo)/400,-1.9,1.9);
  const logRatio=.18*Math.log(a/b)+.82*opponentLog;
  const geometric=Math.sqrt(a*b);
  return {a:clamp(geometric*Math.exp(logRatio/2),.5,1.65),
          b:clamp(geometric*Math.exp(-logRatio/2),.5,1.65),
-         eloReference:e.pA,eloGap:e.ratingA-e.ratingB,asOf:e.lastScoredGame||e.asOf,
-         classification:'opponent-adjusted-elo-guided-synthetic-play-not-forecast'};
+         eloReference:e.pA,eloGap:rawGap,effectiveEloGap:effectiveGap,
+         committeeContextGuard:contextAdjusted,asOf:e.lastScoredGame||e.asOf,
+         classification:contextAdjusted?'committee-context-guarded-exhibition-not-calibrated':'opponent-adjusted-elo-guided-synthetic-play-not-forecast'};
 }
 function newPlayers(team,season){const p={QB:{id:team+'-QB',label:'QB1 · synthetic',passingAttempts:0,completions:0,passingYards:0,passingTD:0,interceptions:0,rushAttempts:0,rushYards:0,rushingTD:0},RB:{id:team+'-RB',label:'RB1 · synthetic',rushAttempts:0,rushYards:0,rushingTD:0,targets:0,receptions:0,receivingYards:0,receivingTD:0},WR1:{id:team+'-WR1',label:'WR1 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},WR2:{id:team+'-WR2',label:'WR2 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},TE:{id:team+'-TE',label:'TE1 · synthetic',targets:0,receptions:0,receivingYards:0,receivingTD:0},OTHER:{id:team+'-OTHER',label:'Other contributors · aggregate',rushAttempts:0,rushYards:0,rushingTD:0,targets:0,receptions:0,receivingYards:0,receivingTD:0},K:{id:team+'-K',label:'K1 · synthetic',fieldGoalsAttempted:0,fieldGoalsMade:0,extraPointsAttempted:0,extraPointsMade:0}};for(const [role,player] of Object.entries(p)){const named=namedPlayer(team,role,season);player.label=role==='OTHER'?'Other contributors · aggregate':(named?.name||('Unassigned '+role+' · model-only'));player.historical=Boolean(named);player.rosterSeason=named?.season||null;player.selectionBasis=named?.selectionBasis||'unassigned';player.roleVerified=Boolean(named?.roleVerified);player.eventGames=named?.eventGames||0;player.observedMean=named?.observedMean??null;player.sourceUrl=named?.sourceUrl||null;player.verifiedOn=named?.verifiedOn||null;}return p;}
 function initStats(team,season){return {team,points:0,passYards:0,rushYards:0,passAttempts:0,completions:0,rushAttempts:0,passingTD:0,rushingTD:0,turnovers:0,fumblesLost:0,drives:0,plays:0,fieldGoals:0,twoPointAttempts:0,twoPointMade:0,overtimePoints:0,byQuarter:[0,0,0,0],players:newPlayers(team,season)};}
@@ -99,7 +104,7 @@ while(secs>0){let dsec=clamp(Math.round((100+Math.abs(normal(r))*50)/config.pace
 // Model overtime as paired untimed drives, with two-point shootout from third OT.
 let ot=0;while(stats[0].points===stats[1].points&&ot<128){ot++;if(ot<=2){const order=r()<.5?[0,1]:[1,0];for(let ix of order){const d=drive(r,stats[ix],stats[1-ix],profiles[ix],profiles[1-ix],{pace:1,shift:ix===0?+config.shift:-config.shift,ot:true,home:false,tempoRealism:Boolean(balance),scoringIntensity:intensity[ix],q:3+ot,clock:0,elapsed:0});d.scoreA=stats[0].points;d.scoreB=stats[1].points;drives.push(d)}}else{for(let ix=0;ix<2;ix++){const success=r()<.46;const pts=success?2:0;stats[ix].points+=pts;stats[ix].overtimePoints+=pts;stats[ix].twoPointAttempts++;stats[ix].twoPointMade+=+success;stats[ix].drives++;stats[ix].plays++;const d={offense:stats[ix].team,defense:stats[1-ix].team,start:97,gain:pts?3:0,plays:1,outcome:success?'2PT GOOD':'2PT FAIL',conversion:'2PT',points:pts,passYards:0,rushYards:0,passAttempts:0,completions:0,quarter:'OT'+ot,clock:0,elapsed:0,scoreA:stats[0].points,scoreB:stats[1].points};drives.push(d)}}}
 if(stats[0].points===stats[1].points)throw Error('Overtime simulation safety limit reached');
-return {id:`g-${hash32(seed+'|'+config.a+'|'+config.b).toString(16)}`,seed,config:{...config},teams:stats,drives,final:[stats[0].points,stats[1].points],margin:stats[0].points-stats[1].points,total:stats[0].points+stats[1].points,winner:stats[0].points>stats[1].points?config.a:config.b,ot,scoringMode:scoring?'research-conditioned-drive-intensity-not-player-calibration':balance?'elo-guided-2026-synthetic-not-calibrated':'retrospective-synthetic',gameplayEvidence:balance?{classification:balance.classification,eloReference:balance.eloReference,asOf:balance.asOf}:null};}
+return {id:`g-${hash32(seed+'|'+config.a+'|'+config.b).toString(16)}`,seed,config:{...config},teams:stats,drives,final:[stats[0].points,stats[1].points],margin:stats[0].points-stats[1].points,total:stats[0].points+stats[1].points,winner:stats[0].points>stats[1].points?config.a:config.b,ot,scoringMode:scoring?'research-conditioned-drive-intensity-not-player-calibration':balance?'elo-guided-2026-synthetic-not-calibrated':'retrospective-synthetic',gameplayEvidence:balance?{classification:balance.classification,eloReference:balance.eloReference,committeeContextGuard:balance.committeeContextGuard,effectiveEloGap:balance.effectiveEloGap,asOf:balance.asOf}:null};}
 export function outcomeSummary(games,config){if(!games.length)throw Error('No games');let aw=0,over=0,cover=0,ots=0,sumA=0,sumB=0;let margin=[],total=[],scores=new Map(),running=[];for(let i=0;i<games.length;i++){const g=games[i];if(!sameScenario(g.config,config))throw Error('Mixed matchup configurations in outcome summary');sumA+=g.final[0];sumB+=g.final[1];aw+=g.winner===config.a?1:0;ots+=g.ot>0?1:0;const key=g.final.join('-');scores.set(key,(scores.get(key)||0)+1);margin.push(g.margin);total.push(g.total);if((i+1)%Math.max(1,Math.floor(games.length/65))===0)running.push({n:i+1,p:aw/(i+1)});}margin.sort((a,b)=>a-b);total.sort((a,b)=>a-b);const quant=(xs,p)=>xs[Math.min(xs.length-1,Math.floor((xs.length-1)*p))];const prob=aw/games.length;return {n:games.length,meanA:sumA/games.length,meanB:sumB/games.length,pA:prob,pB:1-prob,ot:ots/games.length,marginMean:(sumA-sumB)/games.length,totalMean:(sumA+sumB)/games.length,margin,total,scores:[...scores.entries()].map(([score,count])=>({score,count})),running,marginInterval:[quant(margin,.05),quant(margin,.95)],totalInterval:[quant(total,.05),quant(total,.95)],mcse:Math.sqrt(prob*(1-prob)/games.length),markets:simulatedMarketLedger(games),model:ENGINE_VERSION};}
 export function namedPropSummaries(games,config){
   const choices=[['QB','passingYards',250.5,'Pass yards'],['RB','rushYards',75.5,'Rush yards'],['WR1','receivingYards',99.5,'Receive yards'],['WR1','receptions',5.5,'Receptions'],['WR2','receivingYards',49.5,'Receive yards'],['TE','receptions',3.5,'Receptions']];
