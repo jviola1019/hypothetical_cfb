@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {FBS_TEAMS} from '../src/catalog.js';
-import {COMMITTEE_2026,committeeRank,committeeOrderedField,provisionalEliteGap} from '../src/committee2026.js';
+import {COMMITTEE_2026,CFP_SCHEDULE_2026,committeeRank,committeeOrderedField,provisionalEliteGap} from '../src/committee2026.js';
 import {installResearchSnapshot,evaluatedMatchup} from '../src/research.js';
-import {installSeasonSnapshot} from '../src/observed.js';
+import {installSeasonSnapshot,installRosterSnapshot,namedPlayer} from '../src/observed.js';
 import {DEFAULT_CONFIG,gameplayBalanceFor,teamProfile,simulateBatch} from '../src/engine.js';
 import {rulesOrder,FORMAT_MAP,createTournament,defaultParticipants,playablePairs,simulateRound,simulateTournament} from '../src/tournament.js';
 const data=name=>JSON.parse(readFileSync(new URL('../public/data/'+name,import.meta.url),'utf8'));
@@ -74,6 +74,24 @@ test('playing one round at a time reaches exactly the same bracket as full one-s
   assert.equal(stepping.rounds.flatMap(r=>r.matches.filter(x=>x.game)).length,t.participants.length-1);
   assert.ok(stepping.rounds.every(round=>round.matches.every(m=>m.bye||m.game)));
  }
+});
+test('official 2026 postseason calendar has real source dates; fantasy fields never invent participants',()=>{
+ assert.deepEqual(CFP_SCHEDULE_2026.map(x=>x.date),['2026-12-18','2026-12-19','2026-12-30','2027-01-01','2027-01-14','2027-01-15','2027-01-25']);
+ assert.ok(CFP_SCHEDULE_2026.every(x=>!x.teamA&&!x.teamB));
+ const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
+ assert.match(app,/function playoffCalendar\(/);
+ assert.match(app,/actual CFP calendar/i);
+});
+test('2026 secondary quarterback scouting never duplicates the QB1 identity or fabricates QB2 props',()=>{
+ installRosterSnapshot(data('rosters-2026.json'));
+ const qb1=namedPlayer('tennessee','QB',2026);
+ const qb2=namedPlayer('tennessee','QB2',2026);
+ assert.ok(qb1&&qb2,'Tennessee must have at least two roster-listed 2026 quarterbacks');
+ assert.notEqual(qb1.name,qb2.name);
+ assert.equal(qb2.roleVerified,false,'no verified QB2 report in the dated source');
+ const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
+ assert.match(app,/Secondary QB roster candidate only/);
+ assert.match(app,/does not split unproven passing attempts/i);
 });
 test('arcade UI includes tournament theater, round control and reduced-motion fallbacks',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
