@@ -124,9 +124,13 @@ def check(browser_type,engine,width):
         page.locator('#dynasty-showcase.stage-champion').wait_for(timeout=21000)
         elapsed=time.monotonic()-start_clock
         assert elapsed>=10.0, f"Champion revealed too early ({elapsed:.2f}s)"
+        if engine=='chromium' and width in (390,1366):
+            page.screenshot(path=str(OUT/f"{engine}-{width}-champion-reveal.png"),full_page=False,animations="allow")
         assert page.locator('#dynasty-showcase .showcase-winner').count()==1
         page.locator('#dynasty-showcase.stage-awards').wait_for(timeout=21000)
         assert page.locator('#dynasty-showcase .award-card').count()==4, "MVP OPOY DPOY and title-game MVP missing"
+        if engine=='chromium' and width in (390,1366):
+            page.screenshot(path=str(OUT/f"{engine}-{width}-award-ceremony.png"),full_page=False,animations="allow")
         page.locator('#dynasty-showcase.stage-finish').wait_for(timeout=23000)
         assert page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').count()==1
         page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').click()
