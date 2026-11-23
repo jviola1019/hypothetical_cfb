@@ -91,7 +91,7 @@ test('2026 secondary quarterback scouting never duplicates the QB1 identity or f
  assert.equal(qb2.roleVerified,false,'no verified QB2 report in the dated source');
  const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
  assert.match(app,/Secondary QB roster candidate only/);
- assert.match(app,/does not split unproven passing attempts/i);
+ assert.match(app,/season-long event games do not prove a same-game passing split/i);
 });
 test('arcade UI includes tournament theater, round control and reduced-motion fallbacks',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
