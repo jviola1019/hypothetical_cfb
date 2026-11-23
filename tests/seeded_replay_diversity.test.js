@@ -111,7 +111,7 @@ test('a previous tournament game or award ledger cannot pass as a new-seed repla
  const seeded=structuredClone(done);
  seeded.seed=freshSimulationSeed(done.seed,()=>done.seed);
  assert.throws(()=>tournamentReport(seeded),/seed provenance/i);
- const stale=structuredClone(done);stale.rounds[0].matches[0].game.config.seed++;
+ const stale=structuredClone(done);stale.rounds[0].matches.find(m=>m.game).game.config.seed++;
  assert.throws(()=>tournamentReport(stale),/seed provenance/i);
  let staged=a;
  while(!staged.champion){
