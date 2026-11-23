@@ -19,7 +19,7 @@ test('research Elo remains separate; CFP preview follows dated committee top-25,
  for(const id of ['fbs12','fbs24','custom64','custom68','custom128','fullFbs138']){
   const f=FORMAT_MAP[id];const selected=defaultParticipants(id);
   assert.equal(selected.length,f.size);assert.equal(new Set(selected).size,selected.length);
-  assert.deepEqual(selected, id==='fbs12'||id==='fbs24'?COMMITTEE_2026.ids.slice(0,f.size):rank.ids.slice(0,f.size));
+  assert.deepEqual(selected, [...COMMITTEE_2026.ids,...rank.ids.filter(x=>!COMMITTEE_2026.ids.includes(x))].slice(0,f.size));
  }
 });
 
