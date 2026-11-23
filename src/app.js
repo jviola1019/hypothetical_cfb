@@ -288,7 +288,7 @@ function showcaseOverlay(){
    `<div class="showcase-live-score"><span>STADIUM TRANSMISSION</span><strong>${f.size} PROGRAMS // ONE TROPHY</strong><small>KICKOFF SEQUENCE ACTIVE</small></div>`}
   ${awarding?awardsShowcase(state.report?.awards,true):''}
   <div class="showcase-progress"><div class="showcase-progress-top"><b>${count} / ${f.size-1} GAMES RESOLVED</b><span id="showcase-timecode">BROADCAST ON AIR</span></div><div class="showcase-progress-track"><span id="showcase-timebar" style="width:${progress}%"></span></div><small>ACTUAL ROUND PROGRESSION · 11.6 SECOND MINIMUM TO CHAMPION REVEAL</small></div>
-  <div class="showcase-controls"><button type="button" data-action="showcase-cancel" class="showcase-abort">${finished?'RESTART THE EXPERIENCE':'CANCEL SIMULATION'}</button>${finished?'<button type="button" class="showcase-open-results" data-action="showcase-dismiss">OPEN THE FULL BRACKET + TROPHY CASE →</button>':'<span class="showcase-tuning">BROADCAST IN PROGRESS</span>'}</div>
+  <div class="showcase-controls"><button type="button" data-action="showcase-cancel" class="showcase-abort">${finished?'DISCARD REPLAY':'CANCEL SIMULATION'}</button>${finished?'<button type="button" class="showcase-open-results" data-action="showcase-dismiss">OPEN THE FULL BRACKET + TROPHY CASE →</button>':'<span class="showcase-tuning">BROADCAST IN PROGRESS</span>'}</div>
   </div><div class="showcase-confetti" aria-hidden="true">${Array.from({length:24},(_,i)=>`<i style="--x:${i*4}%;--delay:${(i*.035).toFixed(2)}s;--dur:${(2.1+i*.08).toFixed(2)}s;--turn:${i*31}deg"></i>`).join('')}</div>
  </div>`;
 }
