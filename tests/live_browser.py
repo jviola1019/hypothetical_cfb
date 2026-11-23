@@ -7,6 +7,7 @@ the rendering engine but is NOT physical iPhone Safari certification.
 from __future__ import annotations
 import json
 import os
+import time
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -55,13 +56,13 @@ def check(browser_type,engine,width):
 
         # Verify the actual new game CSS and locally served stadium asset, rather
         # than passing on DOM-only assertions while a stylesheet 404s.
-        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(216, 225, 233)', "Cartridge Rush arcade skin missing"
+        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(231, 223, 202)', "Vintage heritage Dynasty skin missing"
         assert page.locator('.brand-copy').evaluate("(el) => getComputedStyle(el).flexDirection")=='column', "Wordmark/subtitle should stack without collision"
-        assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(21, 29, 38)', "Quarter table is using old olive background"
-        assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(242, 245, 247)', "Quarter scores lack readable contrast"
+        assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(35, 54, 75)', "Vintage score table failed to style"
+        assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(250, 241, 218)', "Vintage quarter scores lack readable contrast"
 
-        assert "night-stadium.svg" in page.locator('.page-intro').evaluate("(el) => getComputedStyle(el).backgroundImage"), "Stadium asset not used"
-        assert page.evaluate("fetch('./public/assets/night-stadium.svg').then(r => r.ok)"), "Local stadium illustration failed to load"
+        assert "heritage-stadium.svg" in page.locator('.page-intro').evaluate("(el) => getComputedStyle(el).backgroundImage"), "Vintage stadium artwork not used"
+        assert page.evaluate("fetch('./public/assets/heritage-stadium.svg').then(r => r.ok)"), "Heritage stadium illustration missing"
         # The visible score pair must reproduce the printed point total and margin.
         estimates=page.locator('.snapshot-figures strong').all_text_contents()
         import re
@@ -94,24 +95,54 @@ def check(browser_type,engine,width):
             assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Availability interaction introduced page overflow"
 
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Mobile document overflow"
-        page.screenshot(path=str(OUT/f"{engine}-{width}-game.png"),full_page=True,animations="disabled")
+        page.screenshot(path=str(OUT/f"{engine}-{width}-game.png"),full_page=width<1100,animations="disabled")
+        # Full tournament must NOT instantly disclose the result: a genuinely
+        # timed, deterministic, multi-stage broadcast runs before champion reveal.
         page.locator('[data-action="tab-playoff"]').click()
         page.locator('[data-field="format"]').select_option("fullFbs138")
+        assert page.locator('.playoff-theater').count()==1
+        assert page.locator('[data-action="playoff-next"]').count()==1
+        start_clock=time.monotonic()
         page.locator('[data-action="playoff-run"]').click(timeout=30000)
-        page.locator(".champion-banner").wait_for(timeout=30000)
-        assert page.locator(".playoff-theater").count()==1, "Animated championship arena missing"
-        assert page.locator('[data-action="playoff-next"]').count()==1, "Round-by-round control missing"
+        page.locator('#dynasty-showcase').wait_for(timeout=5000)
+        assert page.locator('#dynasty-showcase.stage-champion').count()==0, "Premature champion/award disclosure"
+        assert page.locator('#dynasty-showcase .awards-showcase').count()==0
+        assert page.locator('#dynasty-showcase').evaluate("(e)=>getComputedStyle(e).position")=="fixed"
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+2'), "Broadcast overlay horizontal overflow"
+        # It must progress through actual rounds while the viewer is watching.
+        page.locator('#dynasty-showcase.stage-round').wait_for(timeout=9000)
+        page.locator('#dynasty-showcase.stage-champion').wait_for(timeout=21000)
+        elapsed=time.monotonic()-start_clock
+        assert elapsed>=10.0, f"Champion revealed too early ({elapsed:.2f}s)"
+        assert page.locator('#dynasty-showcase .showcase-winner').count()==1
+        page.locator('#dynasty-showcase.stage-awards').wait_for(timeout=21000)
+        assert page.locator('#dynasty-showcase .award-card').count()==4, "MVP OPOY DPOY and title-game MVP missing"
+        page.locator('#dynasty-showcase.stage-finish').wait_for(timeout=23000)
+        assert page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').count()==1
+        page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').click()
+        assert page.locator('#dynasty-showcase').count()==0
+        assert '137 / 137' in page.locator('.tournament-overview').inner_text(), "Not all 138-team games completed"
+        assert page.locator('.awards-showcase .award-card').count()==4
+        assert '137 / 137' in page.locator('.scorebox-audit-title').inner_text(), "Every scorebox must reconcile"
+        assert page.locator('.scorebox-audit.failed').count()==0
+        assert page.locator('.scorebox-directory').count()==1
+        page.locator('[data-action="bracket-full"]').click()
+        assert page.locator('.full-bracket').count()==1
+        assert page.locator('.full-match.played').count()==137, "Complete all-round tree must show all played fixtures"
+        assert page.locator('.full-bracket-scroll').evaluate("(e)=>e.scrollWidth>e.clientWidth"), "Full tree must be independently horizontally scrollable"
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Full bracket caused body overflow"
         if engine=='chromium' and width==390:
             page.locator('[data-action="playoff-reset"]').click()
             page.locator('[data-action="playoff-next"]').click()
-            assert '10 / 137' in page.locator('.tournament-overview').inner_text(), "138-team 10-game opening play-in incorrect"
+            assert '10 / 137' in page.locator('.tournament-overview').inner_text(), "Incorrect 138-team opening play-in"
             page.locator('[data-action="playoff-next"]').click()
-            assert '74 / 137' in page.locator('.tournament-overview').inner_text(), "Round-two 64-game stage incorrect"
+            assert '74 / 137' in page.locator('.tournament-overview').inner_text(), "Incorrect 64-game second stage"
             page.locator('[data-action="playoff-run"]').click()
-            assert '137 / 137' in page.locator('.tournament-overview').inner_text(), "Resume-from-round full simulation failed"
-        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Playoff document overflow"
-        page.screenshot(path=str(OUT/f"{engine}-{width}-playoffs.png"),full_page=True,animations="disabled")
-        page.locator('[data-action="tab-research"]').click()
+            page.locator('#dynasty-showcase.stage-finish').wait_for(timeout=25000)
+            page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').click()
+            assert '137 / 137' in page.locator('.tournament-overview').inner_text(), "Resume-from-round full tournament failed"
+        page.screenshot(path=str(OUT/f"{engine}-{width}-playoffs.png"),full_page=width<1100,animations="disabled")
+                page.locator('[data-action="tab-research"]').click()
         page.locator(".audit-section").first.wait_for(timeout=30000)
         assert page.locator('.coverage-intro').evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(32, 41, 53)', "Old dark olive uncertainty metric panel"
         assert page.locator('.coverage-intro strong').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(255, 255, 255)', "Historical uncertainty numbers must contrast with dark metrics panel"
@@ -125,7 +156,7 @@ def check(browser_type,engine,width):
         assert displayed[:3]==expected, f"Research source labels mismatch committed data: expected {expected}, got {displayed}"
 
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Research document overflow"
-        page.screenshot(path=str(OUT/f"{engine}-{width}-research.png"),full_page=True,animations="disabled")
+        page.screenshot(path=str(OUT/f"{engine}-{width}-research.png"),full_page=width<1100,animations="disabled")
         assert not exceptions,f"{engine} JS exceptions: {exceptions}"
         print(json.dumps({"engine":engine,"width":width,"realWorker":True,"forecastRuns":850,
                           "fbs138Bracket":True,"screenshots":3,"javascriptErrors":0}))
@@ -136,5 +167,5 @@ def check(browser_type,engine,width):
 if __name__=="__main__":
     with sync_playwright() as pw:
         for engine in ("chromium","webkit"):
-            for width in (320,390,768,1370):
+            for width in (320,390,430,768,1024,1366,1920):
                 check(getattr(pw,engine),engine,width)
