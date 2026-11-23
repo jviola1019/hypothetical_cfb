@@ -27,7 +27,7 @@ test('published committee preview takes precedence for the 2026 CFP showcase but
  assert.equal(new Set(ranked).size,FBS_TEAMS.length);
  assert.deepEqual(defaultParticipants('fbs12'),COMMITTEE_2026.ids.slice(0,12));
  assert.deepEqual(defaultParticipants('fbs24'),COMMITTEE_2026.ids.slice(0,24));
- assert.notEqual(defaultParticipants('custom68')[0],undefined);
+ assert.equal(defaultParticipants('custom68')[0],'georgia');
  const t=createTournament('fbs12');
  assert.match(t.seedingSource,/NOT final qualifiers/);
 });
