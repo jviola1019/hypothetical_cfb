@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {FBS_TEAMS} from '../src/catalog.js';
-import {COMMITTEE_2026} from '../src/committee2026.js';
+import {COMMITTEE_2026,provisional12Field} from '../src/committee2026.js';
 import {installResearchSnapshot} from '../src/research.js';
 import {FORMATS,FORMAT_MAP,defaultParticipants,ranked2026Field,createTournament,swapTournamentSeeds,simulateRound,simulateTournament,monteCarloTournament} from '../src/tournament.js';
 import {installRosterSnapshot,namedPlayer,rosterForTeam} from '../src/observed.js';
@@ -19,7 +19,7 @@ test('research Elo remains separate; CFP preview follows dated committee top-25,
  for(const id of ['fbs12','fbs24','custom64','custom68','custom128','fullFbs138']){
   const f=FORMAT_MAP[id];const selected=defaultParticipants(id);
   assert.equal(selected.length,f.size);assert.equal(new Set(selected).size,selected.length);
-  assert.deepEqual(selected, [...COMMITTEE_2026.ids,...rank.ids.filter(x=>!COMMITTEE_2026.ids.includes(x))].slice(0,f.size));
+  assert.deepEqual(selected, id==='fbs12'?provisional12Field():[...COMMITTEE_2026.ids,...rank.ids.filter(x=>!COMMITTEE_2026.ids.includes(x))].slice(0,f.size));
  }
 });
 
