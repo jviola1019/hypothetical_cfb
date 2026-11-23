@@ -137,7 +137,7 @@ def check(browser_type,engine,width):
         page.locator('#dynasty-showcase.stage-finish').wait_for(timeout=23000)
         if width<680:
             head_position=page.locator('#dynasty-showcase .awards-head').evaluate("(e)=>e.getBoundingClientRect().top")
-            assert 0<=head_position<height, f"Final ceremony unexpectedly reset mobile trophy case scroll: {head_position}"
+            assert 0<=head_position<page.evaluate('innerHeight'), f"Final ceremony unexpectedly reset mobile trophy case scroll: {head_position}"
         assert page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').count()==1
         page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').click()
         assert page.locator('#dynasty-showcase').count()==0
