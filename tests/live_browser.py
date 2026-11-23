@@ -142,7 +142,7 @@ def check(browser_type,engine,width):
             page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').click()
             assert '137 / 137' in page.locator('.tournament-overview').inner_text(), "Resume-from-round full tournament failed"
         page.screenshot(path=str(OUT/f"{engine}-{width}-playoffs.png"),full_page=width<1100,animations="disabled")
-                page.locator('[data-action="tab-research"]').click()
+        page.locator('[data-action="tab-research"]').click()
         page.locator(".audit-section").first.wait_for(timeout=30000)
         assert page.locator('.coverage-intro').evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(32, 41, 53)', "Old dark olive uncertainty metric panel"
         assert page.locator('.coverage-intro strong').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(255, 255, 255)', "Historical uncertainty numbers must contrast with dark metrics panel"
