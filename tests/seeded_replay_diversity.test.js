@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {freshSimulationSeed} from '../src/runSeeds.js';
 import {DEFAULT_CONFIG,hash32,simulateGame} from '../src/engine.js';
-import {createTournament,defaultParticipants,simulateRound,simulateTournament} from '../src/tournament.js';
+import {createTournament,defaultParticipants,simulateRound,simulateTournament,monteCarloTournament} from '../src/tournament.js';
 import {scoreboxFor,tournamentReport} from '../src/tournamentHonors.js';
 import {installRosterSnapshot} from '../src/observed.js';
 
@@ -146,4 +146,15 @@ test('all six tournament sizes regenerate distinct seeded score/player ledgers a
   assert.ok(honors.size>=5,`${id}: awards failed to react to the newly simulated player stats (${honors.size})`);
   console.log(`[DIVERSITY FORMAT] ${id} trials=6 scorebooks=${scorebooks.size} teamPlayerLedgers=${statLedgers.size} awardLedgers=${honors.size}`);
  }
+});
+
+test('title-share Monte Carlo studies are independently seeded while fixed study seeds reproduce the same samples',()=>{
+ const participants=defaultParticipants('fbs12');
+ const mk=seed=>monteCarloTournament(createTournament('fbs12',participants,seed),80,base);
+ const first=mk(384817),repeat=mk(384817),second=mk(384818);
+ assert.deepEqual(first,repeat,'A title study with fixed seed must be repeatable');
+ assert.notDeepEqual(first.counts,second.counts,'Fresh title-study seed did not change simulated title frequencies');
+ assert.equal(Object.values(first.counts).reduce((a,b)=>a+b,0),80);
+ assert.equal(Object.values(second.counts).reduce((a,b)=>a+b,0),80);
+ console.log('[DIVERSITY STUDY] trialsPerSeed=80 uniqueSamples=2 seed1=384817 seed2=384818');
 });
