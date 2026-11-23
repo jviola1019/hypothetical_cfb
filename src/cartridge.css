@@ -187,3 +187,18 @@ url('../public/assets/night-stadium.svg');background-position:center;background-
  .playoff-theater:after,.arena-glow,.theater-complete .trophy-hex,.theater-final-reveal .theater-copy h3,.theater-final-reveal:before{animation:none!important}
  .theater-meter i{transition:none}
 }
+
+/* Source-separated official postseason dates — a broadcast ticker, not generated fixtures. */
+.schedule-section{margin:22px 0 31px;border:2px solid #1e4165;background:#0d1d36;color:#fff;overflow:hidden}
+.schedule-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 17px;border-bottom:1px solid #3d6182;background:#142d51}
+.schedule-head span{font:800 11px var(--mono);color:#d2fca4}
+.schedule-head a{font:700 10px var(--mono);color:#b7edff}
+.schedule-tracks{display:grid;grid-template-columns:repeat(7,minmax(125px,1fr));min-width:0;overflow-x:auto;scrollbar-color:#577fa4 #0b1d35}
+.schedule-event{display:flex;flex-direction:column;gap:4px;padding:17px 13px 15px;min-width:124px;border-right:1px solid #34536d}
+.schedule-event:last-child{border-right:0}
+.schedule-event time{font:900 29px/.9 var(--display);color:#b7f530}
+.schedule-event b{font:800 12px var(--font);color:#f1faff}
+.schedule-event small{font:500 10px/1.45 var(--mono);color:#c9dded}
+.schedule-section>p{margin:0;padding:11px 15px;background:#f0f8ff;color:#344e66;font-size:12px;line-height:1.55}
+@media(max-width:1050px){.schedule-tracks{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}.schedule-event{flex:0 0 174px;scroll-snap-align:start}}
+@media(max-width:680px){.schedule-head{padding:10px 12px}.schedule-head span{font-size:9px}.schedule-tracks{gap:0}.schedule-event{flex-basis:155px;padding:13px 12px}.schedule-event time{font-size:25px}}
