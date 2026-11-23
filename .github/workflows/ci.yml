@@ -58,6 +58,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+      - name: Compile browser test before installing heavy browser engines
+        run: python -m py_compile tests/live_browser.py
       - name: Install exact browser driver and real browser engines
         run: |
           python -m pip install playwright==1.57.0
