@@ -276,7 +276,7 @@ function showcaseOverlay(){
  const title=x.phase==='kickoff'?'THE DYNASTY BEGINS':x.phase==='field'?'THE FIELD IS LOCKED':x.phase==='tunnel'?'TAKE THE FIELD':x.phase==='round'?x.label:reveal?'NATIONAL CHAMPIONS':'PREPARING THE BRACKET';
  const sub=x.phase==='round'?'Every result below comes from the actual seeded simulation round.':reveal?'The final scorebook has been reconciled.':'Welcome to the National Championship Showcase.';
  const progress=Math.round((count/Math.max(1,f.size-1))*100);
- return `<div id="dynasty-showcase" class="dynasty-showcase stage-${esc(x.phase)}" role="dialog" aria-modal="true" aria-label="National championship broadcast simulation" tabindex="-1">
+ return `<div id="dynasty-showcase" class="dynasty-showcase stage-${esc(x.phase)}" data-phase="${esc(x.phase)}" role="dialog" aria-modal="true" aria-label="National championship broadcast simulation" tabindex="-1">
   <div class="showcase-vignette" aria-hidden="true"></div><div class="showcase-crowd" aria-hidden="true"></div>
   <div class="showcase-inner"><div class="showcase-scorestrip"><span>DYNASTY MODE // 2026</span><b>NATIONAL CHAMPIONSHIP</b><span>LIVE SIMULATION · FICTIONAL</span></div>
   <div class="showcase-crawl"><span>COLLEGE GRIDIRON CLASSIC</span><span>${esc(f.label)}</span><span>ALL ${f.size} ENTRANTS</span></div>
@@ -324,6 +324,9 @@ function dataSources(){return `<details class="disclosure"><summary>Sources, mod
 function researchPage(){const status=researchStatus();return `${topper('MODEL & VALIDATION','THE MODEL.<br><em>EXPLAINED.</em>','A separate research desk. This is where every number is challenged before it earns a place in the game.')}${callout('<strong>Read this first:</strong> Historical win predictions have empirical evaluation. The drive-by-drive engine and named-player game props remain synthetic. Monte Carlo error is not model accuracy.','important')}${subtitle('01','Evidence before precision','Real observations, fitted research and simulated outcomes are different layers.')}${actualData()}${seedingAudit()}<section class="audit-section">${subtitle('02','Which model held up?','Chronological baselines trained on older seasons; no postgame features in pregame research.')}${calibrationGraphic()}<div class="two-viz"><article class="viz-sheet"><div class="viz-head"><span>RELIABILITY STUDY</span><h3>Predicted versus observed</h3><p>Dashed diagonal = ideal calibration. Vertical lines = uncertainty.</p></div>${reliabilityPlot()}</article><article class="viz-sheet audit-explainer"><h3>How to read this chart</h3><p>If games assigned a 60% chance actually win only 45% of the time, the model is too confident in that group.</p><p><b>Brier score</b> penalizes inaccurate probability forecasts. Lower is better; 0.25 represents always predicting 50/50 in two-outcome games.</p><p><b>2026 is not pristine holdout data.</b> Earlier iterations already examined it.</p></article></div></section><section class="audit-section">${subtitle('03','How wide is the uncertainty?','Historical score-distribution validation, not drive or player calibration.')}${scoreEvaluation()}${replayEvaluation()}</section><section class="audit-section">${subtitle('04','What do player stats prove?','A recorded stat-event probability cannot be sold as a full-game player prop.')}${playerEvaluation()}</section><section class="audit-section">${subtitle('05','Methods, sources & caveats','The project remains inspectable and reproducible.')}${dataSources()}</section><div class="research-stamp">MODEL VERSION ${esc(status.version||'unavailable')} · LAST RECORDED GAME ${esc(String(status.lastScoredGame||'not installed').slice(0,10))} · ${esc(ENGINE_VERSION)}</div>`;}
 function footer(){return `<footer class="footer"><div><b>GRIDIRON<span>/</span>LAB <small>26</small></b><p>An independent college-football simulation studio. Fictional games and illustrative player lines; not official NCAA data, odds or endorsements.</p></div><div class="footer-links">${safeLink('https://github.com/jviola1019/hypothetical_cfb','SOURCE & METHODOLOGY')}<span>2026 / SATURDAY NIGHT EDITION</span></div></footer>`;}
 function render(){
+ const previousOverlay=root.querySelector('#dynasty-showcase');
+ const previousOverlayTop=previousOverlay?.scrollTop||0;
+ const previousOverlayPhase=previousOverlay?.dataset?.phase||null;
  const current=document.activeElement;
  const field=root.contains(current)?current?.dataset?.field:null;
  const action=root.contains(current)?current?.dataset?.action:null;
@@ -338,7 +341,23 @@ function render(){
   table.setAttribute('role','region');
   table.setAttribute('aria-label',caption?`${caption} (scroll horizontally if needed)`:'Scrollable statistics table');
  }
- if(state.showcase){root.querySelector('#dynasty-showcase')?.focus({preventScroll:true});}
+ if(state.showcase){
+  const overlay=root.querySelector('#dynasty-showcase');
+  if(overlay){
+   overlay.scrollTop=previousOverlayTop;
+   overlay.focus({preventScroll:true});
+   // Mobile trophy ceremonies must bring the newly revealed awards on-screen.
+   // Preserve this position through the final state re-render.
+   if(state.showcase.phase==='awards'&&previousOverlayPhase!=='awards'&&
+      window.matchMedia?.('(max-width: 680px)').matches){
+    const honors=overlay.querySelector('.awards-showcase');
+    if(honors){
+     const y=honors.getBoundingClientRect().top-overlay.getBoundingClientRect().top+overlay.scrollTop-16;
+     overlay.scrollTo({top:Math.max(0,y),behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    }
+   }
+  }
+ }
  else if(keepFocus){
   const controls=root.querySelectorAll(field?'[data-field]':'[data-action]');
   const next=[...controls].find(el=>field?el.dataset.field===field:el.dataset.action===action);
