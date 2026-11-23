@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 650" role="img" aria-label="Original illustrated vintage college football stadium under dusk lights">
+<defs><linearGradient id="sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#263d59"/><stop offset=".55" stop-color="#51647b"/><stop offset="1" stop-color="#b69a75"/></linearGradient>
+<linearGradient id="field" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#203b38"/><stop offset="1" stop-color="#405b46"/></linearGradient>
+<pattern id="grain" width="11" height="13" patternUnits="userSpaceOnUse"><path d="M2 3h1M7 9h1" stroke="#f5e7c8" opacity=".11" stroke-width="1"/></pattern>
+<pattern id="crowd" width="21" height="19" patternUnits="userSpaceOnUse"><circle cx="3" cy="7" r="2" fill="#d4b68b"/><circle cx="12" cy="5" r="2" fill="#792e37"/><circle cx="19" cy="12" r="2" fill="#ebdbc0"/><circle cx="9" cy="15" r="2" fill="#65869d"/></pattern>
+</defs>
+<rect width="1600" height="650" fill="url(#sky)"/><circle cx="1225" cy="130" r="130" fill="#eed5a0" opacity=".16"/>
+<path d="M0 270L120 245 285 258 425 239 590 255 740 231 960 245 1110 225 1270 245 1440 224 1600 242v190H0Z" fill="#20354d"/>
+<path d="M0 280L210 276 410 268 610 259 810 263 1010 260 1200 272 1400 266 1600 276v161H0Z" fill="#142b43"/>
+<path d="M0 309L1600 311v128H0Z" fill="url(#crowd)" opacity=".72"/>
+<path d="M0 326L1600 331M0 352L1600 358M0 380L1600 385M0 405L1600 409" stroke="#afaa8d" stroke-opacity=".4" stroke-width="7"/>
+<path d="M0 304L1600 304M0 416L1600 416" stroke="#d5bd8a" stroke-width="8"/>
+<g fill="#1f354d" stroke="#d2bc8c" stroke-width="5"><path d="M100 285h140v122H100zM1380 285h140v122h-140z"/></g>
+<rect x="114" y="311" width="111" height="67" fill="#1c2633" stroke="#9d956f"/><rect x="1394" y="311" width="111" height="67" fill="#1c2633" stroke="#9d956f"/>
+<g fill="#c9b37a" font-size="26" font-family="monospace"><text x="129" y="355">26 : 06</text><text x="1409" y="355">00 : 00</text></g>
+<g stroke="#ddc999" stroke-width="6" fill="none"><path d="M360 308V145h-67m67 0h67M1333 315V145h-67m67 0h67"/><path d="M360 149v-50M1333 149V99"/></g>
+<g fill="#eed9a0"><circle cx="360" cy="100" r="14"/><circle cx="1333" cy="100" r="14"/><circle cx="360" cy="100" r="43" opacity=".1"/><circle cx="1333" cy="100" r="43" opacity=".1"/></g>
+<path d="M0 448L1600 448l-170 202H180Z" fill="url(#field)" stroke="#b8a274" stroke-width="12"/>
+<path d="M0 471L1600 471M80 515H1520M160 563H1440M200 615H1400" stroke="#ebddbb" stroke-width="3" opacity=".68"/>
+<g stroke="#ebddbb" stroke-width="4" opacity=".5"><path d="M350 449l90 201M600 449l37 201M830 449l-8 201M1050 449l-55 201M1280 449l-100 201"/></g>
+<g stroke="#f6e7c4" fill="none" stroke-width="9"><path d="M760 509v-40m-56 0h112"/></g>
+<path d="M760 511v40" stroke="#f6e7c4" stroke-width="7"/>
+<path d="M0 0h1600v650H0z" fill="url(#grain)"/>
+<rect x="0" y="0" width="1600" height="650" fill="#5c3527" opacity=".08"/>
+</svg>
