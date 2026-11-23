@@ -129,9 +129,15 @@ def check(browser_type,engine,width):
         assert page.locator('#dynasty-showcase .showcase-winner').count()==1
         page.locator('#dynasty-showcase.stage-awards').wait_for(timeout=21000)
         assert page.locator('#dynasty-showcase .award-card').count()==4, "MVP OPOY DPOY and title-game MVP missing"
+        if width<680:
+            award_position=page.locator('#dynasty-showcase .awards-head').evaluate("(e)=>({top:e.getBoundingClientRect().top,bottom:e.getBoundingClientRect().bottom,height:innerHeight})")
+            assert 0<=award_position['top']<award_position['height'] and award_position['bottom']>0, f"Mobile award ceremony announced off-screen: {award_position}"
         if engine=='chromium' and width in (390,1366):
             page.screenshot(path=str(OUT/f"{engine}-{width}-award-ceremony.png"),full_page=False,animations="allow")
         page.locator('#dynasty-showcase.stage-finish').wait_for(timeout=23000)
+        if width<680:
+            head_position=page.locator('#dynasty-showcase .awards-head').evaluate("(e)=>e.getBoundingClientRect().top")
+            assert 0<=head_position<height, f"Final ceremony unexpectedly reset mobile trophy case scroll: {head_position}"
         assert page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').count()==1
         page.locator('#dynasty-showcase [data-action="showcase-dismiss"]').click()
         assert page.locator('#dynasty-showcase').count()==0
