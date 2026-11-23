@@ -2,6 +2,7 @@ import {TEAM_MAP,TEAMS,DEFAULT_CONFIG,ENGINE_VERSION,hash32,rng,validateConfig,s
 import {selectCFPField} from './cfpSelection.js';
 import {evaluatedFbsRankings} from './research.js';
 import {observed,sourceStatus} from './observed.js';
+import {COMMITTEE_2026,committeeOrderedField,provisional12Field} from './committee2026.js';
 export const FORMATS=[
 {id:'fbs12',label:'CFP 12 · 2026–27',size:12,kind:'official-fbs',byes:4,season:'2026–27'},
 {id:'fbs24',label:'CFP 24 · 2027–28',size:24,kind:'official-fbs',byes:8,season:'2027–28'},
@@ -30,7 +31,18 @@ function validSimulatedWinner(game,a,b){return !!game&&game.config?.a===a&&game.
  game.total===game.final[0]+game.final[1]&&game.margin===game.final[0]-game.final[1];}
 
 export function seedOrder(n){if(n<2||(n&(n-1))!==0)throw Error('Power-of-two bracket required');let a=[1,2];for(let m=4;m<=n;m*=2)a=a.flatMap(v=>[v,m+1-v]);return a;}
-export function rulesOrder(format){let n=1;while(n<format.size)n*=2;let order=seedOrder(n);if(format.id==='fbs24')order=[1,32,16,17,8,25,9,24,5,28,12,21,4,29,13,20,6,27,11,22,3,30,14,19,7,26,10,23,2,31,15,18];if(format.id==='fbs12')order=[1,16,8,9,4,13,5,12,2,15,7,10,3,14,6,11];return order;}
+export function rulesOrder(format){let n=1;while(n<format.size)n*=2;let order=seedOrder(n);
+ // March Mayhem models 4 regional 16-team ladders after a four-game First Four.
+ // Instead of placing all four play-in games among the bottom eight national seeds,
+ // place two at the global 11-seed line (approx. ranks 41-44) and two at
+ // the 16-seed line (ranks 61-64). Four extra qualifiers #65-68 enter
+ // those lanes; survivors retain their lane through the main 64-team field.
+ // This is an NCAA-style HYPOTHETICAL seeding model, not NCAA basketball rules.
+ if(format.id==='custom68'){
+   const opponents={42:65,43:66,63:67,64:68};
+   order=seedOrder(64).flatMap(rank=>[rank,opponents[rank]||128]);
+ }
+ if(format.id==='fbs24')order=[1,32,16,17,8,25,9,24,5,28,12,21,4,29,13,20,6,27,11,22,3,30,14,19,7,26,10,23,2,31,15,18];if(format.id==='fbs12')order=[1,16,8,9,4,13,5,12,2,15,7,10,3,14,6,11];return order;}
 export function validateParticipants(ids,formatId){const f=FORMAT_MAP[formatId];if(!f)throw Error('Unsupported bracket format');if(!Array.isArray(ids)||ids.length!==f.size)throw Error(`Expected ${f.size} participants`);if(new Set(ids).size!==ids.length)throw Error('Duplicate participant');if(ids.some(x=>!TEAM_MAP[x]))throw Error('Unknown team');return true;}
 /** Order is a 2026 *research seeding*, not a claim about CFP rankings. */
 export function ranked2026Field() {
@@ -52,7 +64,10 @@ export function ranked2026Field() {
 }
 export function defaultParticipants(formatId){
  const f=FORMAT_MAP[formatId];if(!f)throw Error('Unknown format');
- const ids=ranked2026Field().ids;
+ const researchIds=ranked2026Field().ids;
+ // Official interim top 25 leads the 2026 CFP *preview* field, but we do not
+ // invent Selection Day conference champions or infer 2027 committee rankings.
+ const ids=f.id==='fbs12'?provisional12Field():f.kind==='fcs-inspired'?researchIds:committeeOrderedField(researchIds);
  if(f.kind==='fcs-inspired')return TEAMS.filter(x=>x.division==='fcs').map(x=>x.id).concat(ids).slice(0,f.size);
  if(f.size>ids.length)throw Error('Not enough FBS teams for this field');
  return ids.slice(0,f.size);
@@ -68,7 +83,7 @@ export function swapTournamentSeeds(t,from,to){
 }
 
 export function createTournament(formatId='fbs12',participants=defaultParticipants(formatId),seed=20261120){validateParticipants(participants,formatId);if(!Number.isSafeInteger(+seed)||+seed<0||+seed>4294967295)throw Error('Invalid seed');const f=FORMAT_MAP[formatId];const order=rulesOrder(f);const slots=order.map(i=>i<=f.size?participants[i-1]:null);return {formatId,participants:participants.slice(),seed:+seed,slots,stage:0,rounds:[],played:{},champion:null,version:ENGINE_VERSION,
-  seedingSource:ranked2026Field().source};}
+  seedingSource:formatId==='fbs12'?`2026 CFP interim top 25 + assumed five conference delegates incl Boise State; NOT final qualifiers`:formatId==='fbs24'?`2026 CFP interim top 25 preview for 2027 format; not 2027 rankings`:`2026 Nov 17 CFP Top25 then research Elo for unranked fantasy seeds; not official bracket`};}
 /** Builds an official-geometry bracket only after explicit qualification inputs pass.
  * The returned bracket is still hypothetical until committee rankings/champions
  * have been independently verified against an official Selection Day release.

@@ -55,7 +55,7 @@ def check(browser_type,engine,width):
 
         # Verify the actual new game CSS and locally served stadium asset, rather
         # than passing on DOM-only assertions while a stylesheet 404s.
-        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(233, 233, 229)', "Old/absent site skin"
+        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(216, 225, 233)', "Cartridge Rush arcade skin missing"
         assert page.locator('.brand-copy').evaluate("(el) => getComputedStyle(el).flexDirection")=='column', "Wordmark/subtitle should stack without collision"
         assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(21, 29, 38)', "Quarter table is using old olive background"
         assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(242, 245, 247)', "Quarter scores lack readable contrast"
@@ -99,6 +99,16 @@ def check(browser_type,engine,width):
         page.locator('[data-field="format"]').select_option("fullFbs138")
         page.locator('[data-action="playoff-run"]').click(timeout=30000)
         page.locator(".champion-banner").wait_for(timeout=30000)
+        assert page.locator(".playoff-theater").count()==1, "Animated championship arena missing"
+        assert page.locator('[data-action="playoff-next"]').count()==1, "Round-by-round control missing"
+        if engine=='chromium' and width==390:
+            page.locator('[data-action="playoff-reset"]').click()
+            page.locator('[data-action="playoff-next"]').click()
+            assert '10 / 137' in page.locator('.tournament-overview').inner_text(), "138-team 10-game opening play-in incorrect"
+            page.locator('[data-action="playoff-next"]').click()
+            assert '74 / 137' in page.locator('.tournament-overview').inner_text(), "Round-two 64-game stage incorrect"
+            page.locator('[data-action="playoff-run"]').click()
+            assert '137 / 137' in page.locator('.tournament-overview').inner_text(), "Resume-from-round full simulation failed"
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Playoff document overflow"
         page.screenshot(path=str(OUT/f"{engine}-{width}-playoffs.png"),full_page=True,animations="disabled")
         page.locator('[data-action="tab-research"]').click()

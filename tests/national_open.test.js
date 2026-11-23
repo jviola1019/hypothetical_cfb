@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {FBS_TEAMS} from '../src/catalog.js';
+import {COMMITTEE_2026,provisional12Field} from '../src/committee2026.js';
 import {installResearchSnapshot} from '../src/research.js';
 import {FORMATS,FORMAT_MAP,defaultParticipants,ranked2026Field,createTournament,swapTournamentSeeds,simulateRound,simulateTournament,monteCarloTournament} from '../src/tournament.js';
 import {installRosterSnapshot,namedPlayer,rosterForTeam} from '../src/observed.js';
@@ -9,7 +10,7 @@ import {simulateGame,DEFAULT_CONFIG} from '../src/engine.js';
 
 const rankingFixture=()=>({schemaVersion:1,modelVersion:'chronological-elo-slope-0.1.0',classification:'experimental-2025-trained-2026-held-out',asOf:'2026-11-21',lastScoredGame:'2026-11-15T18:00:00.000Z',training:{season:2025,games:650,calibratedSlope:1.1},holdout:{season:2026,evaluatedGames:600,calibratedElo:{brier:.2}},fixedParameters:{eloScale:400,initialElo:1500,homeElo:55,priorGames:4,startingPointsPerTeam:27,homePointsMargin:2.4},teamState:Object.fromEntries(FBS_TEAMS.map((t,i)=>[t.id,{elo:1400+i*1.5,gamesCurrentSeason:10,scoredToDate:300,allowedToDate:220}]))});
 
-test('ranked fields use 2026 research Elo, not alphabetic order or fabricated CFP committee seeding',()=>{
+test('research Elo remains separate; CFP preview follows dated committee top-25, fantasy field uses model Elo',()=>{
  installResearchSnapshot(rankingFixture());
  const rank=ranked2026Field();
  assert.equal(rank.covered,138);assert.equal(rank.ids.length,138);
@@ -18,7 +19,7 @@ test('ranked fields use 2026 research Elo, not alphabetic order or fabricated CF
  for(const id of ['fbs12','fbs24','custom64','custom68','custom128','fullFbs138']){
   const f=FORMAT_MAP[id];const selected=defaultParticipants(id);
   assert.equal(selected.length,f.size);assert.equal(new Set(selected).size,selected.length);
-  assert.deepEqual(selected,rank.ids.slice(0,f.size));
+  assert.deepEqual(selected, id==='fbs12'?provisional12Field():[...COMMITTEE_2026.ids,...rank.ids.filter(x=>!COMMITTEE_2026.ids.includes(x))].slice(0,f.size));
  }
 });
 

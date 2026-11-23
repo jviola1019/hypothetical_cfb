@@ -1,7 +1,7 @@
 /** Week-scoped, auditable 2026 role selections. A roster entry is NOT a starter verification. */
 import {FBS_TEAMS} from './catalog.js';
 const ids=new Set(FBS_TEAMS.map(x=>x.id));
-const allowedRoles=new Set(['QB','RB','WR1','WR2','TE','K']);
+const allowedRoles=new Set(['QB','QB2','RB','WR1','WR2','TE','K']);
 const allowedBasis=new Set(['depth-chart-listed','depth-chart-projected','reported-replacement','usage-projected','last-reported-replacement','roster-only']);
 let weekly=null;
 const dateOk=s=>{

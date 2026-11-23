@@ -131,7 +131,7 @@ export function observed(id,season=2026){
   return seasonSnapshots.get(n)?.[id] || (n===2025?HISTORICAL[id]||null:null);
 }
 const ROLE_PREFERENCE = {
- QB:['QB'], RB:['RB','HB','FB'],WR1:['WR'],WR2:['WR'],TE:['TE'],K:['K','PK']
+ QB:['QB'], QB2:['QB'], RB:['RB','HB','FB'],WR1:['WR'],WR2:['WR'],TE:['TE'],K:['K','PK']
 };
 export function namedPlayer(id,role,season=2026,day=new Date().toISOString().slice(0,10)){
  const n=Number(season),people=seasonRosters.get(n)?.[id];
@@ -147,9 +147,9 @@ export function namedPlayer(id,role,season=2026,day=new Date().toISOString().sli
    };
    const candidates=people.filter(x=>pref.includes(x.position)&&!blocked(x));
    const eventDoc=n===2026?getPlayerEvidence(id,2026):null;
-   const stat=role==='QB'?'passingYards':role==='RB'?'rushingYards':role==='K'?'fieldGoalsMade':'receivingYards';
+   const stat=role==='QB'||role==='QB2'?'passingYards':role==='RB'?'rushingYards':role==='K'?'fieldGoalsMade':'receivingYards';
    const evidence=new Map((eventDoc?.players||[]).filter(x=>x.stat===stat).map(x=>[personKey(x.name),x]));
-   const otherFirst=n===2026&&role==='WR2'?lineupRole(id,'WR1',day)?.name:null;
+   const otherFirst=role==='QB2'?namedPlayer(id,'QB',season,day)?.name:n===2026&&role==='WR2'?lineupRole(id,'WR1',day)?.name:null;
    const available=candidates.filter(x=>!otherFirst||personKey(x.name)!==personKey(otherFirst));
    available.sort((a,b)=>{
      const x=evidence.get(personKey(a.name)),y=evidence.get(personKey(b.name));
