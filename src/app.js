@@ -15,13 +15,15 @@ import {playerModelEvaluation,loadPlayerModelEvaluation} from './playerModel.js'
 import {histogram,atlas,scoreboardCurve,driveStrip,propBars} from './charts.js';
 import {QUALIFICATION_RULES} from './cfpSelection.js';
 import {teamAccent} from './branding.js';
+import {tournamentReport,scoreboxFor} from './tournamentHonors.js';
+import {SHOWCASE,ceremonyTimeline} from './dynastyCeremony.js';
 import {COMMITTEE_2026,CFP_SCHEDULE_2026,committeeRank,provisionalEliteGap} from './committee2026.js';
 
 const root=document.querySelector('#app');
 const state={tournamentRuns:0,tab:'game',config:{...DEFAULT_CONFIG},game:null,forecast:null,runNumber:1,running:false,progress:0,
   worker:null,task:0,error:'',loading:true,datasets:[],selectedProp:null,format:'fbs12',
   tournament:createTournament('fbs12'),tournamentMC:null,selectedMatch:null,playoffBusy:false,mcBusy:false,
-  sourcesReady:false,bracketViewRound:0,bracketViewPage:0,bracketQuadrant:'all',seedFrom:0,seedTo:1,finale:null,finaleTimer:null};
+  sourcesReady:false,bracketViewRound:0,bracketViewPage:0,bracketQuadrant:'all',seedFrom:0,seedTo:1,finale:null,finaleTimer:null,bracketMode:'atlas',showcase:null,showcaseToken:0,showcaseTimers:[],showcaseTicker:null,report:null};
 const fbs=TEAMS.filter(t=>t.division==='fbs');
 const esc=x=>String(x??'').replace(/[&<>"']/g,y=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[y]));
 const name=id=>TEAM_MAP[id]?.name||'Unknown team';
@@ -165,7 +167,14 @@ function personnelDesk(){
  const status=hasWeek?`${esc(week.weekStart)}–${esc(week.weekEnd)} · ${today>week.weekEnd?'Week expired: identities provisional until refreshed':'Week-scoped roster evidence'}`:'Weekly evidence not loaded: identities are provisional';
  return `<details id="game-personnel" class="personnel-desk" ${hasWeek?'':'open'}><summary><span><span class="eyebrow">WEEKLY PERSONNEL REPORT / 2026</span><b>Who is expected to play?</b><small>${status}</small></span><span class="personnel-expander">Role evidence ▾</span></summary><div class="personnel-sheet"><p class="personnel-disclosure">A depth-chart slot is not proof of kickoff availability. Injury and replacement reports can change right before the game; estimates expire at the end of the week. Source-backed identities and synthetic stat lines are different claims. Secondary QB candidates are tracked separately from synthetic QB1 stats; season-long event games do not prove a same-game passing split. External projected depth-chart directories (not official game-day certification): ${safeLink('https://www.thetwodeep.com/college/depth-charts','TWO·DEEP')} · ${safeLink('https://whosstarting.com/teams/','Who\'s Starting')}.</p><div class="personnel-columns">${rows}</div></div></details>`;
 }
-function gamePage(){const g=state.game;return `${topper('GAME SIMULATION','SATURDAY NIGHT.<br><em>YOUR MATCHUP.</em>','Choose two programs, set the stage, and play an original hypothetical matchup. Every result is inspectable.')}${matchupPicker()}${gamedayHud()}${gamedayNav()}${errorBox()}<div id="broadcast-result" class="game-canvas"><div class="lead-section"><span class="eyebrow">02 / THE GENERATED RESULT</span><div class="lead-actions"><span class="narrative-dot"></span><span>ONE POSSIBLE OUTCOME</span></div></div>${scoreboard(g)}${g?quarterTable(g):''}<div class="result-buttons">${button('new-game','Play it again <span aria-hidden="true">↗</span>','primary')}<a class="jump-link" href="#game-details">Jump to box score ↓</a></div></div>${matchupForecast()}${gameDetail(g)}${injuryTicker()}${propTable()}${rosterCoverageCard(g)}${personnelDesk()}${syntheticDistribution()}${historyTable()}`;}
+function gamePage(){const g=state.game;return `${topper('GAME SIMULATION','SATURDAY NIGHT.<br><em>YOUR MATCHUP.</em>','Choose two programs, set the stage, and play an original hypothetical matchup. Every result is inspectable.')}${matchupPicker()}${gamedayHud()}${gamedayNav()}${errorBox()}<div id="broadcast-result" class="game-canvas"><div class="lead-section"><span class="eyebrow">02 / THE GENERATED RESULT</span><div class="lead-actions"><span class="narrative-dot"></span><span>ONE POSSIBLE OUTCOME</span></div></div>${scoreboard(g)}${g?quarterTable(g):''}${g?gameScorebox(g):''}<div class="result-buttons">${button('new-game','Play it again <span aria-hidden="true">↗</span>','primary')}<a class="jump-link" href="#game-details">Jump to box score ↓</a></div></div>${matchupForecast()}${gameDetail(g)}${injuryTicker()}${propTable()}${rosterCoverageCard(g)}${personnelDesk()}${syntheticDistribution()}${historyTable()}`;}
+function safeTournamentReport(t){
+ try{return tournamentReport(t)}catch(e){return {error:e.message,complete:false,played:0,audited:0,failed:1,scores:[],awards:null}}
+}
+function gameScorebox(g){
+ const v=scoreboxFor(g);
+ return `<section class="scorebox-verification ${v.ok?'passed':'failed'}" aria-label="Simulated scorebox consistency check"><div class="scorebox-verification-head"><b>${v.ok?'SCOREBOX RECONCILED':'SCOREBOX CHECK FAILED'}</b><span>${v.ok?'QUARTERS + DRIVES + WINNER / PASS':'VALIDATION ERROR'}</span></div><p>${v.ok?'All 13 internal score, drive, quarter, possession and winner consistency assertions passed. This is not empirical prediction accuracy.':esc(v.errors.join('; '))}</p></section>`;
+}
 function tournamentOverview(){const t=state.tournament,rs=t.rounds,played=rs.reduce((s,r)=>s+r.matches.filter(m=>m.game).length,0),f=FORMAT_MAP[t.formatId];return `<div class="tournament-overview"><div><small>FIELD</small><b>${f.size} teams</b></div><div><small>COMPLETED</small><b>${played} / ${f.size-1}</b></div><div><small>CHAMPION</small><b>${t.champion?esc(name(t.champion)):'Not determined'}</b></div></div>`;}
 /** No more than 16 rendered games per large-field page; accessible round selector. */
 function bracketRounds(){
@@ -200,7 +209,7 @@ function roundNameForView(id,stage){const f=FORMAT_MAP[id];const rounds=Math.cei
  return width===128?'Round of 128':width===64?'Round of 64':width===32?'Round of 32':width===16?'Round of 16':'First round';
 }
 function titleLeaderboard(){const r=state.tournamentMC;if(!r)return `<div class="empty-panel"><strong>Want to see the most common champion?</strong><p>Run a title study to compare many hypothetical brackets. Sample counts depend on available browser capabilities.</p></div>`;const ranking=Object.entries(r.probabilities).sort((a,b)=>b[1]-a[1]);return `<div class="table-scroll"><table class="stat-table odds-table"><thead><tr><th>SCHOOL</th><th>CHAMPIONSHIP SHARE</th><th>SIMULATION ERROR</th></tr></thead><tbody>${ranking.map(([id,p],i)=>`<tr><th><span class="ranking-num">${String(i+1).padStart(2,'0')}</span>${esc(name(id))}</th><td><div class="odds-bar"><span style="width:${(100*p).toFixed(2)}%"></span></div><b>${percent(p)}</b></td><td>±${percent(Math.sqrt(p*(1-p)/r.n))}</td></tr>`).join('')}</tbody></table></div><p class="subcaption">Entire brackets were simulated together. These are fictional championship frequencies, not empirically calibrated odds.</p>`;}
-function playoffGameInspector(){const item=state.selectedMatch;if(!item)return '';const g=item.game;return `<section class="inspector-view" id="game-inspector" tabindex="-1">${subtitle('03','Inside the playoff game',`${esc(item.round)} · Every number below is generated from one game.`)}${button('close-inspector','Close report','subtle')}${scoreboard(g,'playoff')}${quarterTable(g)}${gameDetail(g,'inspected-game-details')}<section class="player-desk">${subtitle('04','Player notes','Generated roster-linked statistics and historical evidence are not the same thing.')} ${playerBoxes(g)}</section></section>`;}
+function playoffGameInspector(){const item=state.selectedMatch;if(!item)return '';const g=item.game;return `<section class="inspector-view" id="game-inspector" tabindex="-1">${subtitle('03','Inside the playoff game',`${esc(item.round)} · Every number below is generated from one game.`)}${button('close-inspector','Close report','subtle')}${scoreboard(g,'playoff')}${quarterTable(g)}${gameScorebox(g)}${gameDetail(g,'inspected-game-details')}<section class="player-desk">${subtitle('04','Player notes','Generated roster-linked statistics and historical evidence are not the same thing.')} ${playerBoxes(g)}</section></section>`;}
 function seedEditor(){
  const t=state.tournament,f=FORMAT_MAP[t.formatId],source=ranked2026Field();
  const locked=!!(t.champion||t.stage||t.rounds.length||Object.keys(t.played).length),disabled=locked||!state.sourcesReady;
@@ -227,6 +236,62 @@ function playoffTheater(){
   </div><div class="theater-bottom"><span>100% SIMULATED · NOT A LIVE GAME</span><span>${done?'TITLE DECIDED':'BRACKET CONTROL / ACTIVE'}</span></div>
  </section>`;
 }
+function awardsShowcase(awards,compact=false){
+ if(!awards)return '';
+ const rows=[['MVP',awards.mvp,'Tournament Most Valuable Player'],['OPOY',awards.opoy,'Offensive Player of the Year'],['DPOY',awards.dpoy,'Defensive Player of the Year'],['TITLE GAME MVP',awards.titleMvp,'National Championship standout']];
+ return `<section class="awards-showcase ${compact?'awards-in-ceremony':''}" aria-label="Simulated tournament awards">
+ <div class="awards-head"><span>THE DYNASTY HONORS</span><strong>2026 NATIONAL AWARDS</strong></div>
+ <div class="awards-grid">${rows.map(([shortName,p,explain],i)=>`<article class="award-card"><span class="award-kicker">${String(i+1).padStart(2,'0')} / ${shortName}</span><div class="award-seal" aria-hidden="true"><span>★</span></div><h4>${esc(p?.name||'Unassigned')}</h4><b>${esc(p?.team?name(p.team):'Data unavailable')}</b><small>${esc(explain)}</small><span class="award-stat">${p?esc(p.role==='DEF'?'SIMULATED TEAM DEFENSE':p.interceptions!==undefined?`${p.interceptions} INT · ${p.fumbleRecoveries} FUMBLE REC`:`${Math.round(p.pass)} PASS / ${Math.round(p.rush)} RUSH / ${Math.round(p.receiving)} REC YDS`):'NO PARTICIPATION DATA'}</span></article>`).join('')}</div>
+ <p class="award-disclosure">FICTIONAL TOURNAMENT AWARDS — calculated only from simulated box scores, not observed season totals. Defensive credited takeaways are explicitly synthetic allocations to roster-listed candidates, not verified starts or individual plays. Replays can change every winner.</p></section>`;
+}
+function fullBracketView(){
+ const t=state.tournament,f=FORMAT_MAP[t.formatId];
+ const max=Math.ceil(Math.log2(f.size));
+ const rounds=[];
+ for(let stage=0;stage<max;stage++){
+  const completed=t.rounds[stage];
+  if(completed){rounds.push({stage,name:completed.name,matches:completed.matches});continue;}
+  if(stage===t.stage&&!t.champion){
+   const m=Array.from({length:t.slots.length/2},(_,i)=>({a:t.slots[2*i],b:t.slots[2*i+1],game:t.played[i]||null}));
+   rounds.push({stage,name:roundNameForView(t.formatId,stage),matches:m});continue;
+  }
+  // Future rounds remain empty until the actual contenders are known.
+  const slots=Math.max(1,2**(max-stage-1));
+  rounds.push({stage,name:roundNameForView(t.formatId,stage),matches:Array.from({length:slots},()=>({a:null,b:null,game:null}))});
+ }
+ return `<section class="full-bracket" aria-label="Complete tournament bracket tree"><div class="full-bracket-guide"><b>FULL BRACKET / ${f.size} SCHOOL TREE</b><span>Scroll sideways for later rounds and vertically for the complete field. No results are omitted.</span></div><div class="full-bracket-scroll" role="region" tabindex="0" aria-label="Complete bracket, all rounds and byes"><div class="full-bracket-columns">${rounds.map(r=>`<div class="full-bracket-column"><div class="full-round-top"><b>ROUND ${r.stage+1}</b><strong>${esc(r.name)}</strong><span>${r.matches.filter(m=>m.game).length} played / ${r.matches.length} slots</span></div>${r.matches.map((m,i)=>`<div class="full-match ${m.game?'played':m.a||m.b?'pending':'empty'}"><div class="full-match-index">#${String(i+1).padStart(3,'0')} · ${m.game?'FINAL':m.a&&m.b?'UPCOMING':m.a||m.b?'BYE':'TBD'}</div><div class="full-team ${m.game?.winner===m.a?'won':''}"><span>${esc(m.a?name(m.a):'TBD')}</span><b>${m.game?m.game.final[0]:'—'}</b></div><div class="full-team ${m.game?.winner===m.b?'won':''}"><span>${esc(m.b?name(m.b):m.a?'BYE':'TBD')}</span><b>${m.game?m.game.final[1]:'—'}</b></div>${m.game?`<button type="button" data-action="inspect:${r.stage}:${i}">VIEW SCOREBOX + STATS</button>`:''}</div>`).join('')}</div>`).join('')}</div></div></section>`;
+}
+function scoreboardAudit(){
+ const report=state.report||safeTournamentReport(state.tournament);
+ if(report.error)return `<section class="scorebox-audit failed" role="alert"><h3>SCOREBOX AUDIT FAILED</h3><p>${esc(report.error)}</p></section>`;
+ return `<section class="scorebox-audit" aria-label="Tournament scorebox validation"><div class="scorebox-audit-title"><div><small>SCOREBOOK / RECONCILIATION ENGINE</small><h3>${report.failed?'REVIEW REQUIRED':'SCORES VERIFIED INTERNALLY'}</h3></div><strong>${report.audited} / ${report.played} PASS</strong></div><p>${report.checks} automated scorebox checks, ${report.failed} mismatches. Every displayed score can be traced to generated drives, quarters, player boxes and bracket advancement. Internal consistency does <b>not</b> establish forecasting calibration.</p>${report.scores.length?`<details class="scorebox-directory"><summary>OPEN ALL ${report.scores.length} MATCH REPORTS / SCOREBOX INDEX</summary><div class="scorebox-directory-scroll" role="region" tabindex="0" aria-label="Full simulated game scorebook"><table><thead><tr><th>ROUND</th><th>MATCH</th><th>BOX</th><th>FINAL SCORE</th><th>CHECK</th></tr></thead><tbody>${report.scores.map(x=>`<tr><td>${esc(x.roundName)}</td><td>${x.index+1}</td><td><button data-action="inspect:${x.round}:${x.index}">BOX #${x.index+1}</button></td><td>${esc(name(x.a))} ${x.game.final[0]} – ${x.game.final[1]} ${esc(name(x.b))}</td><td>${x.box.ok?'PASS':'FAIL'}</td></tr>`).join('')}</tbody></table></div></details>`:''}</section>`;
+}
+function showcaseOverlay(){
+ const x=state.showcase;if(!x)return '';
+ const t=state.tournament,f=FORMAT_MAP[t.formatId],count=t.rounds.reduce((n,r)=>n+r.matches.filter(m=>m.game).length,0);
+ const reveal=['champion','awards','finish'].includes(x.phase);
+ const awarding=['awards','finish'].includes(x.phase);
+ const finished=x.phase==='finish';
+ const just=x.latest;
+ const title=x.phase==='kickoff'?'THE DYNASTY BEGINS':x.phase==='field'?'THE FIELD IS LOCKED':x.phase==='tunnel'?'TAKE THE FIELD':x.phase==='round'?x.label:reveal?'NATIONAL CHAMPIONS':'PREPARING THE BRACKET';
+ const sub=x.phase==='round'?'Every result below comes from the actual seeded simulation round.':reveal?'The final scorebook has been reconciled.':'Welcome to the National Championship Showcase.';
+ const progress=Math.round((count/Math.max(1,f.size-1))*100);
+ return `<div id="dynasty-showcase" class="dynasty-showcase stage-${esc(x.phase)}" role="dialog" aria-modal="true" aria-label="National championship broadcast simulation" tabindex="-1">
+  <div class="showcase-vignette" aria-hidden="true"></div><div class="showcase-crowd" aria-hidden="true"></div>
+  <div class="showcase-inner"><div class="showcase-scorestrip"><span>DYNASTY MODE // 2026</span><b>NATIONAL CHAMPIONSHIP</b><span>LIVE SIMULATION · FICTIONAL</span></div>
+  <div class="showcase-crawl"><span>COLLEGE GRIDIRON CLASSIC</span><span>${esc(f.label)}</span><span>ALL ${f.size} ENTRANTS</span></div>
+  <div class="showcase-spotlight" aria-hidden="true"><span class="showcase-light left"></span><span class="showcase-light right"></span><span class="showcase-trophy">★</span></div>
+  <div class="showcase-copy"><span class="showcase-kicker">ROUND ${Math.min(t.rounds.length,f.size)} · ${f.size} TEAM ELIMINATION</span><h2>${esc(title)}</h2>
+   <h3>${reveal?esc(name(t.champion)):'THE ROAD TO GLORY'}</h3><p>${esc(sub)}</p></div>
+  ${reveal?`<div class="showcase-winner"><span>★ ★ ★ ★ ★</span><strong>${esc(name(t.champion))}</strong><b>2026 NATIONAL CHAMPION · SIMULATED</b></div>`:
+   just?`<div class="showcase-live-score" aria-label="Latest completed game"><span>JUST PLAYED · ${esc(x.label)}</span><strong>${esc(short(just.config.a))} ${just.final[0]} <i>:</i> ${just.final[1]} ${esc(short(just.config.b))}</strong><small>${scoreboxFor(just).ok?'BOX SCORE CHECKED':'CHECK FAILED'}</small></div>`:
+   `<div class="showcase-live-score"><span>STADIUM TRANSMISSION</span><strong>${f.size} PROGRAMS // ONE TROPHY</strong><small>KICKOFF SEQUENCE ACTIVE</small></div>`}
+  ${awarding?awardsShowcase(state.report?.awards,true):''}
+  <div class="showcase-progress"><div class="showcase-progress-top"><b>${count} / ${f.size-1} GAMES RESOLVED</b><span id="showcase-timecode">BROADCAST ON AIR</span></div><div class="showcase-progress-track"><span id="showcase-timebar" style="width:${progress}%"></span></div><small>ACTUAL ROUND PROGRESSION · 11.6 SECOND MINIMUM TO CHAMPION REVEAL</small></div>
+  <div class="showcase-controls"><button type="button" data-action="showcase-cancel" class="showcase-abort">${finished?'DISCARD REPLAY':'CANCEL SIMULATION'}</button>${finished?'<button type="button" class="showcase-open-results" data-action="showcase-dismiss">OPEN THE FULL BRACKET + TROPHY CASE →</button>':'<span class="showcase-tuning">BROADCAST IN PROGRESS</span>'}</div>
+  </div><div class="showcase-confetti" aria-hidden="true">${Array.from({length:24},(_,i)=>`<i style="--x:${i*4}%;--delay:${(i*.035).toFixed(2)}s;--dur:${(2.1+i*.08).toFixed(2)}s;--turn:${i*31}deg"></i>`).join('')}</div>
+ </div>`;
+}
 function playoffCalendar(){
  if(state.format!=='fbs12')return '';
  return `<section class="schedule-section" aria-label="Published 2026–27 CFP postseason dates"><div class="schedule-head"><span>2026–27 / ACTUAL CFP CALENDAR</span><a href="${esc(COMMITTEE_2026.url)}" target="_blank" rel="noopener noreferrer">Official source ↗</a></div><div class="schedule-tracks">${CFP_SCHEDULE_2026.map(item=>`<article class="schedule-event"><time datetime="${item.date}">${esc(item.display)}</time><b>${esc(item.stage)}</b><small>${esc(item.details)}</small></article>`).join('')}</div><p>These are published dates and bowl sites, not simulated matchups. The first four hosts, conference-champion bids and final committee bracket remain undecided.</p></section>`;
@@ -235,9 +300,9 @@ function playoffPage(){const f=FORMAT_MAP[state.format],n=f.size,pregame=!state.
  const explanation=f.kind==='official-fbs'?f.id==='fbs12'?'Official CFP bracket geometry; November 17 interim rankings with FIVE EXPLICITLY ASSUMED conference delegates (Georgia, UCLA, Utah, Miami, Boise State). Champions and automatic bids are NOT decided, so this is not the final field.':'The 24-team CFP takes effect in 2027–28. This is a 2026-ranked fantasy preview; no 2027 committee rankings exist.':f.kind==='hypothetical'?'An alternative national championship: fantasy structure, FBS rosters, and model seed order.':'FCS-inspired geometry with mixed teams; NOT an official FCS field.';
  return `${topper('PLAYOFF SIMULATION',n>=68?'EVERY TEAM.<br><em>ONE TITLE.</em>':'THE ROAD<br><em>TO THE TITLE.</em>',n>=68?(ranked2026Field().covered?'A true national open. Start with the strongest model-rated 2026 teams, trade seeds, then write a new history.':'A national open. Team rankings are currently unavailable, so the field is unranked until research data load.'):(ranked2026Field().covered?'Provisional 2026 model seeds. Swap the seeds. Every game has its own report.':'Unranked fallback: no rating artifact available. The game remains playable.'))}
  <section class="playoff-console"><div class="console-intro"><div><span class="eyebrow">01 / CHOOSE YOUR TOURNAMENT</span><h2>Build the field.</h2></div><span class="console-season">${esc(f.season)}</span></div><div class="playoff-picker"><label><small>TOURNAMENT FORMAT</small>${ctl('format',FORMATS.filter(x=>x.kind!=='fcs-inspired').map(x=>[x.id,x.label]),state.format)}</label><div class="playoff-action-row">${state.sourcesReady?button('playoff-run',state.playoffBusy?'Simulating…':'PLAY FULL TOURNAMENT ◆','primary'):`<button type="button" class="action primary" disabled>Loading 2026 ratings…</button>`}${state.sourcesReady?button('playoff-next',state.tournament.champion?'Play new first round':'Simulate next round →','outline'):'<button class="action outline" disabled>Next round</button>'}${state.sourcesReady?button('playoff-mc',state.mcBusy?'Calculating…':'Estimate title share','outline'):'<button class="action outline" disabled>Title study</button>'}${button('playoff-reset','Reset bracket','subtle')}</div></div><p class="rules-note">${esc(explanation)}</p></section>${playoffTheater()}${playoffCalendar()}${seedEditor()}${errorBox()}
- <section class="bracket-section">${subtitle('02','Your road to the final',n>=68?'Read one round at a time. Choose a quadrant to explore large fields. Select any played game for its complete report.':'Swipe across rounds and select any played game for its complete report.')}${tournamentOverview()}${bracketRounds()}</section>
+ <section class="bracket-section">${subtitle('02','Your road to the final',n>=68?'Read one round at a time. Choose a quadrant to explore large fields. Select any played game for its complete report.':'Swipe across rounds and select any played game for its complete report.')}${tournamentOverview()}<div class="bracket-mode-switch" role="group" aria-label="Bracket viewing mode">${button("bracket-atlas","ROUND VIEW",state.bracketMode==="atlas"?"selected":"outline")}${button("bracket-full","FULL TREE · ALL ROUNDS",state.bracketMode==="full"?"selected":"outline")}</div>${state.bracketMode==="full"?fullBracketView():bracketRounds()}${scoreboardAudit()}</section>
  <section class="titles-section">${subtitle('03','Who takes the title?','Champion shares come from complete hypothetical tournament simulations, not sportsbook odds.')}
- <div class="champion-banner"><span>2026 FBS / NATIONAL CHAMPIONSHIP EXPERIMENT</span><h2>${state.tournament.champion?esc(name(state.tournament.champion)):'A champion awaits.'}</h2><p>${state.tournament.champion?'Winner of this one hypothetical bracket.':'Simulate the field to find a champion.'}</p></div>${titleLeaderboard()}</section>${playoffGameInspector()}`;
+ <div class="champion-banner"><span>2026 FBS / NATIONAL CHAMPIONSHIP EXPERIMENT</span><h2>${state.tournament.champion?esc(name(state.tournament.champion)):'A champion awaits.'}</h2><p>${state.tournament.champion?'Winner of this one hypothetical bracket.':'Simulate the field to find a champion.'}</p></div>${state.report?.awards?awardsShowcase(state.report.awards):""}${titleLeaderboard()}</section>${playoffGameInspector()}`;
 }
 function actualData(){const rec=sourceStatus.seasons[2026],roster=sourceStatus.rosters[2026];return `<div class="data-grid"><article><span>2026 FBS PROGRAM INDEX</span><strong>${fbs.length}</strong><p>Included as selectable schools. Historical data coverage varies by artifact.</p></article><article><span>2026 REPORTED GAME SCORES</span><strong>${rec?.gamesWithScores!=null?integer(rec.gamesWithScores):'—'}</strong><p>${rec?'Reported completed FBS-involving games as of '+esc(String(rec.asOf||'').slice(0,10))+' UTC':'Season snapshot not installed'}.</p></article><article><span>2026 ROSTER NAMES</span><strong>${roster?integer(roster.players):'—'}</strong><p>${roster?'Season-scoped identities, not active starters':'Optional roster snapshot not installed'}.</p></article></div>`;}
 function seedingAudit(){const rank=ranked2026Field();
@@ -263,7 +328,9 @@ function render(){
  const field=root.contains(current)?current?.dataset?.field:null;
  const action=root.contains(current)?current?.dataset?.action:null;
  const keepFocus=!!(field||action);
- root.innerHTML=`${header()}<main id="main" class="site-main" tabindex="-1"><div class="site-width">${state.tab==='game'?gamePage():state.tab==='playoff'?playoffPage():researchPage()}</div></main>${footer()}`;
+ root.innerHTML=`${header()}<main id="main" class="site-main" tabindex="-1"><div class="site-width">${state.tab==='game'?gamePage():state.tab==='playoff'?playoffPage():researchPage()}</div></main>${footer()}${showcaseOverlay()}`;
+ for(const el of [root.querySelector('main'),root.querySelector('.topbar'),root.querySelector('footer')])if(el)el.inert=Boolean(state.showcase);
+ document.body.style.overflow=state.showcase?'hidden':'';
  document.title=`${tabNames[state.tab]} | GRIDIRON LAB`;
  for(const table of root.querySelectorAll('.table-scroll')){
   table.tabIndex=0;
@@ -271,7 +338,8 @@ function render(){
   table.setAttribute('role','region');
   table.setAttribute('aria-label',caption?`${caption} (scroll horizontally if needed)`:'Scrollable statistics table');
  }
- if(keepFocus){
+ if(state.showcase){root.querySelector('#dynasty-showcase')?.focus({preventScroll:true});}
+ else if(keepFocus){
   const controls=root.querySelectorAll(field?'[data-field]':'[data-action]');
   const next=[...controls].find(el=>field?el.dataset.field===field:el.dataset.action===action);
   next?.focus({preventScroll:true});
@@ -287,7 +355,7 @@ function fallbackForecast(task){try{const value=simulateBatch(state.config,450);
 function newGame(){state.runNumber++;state.config.seed=hash32(`replay:${state.runNumber}:${state.config.a}:${state.config.b}:${state.config.venue}`);state.game=simulateGame(state.config,state.config.seed);refreshForecast();}
 function changeField(field,value){try{state.error='';if(field==='a'||field==='b'){if(!TEAM_MAP[value]||TEAM_MAP[value].division!=='fbs')throw Error('Select a supported FBS team');const other=field==='a'?'b':'a';if(state.config[other]===value)state.config[other]=state.config[field];state.config[field]=value;state.runNumber=1;state.config.seed=hash32(`${state.config.a}|${state.config.b}|${state.config.venue}`);state.game=simulateGame(state.config,state.config.seed);refreshForecast();const selected=[state.config.a,state.config.b];Promise.allSettled(selected.map(id=>loadPlayerEvidence(id))).then(()=>{if(state.config.a===selected[0]&&state.config.b===selected[1]){state.game=simulateGame(state.config,state.config.seed);refreshForecast();}});}
  else if(field==='venue'){if(!['a','b','neutral'].includes(value))throw Error('Invalid venue');state.config.venue=value;state.runNumber=1;state.config.seed=hash32(`${state.config.a}|${state.config.b}|${value}`);state.game=simulateGame(state.config,state.config.seed);refreshForecast();}
- else if(field==='format'){if(!FORMAT_MAP[value])throw Error('Unknown bracket format');stopTask();state.format=value;state.finale=null;if(state.finaleTimer)clearTimeout(state.finaleTimer);state.tournament=createTournament(value);state.bracketViewRound=0;state.bracketViewPage=0;state.bracketQuadrant='all';state.seedFrom=0;state.seedTo=1;state.selectedMatch=null;state.tournamentMC=null;render();}
+ else if(field==='format'){if(!FORMAT_MAP[value])throw Error('Unknown bracket format');stopTask();state.format=value;state.bracketMode='atlas';state.report=null;state.finale=null;if(state.finaleTimer)clearTimeout(state.finaleTimer);state.tournament=createTournament(value);state.bracketViewRound=0;state.bracketViewPage=0;state.bracketQuadrant='all';state.seedFrom=0;state.seedTo=1;state.selectedMatch=null;state.tournamentMC=null;render();}
  else if(field==='swap-from'||field==='swap-to'){const i=Number(value);if(!Number.isInteger(i)||i<0||i>=state.tournament.participants.length)throw Error('Invalid swap position');state[field==='swap-from'?'seedFrom':'seedTo']=i;}
  else if(field==='bracket-quadrant'){if(!['all','1','2','3','4'].includes(value))throw Error('Unknown bracket quadrant');state.bracketQuadrant=value;state.bracketViewPage=0;render();}
  }catch(e){state.error=e.message;render();}}
@@ -297,16 +365,78 @@ function showTournamentResult(kind){
  state.finale={kind,champion:state.tournament.champion};
  state.finaleTimer=setTimeout(()=>{state.finale=null;state.finaleTimer=null;render();},kind==='full'?3600:1500);
 }
+function stopShowcase(restore=false){
+ const x=state.showcase;
+ ++state.showcaseToken;
+ for(const timer of state.showcaseTimers)clearTimeout(timer);
+ state.showcaseTimers=[];
+ if(state.showcaseTicker)clearInterval(state.showcaseTicker);
+ state.showcaseTicker=null;
+ if(restore&&x?.original){state.tournament=x.original;state.report=safeTournamentReport(x.original);}
+ state.showcase=null;state.playoffBusy=false;
+}
+function beginFullShowcase(){
+ if(state.playoffBusy||state.showcase)return;
+ state.error='';
+ if(state.finaleTimer)clearTimeout(state.finaleTimer);
+ state.finale=null;
+ const original=state.tournament;
+ const starting=original.champion?createTournament(state.format,original.participants,hash32('bracket:'+state.tournamentRuns++)):original;
+ const roundsLeft=Math.ceil(Math.log2(FORMAT_MAP[state.format].size))-starting.rounds.length;
+ const timeline=ceremonyTimeline(roundsLeft);
+ const token=++state.showcaseToken;
+ state.tournament=starting;state.report=safeTournamentReport(starting);state.selectedMatch=null;state.tournamentMC=null;
+ state.showcase={original,startedAt:performance.now(),phase:'kickoff',label:'FIELD INTRO',latest:null};
+ state.playoffBusy=true;render();
+ const tick=()=>{if(token!==state.showcaseToken||!state.showcase)return;
+  const elapsed=Math.max(0,performance.now()-state.showcase.startedAt);
+  const v=root.querySelector('#showcase-timecode');
+  if(v)v.textContent=(elapsed/1000).toFixed(1)+'s / '+(SHOWCASE.finishMs/1000).toFixed(1)+'s';
+ };
+ state.showcaseTicker=setInterval(tick,100);
+ for(const item of timeline.slice(1)){
+  const timer=setTimeout(()=>{
+   if(token!==state.showcaseToken||!state.showcase)return;
+   try{
+    if(item.type==='round'){
+     const next=simulateRound(state.tournament,{seasonA:2026,seasonB:2026});
+     const report=tournamentReport(next); // throws on scorebox or bracket mismatch
+     state.tournament=next;state.report=report;
+     state.showcase.phase='round';state.showcase.label=next.rounds.at(-1).name;
+     state.showcase.latest=next.rounds.at(-1).matches.find(m=>m.game)?.game||null;
+     state.bracketViewRound=next.rounds.length-1;
+     state.bracketViewPage=0;
+    }else if(item.type==='champion'){
+     if(!state.tournament.champion||!state.report?.complete)throw Error('The championship result failed to reconcile');
+     if(performance.now()-state.showcase.startedAt<SHOWCASE.championRevealMs-15)throw Error('Premature champion reveal');
+     state.showcase.phase='champion';
+    }else if(item.type==='awards'){
+     if(!state.report?.awards)throw Error('Tournament awards unavailable: boxscore validation failed');
+     state.showcase.phase='awards';
+    }else if(item.type==='finish'){
+     state.showcase.phase='finish';state.playoffBusy=false;
+    }else{
+     state.showcase.phase=item.type;
+    }
+    render();tick();
+   }catch(e){stopShowcase(true);state.error='Tournament halted: '+e.message;render();}
+  },item.at);
+  state.showcaseTimers.push(timer);
+ }
+}
 function runTournament(roundOnly=false){
+ if(!roundOnly){beginFullShowcase();return}
+ if(state.showcase||state.playoffBusy)return;
  try{
   state.error='';state.playoffBusy=true;
   const current=state.tournament;
   const starting=current.champion?createTournament(state.format,current.participants,hash32('bracket:'+state.tournamentRuns++)):current;
-  state.tournament=roundOnly?simulateRound(starting,{seasonA:2026,seasonB:2026}):simulateTournament(starting,{seasonA:2026,seasonB:2026});
-  state.selectedMatch=null;state.tournamentMC=null;state.bracketViewRound=state.tournament.rounds.length-1;
-  state.bracketViewPage=0;state.bracketQuadrant='all';state.playoffBusy=false;
-  showTournamentResult(roundOnly?'round':'full');render();
- }catch(e){state.playoffBusy=false;state.error=e.message;render();}
+  const next=simulateRound(starting,{seasonA:2026,seasonB:2026});
+  const report=tournamentReport(next);
+  state.tournament=next;state.report=report;state.selectedMatch=null;state.tournamentMC=null;
+  state.bracketViewRound=state.tournament.rounds.length-1;state.bracketViewPage=0;state.bracketQuadrant='all';
+  state.playoffBusy=false;showTournamentResult('round');render();
+ }catch(e){state.playoffBusy=false;state.error='Round failed validation: '+e.message;render()}
 }
 function titleMC(){if(state.mcBusy)return;state.mcBusy=true;state.error='';const task=++state.task;const base={seasonA:2026,seasonB:2026};const t=createTournament(state.format,state.tournament.participants,hash32('title:'+state.tournament.seed));render();
  if(typeof Worker!=='undefined')try{const w=new Worker(new URL('./worker.js',import.meta.url),{type:'module'});state.worker=w;w.onmessage=e=>{if(task!==state.task)return;const d=e.data;if(d.type==='progress'){const btn=root.querySelector('[data-action="playoff-mc"]');if(btn)btn.textContent=`Simulating ${Math.round(d.current/d.total*100)}%`;return;}w.terminate();state.worker=null;state.mcBusy=false;if(d.type==='result')state.tournamentMC=d.value;else state.error=d.message;render();};w.onerror=()=>{if(task!==state.task)return;w.terminate();state.worker=null;titleMCFallback(task,t,base);};w.postMessage({task,type:'tournament',n:400,tournament:t,config:base,datasets:state.datasets});return;}catch{}
@@ -340,10 +470,10 @@ function titleMCFallback(task,t,base){
  };
  setTimeout(pump,0);
 }
-function action(a){if(a.startsWith('tab-')){const next=a.slice(4);if(!tabNames[next])return;state.tab=next;render();window.scrollTo?.(0,0);return;}if(a==='new-game'){newGame();return;}if(a==='playoff-run'||a==='playoff-next'){if(!state.sourcesReady){state.error='2026 data is still loading';render();return;}runTournament(a==='playoff-next');return;}if(a==='playoff-mc'){titleMC();return;}if(a==='playoff-reset'){state.finale=null;if(state.finaleTimer)clearTimeout(state.finaleTimer);state.tournament=createTournament(state.format,state.tournament.participants);state.bracketViewRound=0;state.bracketViewPage=0;state.bracketQuadrant='all';state.tournamentMC=null;state.selectedMatch=null;render();return;}
- if(a==='restore-ranked'){state.finale=null;if(state.finaleTimer)clearTimeout(state.finaleTimer);state.tournament=createTournament(state.format);state.bracketViewRound=0;state.bracketViewPage=0;state.bracketQuadrant='all';state.tournamentMC=null;state.selectedMatch=null;render();return;}
- if(a==='swap-seeds'){try{state.tournament=swapTournamentSeeds(state.tournament,state.seedFrom,state.seedTo);state.tournamentMC=null;state.selectedMatch=null;state.error='';}catch(e){state.error=e.message;}render();return;}
- if(a.startsWith('round:')){const n=Number(a.slice(6));if(Number.isInteger(n)&&n>=0&&n<=state.tournament.rounds.length){state.bracketViewRound=n;state.bracketViewPage=0;state.bracketQuadrant='all';render();}return;}
+function action(a){if(a==='showcase-cancel'){stopShowcase(true);render();return;}if(a==='showcase-dismiss'){if(state.showcase?.phase!=='finish')return;stopShowcase(false);state.bracketMode='full';render();const honors=root.querySelector('.awards-showcase');if(honors){honors.tabIndex=-1;honors.focus({preventScroll:true});honors.scrollIntoView({block:'start',behavior:'smooth'});}return;}if(state.showcase)return;if(a.startsWith('tab-')){const next=a.slice(4);if(!tabNames[next])return;state.tab=next;render();window.scrollTo?.(0,0);return;}if(a==='new-game'){newGame();return;}if(a==='playoff-run'||a==='playoff-next'){if(!state.sourcesReady){state.error='2026 data is still loading';render();return;}runTournament(a==='playoff-next');return;}if(a==='playoff-mc'){titleMC();return;}if(a==='playoff-reset'){state.report=null;state.finale=null;if(state.finaleTimer)clearTimeout(state.finaleTimer);state.tournament=createTournament(state.format,state.tournament.participants);state.bracketViewRound=0;state.bracketViewPage=0;state.bracketQuadrant='all';state.tournamentMC=null;state.selectedMatch=null;render();return;}
+ if(a==='restore-ranked'){state.report=null;state.finale=null;if(state.finaleTimer)clearTimeout(state.finaleTimer);state.tournament=createTournament(state.format);state.bracketViewRound=0;state.bracketViewPage=0;state.bracketQuadrant='all';state.tournamentMC=null;state.selectedMatch=null;render();return;}
+ if(a==='swap-seeds'){try{state.tournament=swapTournamentSeeds(state.tournament,state.seedFrom,state.seedTo);state.report=null;state.tournamentMC=null;state.selectedMatch=null;state.error='';}catch(e){state.error=e.message;}render();return;}
+ if(a==='bracket-full'||a==='bracket-atlas'){state.bracketMode=a==='bracket-full'?'full':'atlas';render();return;}if(a.startsWith('round:')){const n=Number(a.slice(6));if(Number.isInteger(n)&&n>=0&&n<=state.tournament.rounds.length){state.bracketViewRound=n;state.bracketViewPage=0;state.bracketQuadrant='all';render();}return;}
  if(a.startsWith('page:')){const n=Number(a.slice(5));if(Number.isInteger(n)&&n>=0&&n<=30){state.bracketViewPage=n;render();}return;}if(a==='close-inspector'){state.selectedMatch=null;render();return;}if(a.startsWith('inspect:')){const [_,r,i]=a.split(':');openMatch(Number(r),Number(i));return;}if(a.startsWith('prop:')){state.selectedProp=a.slice(5);render();root.querySelector('.expanded-chart')?.scrollIntoView({block:'nearest',behavior:'smooth'});}}
 root.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(b){e.preventDefault();action(b.dataset.action);}});
 root.addEventListener('change',e=>{const b=e.target.closest('[data-field]');if(b)changeField(b.dataset.field,b.value);});
@@ -353,7 +483,7 @@ state.game=simulateGame(state.config,state.config.seed);
 render();
 Promise.allSettled([loadPublicData(),loadResearchSnapshot(),loadModelComparison(),loadScoreEvidence(),loadPlayerModelEvaluation(),loadPlayableCalibration()]).then(results=>{
  const data=results[0].status==='fulfilled'?results[0].value:null;state.datasets=data?.payloads||[];const empirical=researchSnapshot(),cal=playableCalibrationSnapshot();if(empirical)state.datasets.push({prefix:'research',payload:empirical});if(cal)state.datasets.push({prefix:'playable-calibration',payload:cal});
- state.loading=false;state.sourcesReady=true;state.tournament=createTournament(state.format);state.bracketViewRound=0;
+ state.loading=false;state.sourcesReady=true;state.tournament=createTournament(state.format);state.report=null;state.bracketViewRound=0;
  Promise.allSettled([loadPlayerEvidence(state.config.a),loadPlayerEvidence(state.config.b)]).then(()=>{state.game=simulateGame(state.config,state.config.seed);refreshForecast();});
  render();
 });
