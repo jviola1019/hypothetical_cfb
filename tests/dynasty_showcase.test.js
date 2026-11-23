@@ -66,7 +66,7 @@ test('scorebox pass is truthful and catches tampered quarters, drive scores, tur
  const rogue=structuredClone(t);
  rogue.rounds[0].matches.find(m=>m.game).winner='unknown';
  assert.throws(()=>tournamentReport(rogue),/winner\/teams contradiction/);
- const rogue2=structuredClone(t);rogue2.rounds[1].matches[0].a='georgia';
+ const rogue2=structuredClone(t);rogue2.rounds[1].matches[0].a='__tampered__';
  assert.throws(()=>tournamentReport(rogue2),/Bracket advancement mismatch|winner\/teams contradiction/);
 });
 test('offensive awards are exact aggregates of simulated player box totals; individual defense attribution stays labeled fictional',()=>{
