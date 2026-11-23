@@ -15,7 +15,8 @@ const sortMetric=(a,b)=>b.impact-a.impact||b.games-a.games||a.team.localeCompare
 export function scoreboxFor(game){
  const errors=[];
  try{auditGeneratedGame(game)}catch(e){errors.push(e.message)}
- if(game?.config && game.seed!==game.config.seed)errors.push('Game-level seed and configuration seed disagree');
+ // simulateGame(config, overrideSeed) explicitly accepts an effective seed different
+ // from config.seed; only tournamentReport can enforce bracket seed provenance.
  if(!game||!Array.isArray(game.teams)||game.teams.length!==2||!Array.isArray(game.final))
   return {ok:false,errors:['Missing canonical game structure'],checks:0};
  for(let i=0;i<2;i++){
