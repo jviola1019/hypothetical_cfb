@@ -23,6 +23,24 @@ export function committeeOrderedField(modelIds){
  const seen=new Set(COMMITTEE_2026.ids);
  return [...COMMITTEE_2026.ids,...modelIds.filter(id=>!seen.has(id))];
 }
+/** Demonstration of the 12-team 2026 qualification process under explicitly
+ * assumed conference delegates. Conference championships have NOT occurred.
+ * Four Power-Four delegates are CURRENT committee leaders within conferences,
+ * plus the highest current Group-of-Six ranked Boise State (#17).
+ * All 7 remaining places use published ranks, including Notre Dame top-12.
+ */
+export const CFP_PREVIEW_ASSUMPTIONS_2026=Object.freeze([
+ {conference:'SEC',id:'georgia'},
+ {conference:'Big Ten',id:'ucla'},
+ {conference:'Big 12',id:'utah'},
+ {conference:'ACC',id:'miami'},
+ {conference:'Group of Six',id:'boise-state'}
+]);
+export function provisional12Field(){
+ const selected=new Set(CFP_PREVIEW_ASSUMPTIONS_2026.map(x=>x.id));
+ for(const id of COMMITTEE_2026.ids){if(selected.size>=12)break;selected.add(id);}
+ return COMMITTEE_2026.ids.filter(id=>selected.has(id));
+}
 /** An explicitly unvalidated CONTEXT GUARD for playable exhibition matchups.
  * Distinguishes CFP top-three versus unranked teams from compressed winner-only
  * Elo. It never changes the historical research model or its Brier score;
