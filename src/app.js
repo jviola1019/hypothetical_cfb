@@ -329,6 +329,7 @@ function showcaseOverlay(){
  const awarding=['awards','finish'].includes(x.phase);
  const finished=x.phase==='finish';
  const just=x.latest;
+ const finalGame=t.rounds.at(-1)?.matches?.find(m=>m.game)?.game||null;
  const title=x.phase==='kickoff'?'THE DYNASTY BEGINS':x.phase==='field'?'THE FIELD IS LOCKED':x.phase==='tunnel'?'TAKE THE FIELD':x.phase==='round'?x.label:reveal?'NATIONAL CHAMPIONS':'PREPARING THE BRACKET';
  const sub=x.phase==='round'?'Every result below comes from the actual seeded simulation round.':reveal?'The final scorebook has been reconciled.':'Welcome to the National Championship Showcase.';
  const progress=Math.round((count/Math.max(1,f.size-1))*100);
@@ -336,10 +337,10 @@ function showcaseOverlay(){
   <div class="showcase-vignette" aria-hidden="true"></div><div class="showcase-crowd" aria-hidden="true"></div>
   <div class="showcase-inner"><div class="showcase-scorestrip"><span>DYNASTY MODE // 2026</span><b>NATIONAL CHAMPIONSHIP</b><span>LIVE SIMULATION · FICTIONAL</span></div>
   <div class="showcase-crawl"><span>COLLEGE GRIDIRON CLASSIC</span><span>${esc(f.label)}</span><span>ALL ${f.size} ENTRANTS</span></div>
-  <div class="showcase-spotlight" aria-hidden="true"><span class="showcase-light left"></span><span class="showcase-light right"></span><span class="showcase-trophy">★</span></div>
+  <div class="showcase-spotlight" aria-hidden="true"><span class="showcase-light left"></span><span class="showcase-light right"></span><span class="showcase-trophy"><svg class="era-ceremony-trophy" viewBox="0 0 180 218" fill="none" role="img" aria-label="Original championship trophy illustration"><defs><linearGradient id="trophy-shine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6f4ec"/><stop offset=".24" stop-color="#88888c"/><stop offset=".58" stop-color="#d9d5cd"/><stop offset=".82" stop-color="#77777a"/><stop offset="1" stop-color="#ece9e0"/></linearGradient></defs><path d="M49 18H131L124 95Q116 126 90 140Q64 126 56 95L49 18Z" fill="url(#trophy-shine)" stroke="#f4f0e9" stroke-width="3"/><path d="M52 35H24V50Q24 86 60 93M128 35H156V50Q156 86 120 93" stroke="#d3d1cd" stroke-width="9" stroke-linejoin="round"/><path d="M88 140H92V169H88Z" fill="#c7c3bd"/><path d="M59 178H121L134 197H46Z" fill="url(#trophy-shine)" stroke="#e7e4df" stroke-width="2"/><path d="M39 197H141V211H39Z" fill="#44454b" stroke="#e5e3dc" stroke-width="3"/><path d="M75 36V106M90 36V110M105 36V106" stroke="#fff" stroke-width="1.3" opacity=".47"/><path d="M77 67l13-12 13 12-13 26Z" fill="#6d252e" stroke="#ece2dd" stroke-width="2"/></svg></span></div>
   <div class="showcase-copy"><span class="showcase-kicker">ROUND ${Math.min(t.rounds.length,f.size)} · ${f.size} TEAM ELIMINATION</span><h2>${esc(title)}</h2>
    <h3>${reveal?esc(name(t.champion)):'THE ROAD TO GLORY'}</h3><p>${esc(sub)}</p></div>
-  ${reveal?`<div class="showcase-winner"><span>★ ★ ★ ★ ★</span><strong>${esc(name(t.champion))}</strong><b>2026 NATIONAL CHAMPION · SIMULATED</b></div>`:
+  ${reveal?`<div class="showcase-winner"><span>★ ★ ★ ★ ★</span><strong>${esc(name(t.champion))}</strong><b>2026 NATIONAL CHAMPION · SIMULATED</b>${finalGame?`<div class="era-title-final" aria-label="Actual generated championship score"><span>${esc(short(finalGame.config.a))}</span><strong>${integer(finalGame.final[0])} : ${integer(finalGame.final[1])}</strong><span>${esc(short(finalGame.config.b))}</span></div>`:''}</div>`:
    just?`<div class="showcase-live-score" aria-label="Latest completed game"><span>JUST PLAYED · ${esc(x.label)}</span><strong>${esc(short(just.config.a))} ${just.final[0]} <i>:</i> ${just.final[1]} ${esc(short(just.config.b))}</strong><small>${scoreboxFor(just).ok?'BOX SCORE CHECKED':'CHECK FAILED'}</small></div>`:
    `<div class="showcase-live-score"><span>STADIUM TRANSMISSION</span><strong>${f.size} PROGRAMS // ONE TROPHY</strong><small>KICKOFF SEQUENCE ACTIVE</small></div>`}
   ${awarding?awardsShowcase(state.report?.awards,true):''}

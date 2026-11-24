@@ -157,6 +157,9 @@ def check(browser_type,engine,width):
         if engine=='chromium' and width in (390,1366):
             page.screenshot(path=str(OUT/f"{engine}-{width}-champion-reveal.png"),full_page=False,animations="allow")
         assert page.locator('#dynasty-showcase .showcase-winner').count()==1
+        assert page.locator('#dynasty-showcase .era-ceremony-trophy').count()==1, "Original trophy illustration missing"
+        assert page.locator('#dynasty-showcase .era-title-final').count()==1, "Generated championship score presentation missing"
+        assert ':' in page.locator('#dynasty-showcase .era-title-final strong').inner_text(), "Championship score format missing"
         page.locator('#dynasty-showcase.stage-awards').wait_for(timeout=21000)
         assert page.locator('#dynasty-showcase .award-card').count()==4, "MVP OPOY DPOY and title-game MVP missing"
         if width<680:
