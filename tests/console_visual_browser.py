@@ -30,7 +30,9 @@ def check(browser_type, engine, width):
         assert page.locator('.era-left-rail .era-menu-item').count()==3
         assert page.locator('.era-game-board .era-score-row').count()==2
         assert page.locator('.era-game-board .era-quarter-wrap .score-table').count()==1
-        assert page.locator('.era-game-board .era-action-art svg').count()==1
+        assert page.locator('.era-game-board .era-action-art .uniform-athlete-svg').count()==2
+        assert page.locator('.era-game-board .era-team-emblem .uniform-helmet-svg').count()==2
+        assert page.locator('.era-game-board .era-action-art [data-uniform-team]').count()==4
         assert page.locator('.era-game-board .era-right-rail .era-context-card').count()==2
         assert page.locator('.era-game-board [data-field="a"]').count()==1
         assert page.locator('.era-game-board [data-field="b"]').count()==1
@@ -68,6 +70,22 @@ def check(browser_type, engine, width):
             page.screenshot(path=str(OUT/f'{engine}-{width}-overflow-debug.png'),full_page=False)
             raise AssertionError('Game page body overflow '+json.dumps(trace))
         page.screenshot(path=str(OUT/f'{engine}-{width}-game.png'), full_page=width<600,animations='disabled')
+        if engine=='chromium' and width in (390,1366):
+            # Actual team selection must recolor the uniform geometry; identity
+            # is not an image placeholder or hardcoded Ohio/Georgia mockup.
+            page.locator('[data-field="a"]').select_option('oregon')
+            page.locator('[data-field="b"]').select_option('lsu')
+            left=page.locator('.era-athlete-left')
+            right=page.locator('.era-athlete-right')
+            assert left.get_attribute('data-uniform-team')=='oregon'
+            assert right.get_attribute('data-uniform-team')=='lsu'
+            assert left.evaluate("(e)=>e.style.getPropertyValue('--school-main').trim()")=='#154733', 'Oregon green did not render'
+            assert right.evaluate("(e)=>e.style.getPropertyValue('--school-main').trim()")=='#461D7C', 'LSU purple did not render'
+            assert page.locator('.era-athlete-left .uniform-athlete-svg').get_attribute('data-uniform-team')=='oregon'
+            assert page.locator('.era-athlete-right .uniform-athlete-svg').get_attribute('data-uniform-team')=='lsu'
+            assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+2'), 'Dynamic jersey update introduced overflow'
+            page.screenshot(path=str(OUT/f'{engine}-{width}-oregon-lsu-uniforms.png'),animations='disabled')
+
 
         page.locator('[data-action="era-pane-players"]').click()
         assert page.locator('.era-subpane-one').count()==1
@@ -81,6 +99,8 @@ def check(browser_type, engine, width):
         assert page.locator('.era-bracket-preview').count()==1
         assert page.locator('.era-bracket-column').count()>=2
         assert page.locator('.era-bracket-match').count()>=4, 'Expected four actual opening-round 12-team matchups'
+        assert page.locator('.era-bracket-team[data-uniform-team] .era-bracket-helmet .uniform-helmet-svg').count()>=8, 'Retro bracket should show team-specific helmet marks'
+
         qf=page.locator('.era-bracket-column').nth(1).locator('.era-bracket-team b').all_text_contents()
         assert any(v.strip()!='Awaiting result' for v in qf), 'Known first-round bye seeds must be shown, not blank next-round panels'
         assert (page.locator('.era-bracket-column').first.locator('.era-bracket-team span').first.inner_text().strip().isdigit()), 'Real seed positions must label teams'
@@ -113,6 +133,12 @@ def check(browser_type, engine, width):
             page.locator('[data-action="playoff-run"]').click()
             page.locator('#dynasty-showcase.stage-awards').wait_for(timeout=26000)
             assert page.locator('#dynasty-showcase .award-card').count()==4
+            assert page.locator('#dynasty-showcase .award-card .uniform-athlete-svg').count()==4, 'Player uniform portraits missing from honors'
+            assert page.locator('#dynasty-showcase .award-card').nth(2).locator('.uniform-athlete-svg').get_attribute('data-player-role')=='DEF', 'DPOY must use a defensive no-ball stance'
+            for card in page.locator('#dynasty-showcase .award-card').all():
+                assert card.get_attribute('data-uniform-team')==card.locator('.uniform-athlete-svg').get_attribute('data-uniform-team'), 'Award portrait shows the wrong program'
+
+
             r=page.locator('#dynasty-showcase .award-card').first.bounding_box()
             assert r and 0<=r['y'] and r['y']+r['height']<=page.viewport_size['height']-24, (
                 f'Champion awards below desktop fold at reveal: {r}'
