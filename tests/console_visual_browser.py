@@ -44,13 +44,34 @@ def check(browser_type, engine, width):
         actual=[x.strip() for x in page.locator('.era-score-row>strong').all_text_contents()]
         generated=[x.strip() for x in page.locator('.fixture-score-number b').all_text_contents()]
         assert actual==generated, f'Console scoreboard mismatches canonical generated result: {actual} != {generated}'
+        def stat_rows(selector):
+            return page.locator(selector).evaluate_all("""(rows)=>Object.fromEntries(rows.map(row=>[
+                row.querySelector('th').textContent.trim().toLowerCase(),
+                [...row.querySelectorAll('td')].map(cell=>Number(cell.textContent.replaceAll(',','').trim()))
+            ]))""")
+        compact=stat_rows('.era-reference-stats tbody tr')
+        full=stat_rows('.era-dual-stat .stat-table tbody tr')
+        assert len(compact)==4, 'Original reference requires exactly four compact team statistics'
+        for label in ('passing yards','rushing yards','turnovers'):
+            assert compact[label]==full[label], f'Compact score panel diverges from canonical box score: {label}'
+        assert compact['total yards']==[sum(x) for x in zip(full['passing yards'],full['rushing yards'])], 'Compact total yards do not reconcile'
         if width>=1040:
             rows=page.locator('.retro-stadium-hero .era-score-card .era-score-row')
-            left,right=rows.nth(0).bounding_box(),rows.nth(1).bounding_box()
-            assert left and right and abs(left['y']-right['y'])<3 and left['x']+left['width']<=right['x']+3, (
-                f'Console two-team score overlay must use side-by-side columns: {left}, {right}'
-            )
-            assert page.locator('.era-athlete-left .retro-loaded').bounding_box()['height']>=500, 'Game render too small for main stage'
+            first,second=rows.nth(0).bounding_box(),rows.nth(1).bounding_box()
+            score=page.locator('.retro-stadium-hero .era-score-card').bounding_box()
+            stage=page.locator('.retro-stadium-hero .era-uniform-stage').bounding_box()
+            assert first and second and first['y']+first['height']<=second['y']+2, 'Reference requires stacked team scores'
+            assert score and stage and score['x']+score['width']<=stage['x']+2, 'Real scoreboard must never obscure player artwork'
+            assert abs(score['y']-stage['y'])<=3, 'Score and artwork must align at top'
+            assert stage['height']>=365, 'Artwork stage is too short'
+            for portrait in page.locator('.era-game-board img.retro-loaded').all():
+                assert portrait.bounding_box()['height']>=260, 'Portrait image box too small'
+            context_rect=page.locator('.era-game-board .era-right-rail').bounding_box()
+            assert context_rect['y']>=stage['y']+stage['height']-2, 'Research context must not displace reference art'
+        if width<=720:
+            score=page.locator('.retro-stadium-hero .era-score-card').bounding_box()
+            stage=page.locator('.retro-stadium-hero .era-uniform-stage').bounding_box()
+            assert score and stage and score['y']+score['height']<=stage['y']+2, 'On mobile, score must precede art'
 
         assert page.locator('.era-game-board').bounding_box()['y']<200
         assert page.locator('.era-subtabs button').count()==4
@@ -85,6 +106,7 @@ def check(browser_type, engine, width):
         if engine=='chromium' and width in (390,1366):
             # Actual team selection must recolor the uniform geometry; identity
             # is not an image placeholder or hardcoded Ohio/Georgia mockup.
+            prior_sources=page.locator('.era-game-board img.retro-loaded').evaluate_all('(es)=>es.map(e=>e.currentSrc)')
             page.locator('[data-field="a"]').select_option('oregon')
             page.locator('[data-field="b"]').select_option('lsu')
             left=page.locator('.era-athlete-left')
@@ -96,6 +118,10 @@ def check(browser_type, engine, width):
             assert page.locator('.era-athlete-left .uniform-athlete-svg').get_attribute('data-uniform-team')=='oregon'
             assert page.locator('.era-athlete-right .uniform-athlete-svg').get_attribute('data-uniform-team')=='lsu'
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+2'), 'Dynamic jersey update introduced overflow'
+            page.wait_for_function("""(previous) => {
+              const imgs=[...document.querySelectorAll('.era-game-board img.retro-loaded')];
+              return imgs.length===2 && imgs.every((im,i)=>im.currentSrc.startsWith('data:image/') && im.currentSrc!==previous[i]);
+            }""",arg=prior_sources,timeout=30000)
             page.screenshot(path=str(OUT/f'{engine}-{width}-oregon-lsu-uniforms.png'),animations='disabled')
 
 
@@ -105,7 +131,7 @@ def check(browser_type, engine, width):
         page.locator('[data-action="era-pane-box"]').click()
         assert page.locator('.era-dual-stat').count()==1
         if width>=768:
-            assert page.locator('.era-hero-grid').evaluate('(e)=>getComputedStyle(e).gridTemplateColumns.split(" ").length')==(1 if width>=1040 else 2)
+            assert page.locator('.era-hero-grid').evaluate('(e)=>getComputedStyle(e).gridTemplateColumns.split(" ").length')==2
         page.locator('[data-action="tab-playoff"]').click()
         page.locator('.era-playoff-board').wait_for()
         assert page.locator('.era-bracket-preview').count()==1

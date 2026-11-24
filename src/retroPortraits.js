@@ -5,8 +5,20 @@
 import {teamKit} from './teamKits.js';
 const URLS=Object.freeze({
  qb:['./public/assets/qb-hero.webp','./public/assets/qb-mask.webp'],
- runner:['./public/assets/runner-hero.webp','./public/assets/runner-mask.webp']
+ runner:['./public/assets/runner-hero.webp','./public/assets/runner-mask.webp'],
+ receiver:['./public/assets/receiver-hero.webp','./public/assets/receiver-mask.webp'],
+ defender:['./public/assets/defender-hero.webp','./public/assets/defender-mask.webp'],
+ celebrate:['./public/assets/celebrate-hero.webp','./public/assets/celebrate-mask.webp'],
+ trophy:['./public/assets/trophy-hero.webp','./public/assets/trophy-mask.webp']
 });
+/** Map award roles to the actual simulated position, never to award rank. */
+export function awardPortraitRole(award,player){
+ if(award==='DPOY')return 'defender';
+ if(player?.role==='QB')return 'qb';
+ if(player?.role==='RB')return 'runner';
+ if(['WR1','WR2','WR','TE'].includes(player?.role))return 'receiver';
+ return 'celebrate';
+}
 const sourceCache=new Map();
 const tintCache=new Map();
 const hexRgb=s=>[1,3,5].map(i=>parseInt(s.slice(i,i+2),16));
@@ -26,7 +38,7 @@ async function readSource(role){
   ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(mask,0,0);
   const mattes=ctx.getImageData(0,0,canvas.width,canvas.height);
   return {raw,mattes,width:canvas.width,height:canvas.height};
- }));
+ }).catch(error=>{sourceCache.delete(role);throw error;}));
  return sourceCache.get(role);
 }
 function blendChannel(original,target,brightness,weight){
@@ -44,7 +56,9 @@ export function repairJerseyMask(r,g,b,mr,mg,mb){
 }
 /** Pure pixel transform is independently tested with deliberately tiny fixtures. */
 export function tintPixel(r,g,b,maskR,maskG,maskB,kit){
- const colors=[kit.jersey,kit.helmet,kit.pants].map(hexRgb);
+ return tintWithPalette(r,g,b,maskR,maskG,maskB,[kit.jersey,kit.helmet,kit.pants].map(hexRgb));
+}
+function tintWithPalette(r,g,b,maskR,maskG,maskB,colors){
  let v=[r,g,b];const brightness=r*.2126+g*.7152+b*.0722;
  for(const [i,m] of [maskR,maskG,maskB].entries()){
   const weight=Math.min(1,Math.max(0,m/255));if(weight<.005)continue;
@@ -60,14 +74,17 @@ async function makePortrait(team,role,variant){
   const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
   const ctx=canvas.getContext('2d',{willReadFrequently:true});if(!ctx)throw Error('2D canvas unavailable');
   const out=ctx.createImageData(width,height),s=raw.data,m=mattes.data,d=out.data;
+  const palette=[selected.jersey,selected.helmet,selected.pants].map(hexRgb);
   for(let i=0;i<s.length;i+=4){
+   if(!s[i+3])continue;
    const redMask=repairJerseyMask(s[i],s[i+1],s[i+2],m[i],m[i+1],m[i+2]);
-   const v=tintPixel(s[i],s[i+1],s[i+2],redMask,m[i+1],m[i+2],selected);
+   const v=tintWithPalette(s[i],s[i+1],s[i+2],redMask,m[i+1],m[i+2],palette);
    d[i]=v[0];d[i+1]=v[1];d[i+2]=v[2];d[i+3]=s[i+3];
   }
   ctx.putImageData(out,0,0);
   return canvas.toDataURL('image/webp',.86);
  })();
+ promise.catch(()=>{if(tintCache.get(key)===promise)tintCache.delete(key);});
  tintCache.set(key,promise);
  if(tintCache.size>40)tintCache.delete(tintCache.keys().next().value);
  return promise;
@@ -81,10 +98,10 @@ export function mountRetroPortraits(root){
   const variant=element.dataset.variant||'home';
   if(!Object.hasOwn(URLS,role))continue;
   makePortrait(id,role,variant).then(data=>{
-   if(!element.isConnected||element.dataset.team!==id||element.dataset.variant!==variant)return;
+   if(!element.isConnected||element.dataset.team!==id||(element.dataset.variant||'home')!==variant||element.dataset.retroPlayer!==role)return;
    element.src=data;
    element.classList.add('retro-loaded');
-   element.closest('.era-athlete-panel,.award-card,.era-champion-athlete')?.classList.add('retro-rendered');
+   element.closest('.era-athlete-panel,.award-card,.era-champion-athlete,.retro-champion-portrait')?.classList.add('retro-rendered');
   }).catch(()=>{
    // The original SVG remains as a readable fallback rather than a broken image.
    if(element.isConnected)element.classList.add('retro-unavailable');

@@ -1,0 +1,56 @@
+{
+  "qb": {
+    "size": [
+      402,
+      511
+    ],
+    "alphaClear": 0.711,
+    "bytes": 40512,
+    "sha256": "eac1b97053e5ba456fe52e847628681b915dfd24218dcbfb2a1fe8a41c170c11"
+  },
+  "runner": {
+    "size": [
+      301,
+      503
+    ],
+    "alphaClear": 0.556,
+    "bytes": 40192,
+    "sha256": "e0911cb1248ae184dcd256e41d4f57062d5c5c2c39a7829c7dfdd7767b622793"
+  },
+  "receiver": {
+    "size": [
+      458,
+      512
+    ],
+    "alphaClear": 0.749,
+    "bytes": 38790,
+    "sha256": "7cc221087534a348bc39463662068c926ca865473becb6d31e3d8ff78b06b679"
+  },
+  "defender": {
+    "size": [
+      414,
+      460
+    ],
+    "alphaClear": 0.558,
+    "bytes": 49202,
+    "sha256": "3cb225bd7ab0639453289d05e9be51b8bd4bd670ae485c1e4dc3a72c1bf56b48"
+  },
+  "celebrate": {
+    "size": [
+      377,
+      497
+    ],
+    "alphaClear": 0.561,
+    "bytes": 48752,
+    "sha256": "c292223958b3b36bc95c9f7086cec706c1dcaa4305a120436b1ff715ae6f5c47"
+  },
+  "trophy": {
+    "size": [
+      318,
+      512
+    ],
+    "alphaClear": 0.45,
+    "bytes": 43624,
+    "sha256": "ee70f06105e04974d4ef4f3d85be890ac45138371aca28946a0e218c516a0853"
+  }
+}

@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,statSync} from 'node:fs';
-import {tintPixel,repairJerseyMask} from '../src/retroPortraits.js';
+import {tintPixel,repairJerseyMask,awardPortraitRole} from '../src/retroPortraits.js';
 import {teamKit} from '../src/teamKits.js';
 const root=new URL('../',import.meta.url);
 const read=p=>readFileSync(new URL(p,root),'utf8');
 test('real rendered portrait sources and masks ship locally with bounded sizes',()=>{
- for(const name of ['qb-hero.webp','runner-hero.webp','qb-mask.webp','runner-mask.webp','retro-night-stadium.webp']){
+ for(const name of ['qb-hero.webp','runner-hero.webp','qb-mask.webp','runner-mask.webp','receiver-hero.webp','receiver-mask.webp','defender-hero.webp','defender-mask.webp','celebrate-hero.webp','celebrate-mask.webp','trophy-hero.webp','trophy-mask.webp','retro-night-stadium.webp']){
   const path='public/assets/'+name;
   const b=readFileSync(new URL(path,root));
   assert.equal(b.toString('utf8',0,4),'RIFF',name+' should be WebP RIFF data');
@@ -52,4 +52,12 @@ test('photo stadium and visible full portrait heads rather than clipped award sh
  assert.ok(css.includes('retro-night-stadium.webp'));
  assert.ok(css.includes('left:-35%!important'));
  assert.ok(css.includes('jersey matte repair')===false); // correction lives in JS, not CSS filtering
+});
+
+test('award art maps real role to distinct visual position and celebration',()=>{
+ assert.equal(awardPortraitRole('MVP',{role:'QB'}),'qb');
+ assert.equal(awardPortraitRole('OPOY',{role:'WR2'}),'receiver');
+ assert.equal(awardPortraitRole('TITLE GAME MVP',{role:'RB'}),'runner');
+ assert.equal(awardPortraitRole('DPOY',{role:'CB'}),'defender');
+ assert.equal(awardPortraitRole('MVP',null),'celebrate');
 });
