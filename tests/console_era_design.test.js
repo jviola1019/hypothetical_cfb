@@ -31,7 +31,9 @@ test('vintage visual language is square, condensed, accessible and not publisher
  for(const token of ['Roboto Condensed','--era-red:#982634','--era-white:#f1f0eb','era-menu-item.selected','.era-score-row','.era-quarter-wrap','.era-bracket-team.won','.era-research-panel','@media(max-width:720px)','prefers-reduced-motion:reduce'])assert.ok(css.includes(token),token);
  assert.match(css,/min-height:44px/);
  assert.doesNotMatch(css,/ea-sports-logo|ncaa-logo|\bEA SPORTS\b/);
- assert.ok(app.includes('not actual player tracking data'));
+ assert.ok(app.includes('not actual players or verified 2026 uniforms'));
+ assert.ok(app.includes('data-uniform-team'));
+ assert.ok(app.includes('era-athlete-matchup'));
 });
 test('release keeps interactive report sections and data provenance outside the console viewport',()=>{
  for(const component of ['gamedayHud()','matchupForecast()','gameDetail(g)','injuryTicker()','propTable()','rosterCoverageCard(g)','personnelDesk()','syntheticDistribution()','historyTable()','seedEditor()','fullBracketView()','scoreboardAudit()','playoffGameInspector()','calibrationGraphic()','reliabilityPlot()','scoreEvaluation()','playerEvaluation()'])

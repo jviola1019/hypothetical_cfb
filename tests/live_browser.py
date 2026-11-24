@@ -59,7 +59,7 @@ def check(browser_type,engine,width):
         assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(18, 19, 22)', "Console-era graphite background missing"
         assert page.locator('.brand-copy').evaluate("(el) => getComputedStyle(el).flexDirection")=='column', "Wordmark/subtitle should stack without collision"
         assert 'linear-gradient' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).backgroundImage"), "Console-era crimson selected navigation gradient missing"
-        assert 'Roboto Condensed' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).fontFamily"), "Retro typography not applied"
+        assert 'Barlow Condensed' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).fontFamily"), "Uniform-stage console typography not applied"
         if not page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"):
             trace=page.evaluate("""() => ({width:innerWidth,scroll:document.documentElement.scrollWidth,offenders:
               [...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:String(e.className?.baseVal||e.className||'').slice(0,80),
@@ -75,6 +75,9 @@ def check(browser_type,engine,width):
         assert "heritage-stadium.svg" in page.locator('.topbar').evaluate("(el) => getComputedStyle(el).backgroundImage"), "Console-era stadium masthead not used"
         assert page.evaluate("fetch('./public/assets/heritage-stadium.svg').then(r => r.ok)"), "Heritage stadium illustration missing"
         # The new console scorecard and the inspectable generated scorebug are one game.
+        assert page.locator('.era-uniform-stage .uniform-athlete-svg').count()==2, "Dynamic home and away athlete models missing"
+        assert page.locator('.era-score-row .uniform-helmet-svg').count()==2, "School-specific helmets missing from game scoreboard"
+        assert page.locator('.era-uniform-stage [data-uniform-team]').count()==4, "Both athlete panels and their figures must have source-mapped school IDs"
         compact=page.locator('.era-score-row>strong').all_text_contents()
         canonical=page.locator('.fixture-score-number b').all_text_contents()
         assert [s.strip() for s in compact]==[s.strip() for s in canonical], 'Compact console scores diverge from canonical fixture'
