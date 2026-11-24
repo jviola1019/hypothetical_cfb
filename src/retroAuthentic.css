@@ -299,3 +299,19 @@ body{background:#090b10!important;color:#f3f0ed!important}
 .era-reference-stats tbody tr{background:#242528}
 .era-reference-stats tbody tr:nth-child(even){background:#1a1b1e}
 @media(min-width:1040px){.era-game-board .retro-stadium-hero .era-reference-stats{grid-column:1;grid-row:auto}}
+
+/* Six independently drawn role assets. Art stays clear of the score and actual awards. */
+.era-athlete-panel .retro-player-image.retro-loaded{filter:drop-shadow(3px 5px 4px #000b) contrast(1.04) saturate(.94)!important}
+.awards-showcase .award-visual-model .retro-player-image,
+.dynasty-showcase.stage-awards .award-visual-model .retro-player-image,
+.dynasty-showcase.stage-finish .award-visual-model .retro-player-image{
+ left:0!important;right:auto!important;top:0!important;bottom:auto!important;height:100%!important;width:100%!important;object-fit:contain!important;object-position:center top!important;
+}
+.awards-showcase .award-visual-model:has(.retro-unavailable) .uniform-athlete-svg,
+.dynasty-showcase .era-champion-athlete:has(.retro-unavailable) .uniform-athlete-svg{opacity:1!important;display:block!important}
+.awards-showcase .award-visual-model .retro-unavailable,.retro-champion-portrait .retro-unavailable{display:none!important}
+.dynasty-showcase .era-champion-stage:has(.era-champion-athlete.retro-rendered) .showcase-trophy{display:none!important}
+.dynasty-showcase .era-champion-stage:has(.era-champion-athlete.retro-rendered) .era-champion-athlete{width:min(75%,330px)!important;max-width:100%!important;flex-shrink:0}
+.dynasty-showcase .era-champion-athlete .retro-player-image.retro-loaded{height:100%!important;bottom:0!important;width:100%!important;object-fit:contain!important;object-position:center top!important}
+.retro-champion-portrait .retro-player-image{height:100%!important;bottom:0!important;width:100%!important;object-fit:contain!important;object-position:center top!important}
+@media(max-width:720px){.dynasty-showcase .era-champion-stage:has(.era-champion-athlete.retro-rendered) .era-champion-athlete{width:min(70%,160px)!important}}
