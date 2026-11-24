@@ -267,3 +267,10 @@ body{background:#121316!important;color:#eee!important;font-family:var(--era-ui)
  .topbar .brand-copy strong{font-size:clamp(23px,6.7vw,28px)!important;letter-spacing:-.038em!important}
  .topbar .brand-copy .era-logo-year{font-size:clamp(26px,7.6vw,33px)!important}
 }
+
+/* Unresolved later rounds have real bracket slots, never invented scores. */
+.era-bracket-match.era-future-match{border:1px solid #6d7177!important;background:#1e2025!important;opacity:.82}
+.era-bracket-match.era-future-match .era-bracket-team{color:#c6c8ca!important;letter-spacing:.015em}
+.era-bracket-match.era-future-match .era-bracket-team b{font:600 12px/1.12 var(--era-narrow)!important;color:#cbcdd0!important}
+.era-bracket-match.era-future-match .era-bracket-team span,
+.era-bracket-match.era-future-match .era-bracket-team strong{color:#8f9399!important}

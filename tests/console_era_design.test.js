@@ -40,3 +40,10 @@ test('release keeps interactive report sections and data provenance outside the 
  assert.ok(app.includes('id="research-player"'));
  assert.ok(app.includes('id="research-methods"'));
 });
+
+test('unknown late-round opponents remain explicit placeholders, not fabricated winners',()=>{
+ assert.ok(app.includes('era-future-match'));
+ assert.ok(app.includes('WINNER R'));
+ assert.ok(app.includes('t.rounds[stage]'));
+ assert.ok(css.includes('.era-bracket-match.era-future-match'));
+});
