@@ -56,10 +56,14 @@ def check(browser_type,engine,width):
 
         # Verify the actual new game CSS and locally served stadium asset, rather
         # than passing on DOM-only assertions while a stylesheet 404s.
-        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(231, 223, 202)', "Vintage heritage Dynasty skin missing"
+        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(19, 21, 26)', "Retro-06 graphite background missing"
         assert page.locator('.brand-copy').evaluate("(el) => getComputedStyle(el).flexDirection")=='column', "Wordmark/subtitle should stack without collision"
-        assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(35, 54, 75)', "Vintage score table failed to style"
-        assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(250, 241, 218)', "Vintage quarter scores lack readable contrast"
+        assert page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).backgroundColor")=='rgb(155, 40, 54)', "Retro selected-menu crimson bar not applied"
+        assert 'Roboto Condensed' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).fontFamily"), "Retro typography not applied"
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Retro 06 game layout overflows the viewport"
+
+        assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(36, 40, 48)', "Retro-06 score table failed to style"
+        assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(255, 255, 255)', "Retro-06 quarter scores lack readable contrast"
 
         assert "heritage-stadium.svg" in page.locator('.page-intro').evaluate("(el) => getComputedStyle(el).backgroundImage"), "Vintage stadium artwork not used"
         assert page.evaluate("fetch('./public/assets/heritage-stadium.svg').then(r => r.ok)"), "Heritage stadium illustration missing"
@@ -119,6 +123,10 @@ def check(browser_type,engine,width):
         # timed, deterministic, multi-stage broadcast runs before champion reveal.
         page.locator('[data-action="tab-playoff"]').click()
         page.locator('[data-field="format"]').select_option("fullFbs138")
+        assert page.locator('.swap-desk .swap-label b').evaluate("(e)=>getComputedStyle(e).color")=='rgb(241, 239, 234)', "Seed-trade label must not be white-on-cream"
+        assert page.locator('.swap-desk').evaluate("(e)=>getComputedStyle(e).backgroundColor")=='rgb(37, 40, 46)', "Retro seed-trade editor still inherits a cream surface"
+        assert page.locator('.seed-expander summary').evaluate("(e)=>getComputedStyle(e).backgroundColor")=='rgb(37, 40, 46)', "Expanded field menu lacks the retro graphite bar"
+
         initial_tournament_seed=page.locator('.tournament-overview').get_attribute('data-tournament-seed')
         assert initial_tournament_seed and initial_tournament_seed.isdigit()
         assert page.locator('.playoff-theater').count()==1
@@ -191,9 +199,19 @@ def check(browser_type,engine,width):
             assert next_title_seed!=previous_complete_seed, "New round after a completed title reused the previous tournament seed"
         page.locator('[data-action="tab-research"]').click()
         page.locator(".audit-section").first.wait_for(timeout=30000)
-        assert page.locator('.coverage-intro').evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(32, 41, 53)', "Old dark olive uncertainty metric panel"
-        assert page.locator('.coverage-intro strong').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(255, 255, 255)', "Historical uncertainty numbers must contrast with dark metrics panel"
-        assert page.locator('.audit-explainer p b').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(27, 40, 51)', "Explainer emphasis cannot be white-on-white"
+        assert page.locator('.coverage-intro').evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(36, 39, 45)', "Retro-06 uncertainty metric panel missing"
+        assert page.locator('.coverage-intro strong').first.evaluate("""(el) => {
+            const luminance = color => {
+              const v=color.match(/\\d+/g).slice(0,3).map(Number).map(x=>{
+                const n=x/255;return n<=0.04045?n/12.92:((n+0.055)/1.055)**2.4;
+              });
+              return 0.2126*v[0]+0.7152*v[1]+0.0722*v[2];
+            };
+            const fg=luminance(getComputedStyle(el).color);
+            const bg=luminance(getComputedStyle(el.closest('.coverage-intro')).backgroundColor);
+            return (Math.max(fg,bg)+0.05)/(Math.min(fg,bg)+0.05)>=4.5;
+        }"""), "Historical uncertainty numbers must meet 4.5:1 contrast, whether white or warm off-white"
+        assert page.locator('.audit-explainer p b').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(246, 244, 239)', "Retro-06 explanatory emphasis lacks light-on-dark contrast"
 
         displayed=page.locator('.data-grid article strong').all_text_contents()
         source_root=Path(__file__).resolve().parents[1]
