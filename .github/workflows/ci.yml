@@ -50,20 +50,20 @@ jobs:
   real-browser:
     name: Hosted-module Chromium & WebKit
     runs-on: ubuntu-24.04
+    # The pinned official image ships browser binaries + their system libraries.
+    # Installing via apt on GitHub's fluctuating Ubuntu mirror can hang for 18m
+    # without ever reaching an application test; see PR #9 infra cancellation.
+    container:
+      image: mcr.microsoft.com/playwright/python:v1.57.0-noble
     timeout-minutes: 18
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-      - name: Compile browser test before installing heavy browser engines
+      - name: Compile real-browser checks
         run: python -m py_compile tests/live_browser.py
-      - name: Install exact browser driver and real browser engines
-        run: |
-          python -m pip install playwright==1.57.0
-          python -m playwright install --with-deps chromium webkit
+      - name: Install exact Playwright Python driver (browsers preinstalled)
+        run: python -m pip install --disable-pip-version-check playwright==1.57.0
       - name: Start actual local HTTP site with ES modules
         run: |
           python -m http.server 4173 --bind 127.0.0.1 >/tmp/gridiron-http.log 2>&1 &

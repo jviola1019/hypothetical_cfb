@@ -53,3 +53,11 @@ test('retro skin cannot misrepresent fictional output as validated prediction',(
  assert.equal(SHOWCASE.awardRevealMs,13200);
  assert.equal(SHOWCASE.finishMs,15000);
 });
+
+test('browser job pins both real engines without slow apt downloads',()=>{
+ const workflow=read('.github/workflows/ci.yml');
+ assert.ok(workflow.includes('mcr.microsoft.com/playwright/python:v1.57.0-noble'));
+ assert.ok(workflow.includes('python -m pip install --disable-pip-version-check playwright==1.57.0'));
+ assert.ok(!workflow.includes('playwright install --with-deps'));
+ assert.ok(workflow.includes('python tests/live_browser.py'));
+});
