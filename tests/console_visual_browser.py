@@ -106,6 +106,18 @@ def check(browser_type, engine, width):
         assert 'model validated' not in text
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+2'), 'Research body overflow'
         page.screenshot(path=str(OUT/f'{engine}-{width}-research.png'),full_page=width<600,animations='disabled')
+        if engine=='chromium' and width==1366:
+            # Independent fast visual regression: 13.2s award phase must be
+            # shown on-screen, rather than just existing below the viewport.
+            page.locator('[data-action="tab-playoff"]').click()
+            page.locator('[data-action="playoff-run"]').click()
+            page.locator('#dynasty-showcase.stage-awards').wait_for(timeout=26000)
+            assert page.locator('#dynasty-showcase .award-card').count()==4
+            r=page.locator('#dynasty-showcase .award-card').first.bounding_box()
+            assert r and 0<=r['y'] and r['y']+r['height']<=page.viewport_size['height']-24, (
+                f'Champion awards below desktop fold at reveal: {r}'
+            )
+            page.screenshot(path=str(OUT/'chromium-1366-visible-mvp.png'),animations='disabled')
         assert not exceptions, f'{engine}/{width} uncaught JS: {exceptions}'
         print(f'PASS {engine} {width}: live game score, tabs, 12/138 brackets, research, 3 screenshots, no overflow/errors',flush=True)
         context.close()
