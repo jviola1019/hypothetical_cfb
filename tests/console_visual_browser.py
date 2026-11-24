@@ -5,6 +5,7 @@ and actual DOM, not static mock images or screenshots substituted for controls.
 """
 from __future__ import annotations
 import os
+import json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -39,7 +40,33 @@ def check(browser_type, engine, width):
         assert actual==generated, f'Console scoreboard mismatches canonical generated result: {actual} != {generated}'
         assert page.locator('.era-game-board').bounding_box()['y']<200
         assert page.locator('.era-subtabs button').count()==4
-        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+2'), 'Game page body overflow'
+        if not page.evaluate('document.documentElement.scrollWidth <= innerWidth+2'):
+            trace=page.evaluate("""() => {
+              const cases=[
+                'svg.era-action-art{display:none!important}',
+                '.era-action-art{display:none!important}',
+                '.era-subtabs{display:none!important}',
+                '.era-dual-stat{display:none!important}',
+                '.era-console-board{display:none!important}',
+                '.era-reports{display:none!important}',
+                '.topbar{display:none!important}',
+                '.site-width{overflow:clip!important}',
+                '.era-console-board{overflow:clip!important}',
+                '.era-console-board{display:none!important}.era-reports{display:none!important}',
+                '.era-action-art svg{display:none!important}.era-subtabs{display:none!important}.era-stat{display:none!important}',
+              ];
+              const result={width:innerWidth,before:document.documentElement.scrollWidth,cases:[]};
+              for(const css of cases){
+                const st=document.createElement('style');st.textContent=css;document.head.append(st);
+                result.cases.push([css,document.documentElement.scrollWidth]);
+                st.remove();
+              }
+              const checks=['html','body','#app','.site-main','.site-width','.era-console-board','.era-stage-main','.era-hero-grid','.era-action-art','.era-subtabs','.era-dual-stat','.era-stat','.era-stat .table-scroll','.era-reports','.game-canvas'];
+              result.elements=checks.map(q=>{const e=document.querySelector(q);if(!e)return null;const b=e.getBoundingClientRect();return [q,Math.round(b.left),Math.round(b.right),e.scrollWidth,e.clientWidth,getComputedStyle(e).overflowX];}).filter(Boolean);
+              return result;
+            }""")
+            page.screenshot(path=str(OUT/f'{engine}-{width}-overflow-debug.png'),full_page=False)
+            raise AssertionError('Game page body overflow '+json.dumps(trace))
         page.screenshot(path=str(OUT/f'{engine}-{width}-game.png'), full_page=width<600,animations='disabled')
 
         page.locator('[data-action="era-pane-players"]').click()
