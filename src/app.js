@@ -355,6 +355,16 @@ function playoffCalendar(){
 function consolePreviewMatches(t,stage){
  if(t.rounds[stage])return t.rounds[stage].matches.map((m,i)=>({...m,index:i}));
  if(stage===t.stage&&!t.champion)return playablePairs(t);
+ // Byes are already known before kickoff. Show those real seeded programs in
+ // the next round without inventing their as-yet-unknown opponents or scores.
+ if(stage===1&&t.stage===0&&t.formatId==='fbs12'&&!t.champion){
+  const slots=[];
+  for(let p=0;p<t.slots.length;p+=2){
+   const a=t.slots[p],b=t.slots[p+1];
+   slots.push(a&&b?null:(a||b||null));
+  }
+  return Array.from({length:slots.length/2},(_,i)=>({index:i,a:slots[2*i],b:slots[2*i+1],game:null}));
+ }
  return [];
 }
 
@@ -365,7 +375,7 @@ function consoleBracketBoard(){
   const count=matches.length,shown=matches.slice(0,stage===0?6:4);
   return `<div class="era-bracket-column"><h3>${esc(label)}</h3><div class="era-bracket-games">${shown.length?shown.map(m=>{
     const game=m.game;
-    const row=(id,index)=>`<div class="era-bracket-team ${game?.winner===id?'won':''}"><span>${id?esc(short(id)):'TBD'}</span><b>${id?esc(name(id)):'Awaiting result'}</b><strong>${game?integer(game.final[index]):'–'}</strong></div>`;
+    const row=(id,index)=>`<div class="era-bracket-team ${game?.winner===id?'won':''}"><span>${id?String(t.participants.indexOf(id)+1):'–'}</span><b>${id?esc(name(id)):'Awaiting result'}</b><strong>${game?integer(game.final[index]):'–'}</strong></div>`;
     return `<div class="era-bracket-match">${row(m.a,0)}${row(m.b,1)}${game?`<button type="button" data-action="inspect:${stage}:${m.index}" aria-label="Open ${esc(name(m.a))} vs ${esc(name(m.b))} scorebox">GAME REPORT</button>`:''}</div>`;
    }).join(''):`<div class="era-bracket-pending"><span>AWAITING ROUND ${stage+1}</span><small>Real matchups populate after prior rounds finish.</small></div>`}${count>shown.length?`<p class="era-more-matches">+${integer(count-shown.length)} ADDITIONAL MATCHES · FULL BRACKET BELOW</p>`:''}</div></div>`;
  };

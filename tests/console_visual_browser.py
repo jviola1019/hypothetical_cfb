@@ -54,6 +54,10 @@ def check(browser_type, engine, width):
         assert page.locator('.era-bracket-preview').count()==1
         assert page.locator('.era-bracket-column').count()>=2
         assert page.locator('.era-bracket-match').count()>=4, 'Expected four actual opening-round 12-team matchups'
+        qf=page.locator('.era-bracket-column').nth(1).locator('.era-bracket-team b').all_text_contents()
+        assert any(v.strip()!='Awaiting result' for v in qf), 'Known first-round bye seeds must be shown, not blank next-round panels'
+        assert (page.locator('.era-bracket-column').first.locator('.era-bracket-team span').first.inner_text().strip().isdigit()), 'Real seed positions must label teams'
+
         assert page.locator('[data-field="format"]').count()==1
         assert page.locator('[data-action="playoff-run"]').count()==1
         assert page.locator('[data-action="playoff-next"]').count()==1

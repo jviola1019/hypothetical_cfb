@@ -56,17 +56,21 @@ def check(browser_type,engine,width):
 
         # Verify the actual new game CSS and locally served stadium asset, rather
         # than passing on DOM-only assertions while a stylesheet 404s.
-        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(19, 21, 26)', "Retro-06 graphite background missing"
+        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(18, 19, 22)', "Console-era graphite background missing"
         assert page.locator('.brand-copy').evaluate("(el) => getComputedStyle(el).flexDirection")=='column', "Wordmark/subtitle should stack without collision"
-        assert page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).backgroundColor")=='rgb(155, 40, 54)', "Retro selected-menu crimson bar not applied"
+        assert 'linear-gradient' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).backgroundImage"), "Console-era crimson selected navigation gradient missing"
         assert 'Roboto Condensed' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).fontFamily"), "Retro typography not applied"
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Retro 06 game layout overflows the viewport"
 
         assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(36, 40, 48)', "Retro-06 score table failed to style"
         assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(255, 255, 255)', "Retro-06 quarter scores lack readable contrast"
 
-        assert "heritage-stadium.svg" in page.locator('.page-intro').evaluate("(el) => getComputedStyle(el).backgroundImage"), "Vintage stadium artwork not used"
+        assert "heritage-stadium.svg" in page.locator('.topbar').evaluate("(el) => getComputedStyle(el).backgroundImage"), "Console-era stadium masthead not used"
         assert page.evaluate("fetch('./public/assets/heritage-stadium.svg').then(r => r.ok)"), "Heritage stadium illustration missing"
+        # The new console scorecard and the inspectable generated scorebug are one game.
+        compact=page.locator('.era-score-row>strong').all_text_contents()
+        canonical=page.locator('.fixture-score-number b').all_text_contents()
+        assert [s.strip() for s in compact]==[s.strip() for s in canonical], 'Compact console scores diverge from canonical fixture'
         # The visible score pair must reproduce the printed point total and margin.
         estimates=page.locator('.snapshot-figures strong').all_text_contents()
         import re
