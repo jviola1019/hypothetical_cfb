@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,statSync} from 'node:fs';
-import {tintPixel} from '../src/retroPortraits.js';
+import {tintPixel,repairJerseyMask} from '../src/retroPortraits.js';
 import {teamKit} from '../src/teamKits.js';
 const root=new URL('../',import.meta.url);
 const read=p=>readFileSync(new URL(p,root),'utf8');
@@ -35,4 +35,14 @@ test('stage is photo-first and source data stays real, using semantic menu contr
  assert.match(css,/\.era-score-card/);
  assert.match(css,/prefers-reduced-motion:reduce/);
  assert.doesNotMatch(app,/https:\/\/(?:ea|ncaa)\./i);
+});
+
+test('jersey matte repair recolors green source gaps without affecting skin or helmet',()=>{
+ assert.equal(repairJerseyMask(30,160,45,0,0,0),255);
+ assert.equal(repairJerseyMask(150,90,70,0,0,0),0);
+ assert.equal(repairJerseyMask(10,60,150,0,200,0),0);
+ assert.equal(repairJerseyMask(30,160,45,120,0,0),255);
+ const o=teamKit('ole-miss');
+ const v=tintPixel(30,160,45,repairJerseyMask(30,160,45,0,0,0),0,0,o);
+ assert.ok(v[0]>v[1], 'uncovered green source jersey must render in Ole Miss red');
 });

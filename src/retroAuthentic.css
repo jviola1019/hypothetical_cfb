@@ -179,3 +179,15 @@ body{background:#090b10!important;color:#f3f0ed!important}
 .dynasty-showcase{background:
  linear-gradient(#060811ed,#0a0c11ea),
  url('../public/assets/retro-night-stadium.webp') center/cover no-repeat!important}
+
+/* PR13 visual audit: eliminate clipped anonymous award figures and unreadable final line. */
+.awards-showcase .award-visual-model{mask-image:linear-gradient(90deg,transparent 0%,#000 22%)!important;overflow:hidden!important}
+.awards-showcase .award-visual-model .retro-player-image,
+.dynasty-showcase.stage-awards .award-visual-model .retro-player-image,
+.dynasty-showcase.stage-finish .award-visual-model .retro-player-image{top:-9%!important;bottom:auto!important;right:-1%!important;height:162%!important;max-height:none!important;object-fit:contain!important;transform:none!important}
+.dynasty-showcase.stage-awards .era-title-final,
+.dynasty-showcase.stage-finish .era-title-final{display:grid!important;grid-template-columns:minmax(48px,1fr) auto minmax(48px,1fr)!important;gap:10px!important;align-items:center!important;justify-items:center!important;width:min(100%,560px)!important;max-width:560px!important;padding:6px 10px!important;letter-spacing:0!important}
+.dynasty-showcase .era-title-final>span{font-family:var(--classic-ui)!important;white-space:nowrap!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;letter-spacing:0!important;font-size:clamp(13px,1.55vw,20px)!important}
+.dynasty-showcase .era-title-final>strong{font-family:var(--classic-ui)!important;white-space:nowrap!important;letter-spacing:0!important;font-size:clamp(20px,2.6vw,29px)!important}
+.era-athlete-panel .retro-player-image.retro-loaded{image-rendering:auto!important;filter:drop-shadow(4px 8px 6px #000d) contrast(1.04) saturate(.92)!important}
+@media(max-width:720px){.awards-showcase .award-visual-model .retro-player-image{top:-5%!important;height:142%!important}.era-title-final{gap:5px!important}}

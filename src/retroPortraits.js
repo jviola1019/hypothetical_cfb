@@ -35,6 +35,13 @@ function blendChannel(original,target,brightness,weight){
  const tinted=Math.min(255,target*shadow+highlight);
  return Math.round(original*(1-weight)+tinted*weight);
 }
+/** Repair open-neck/shoulder pixels omitted from the hand-built jersey matte.
+ * Applies only to strongly green source jersey pixels, never to masks for
+ * helmets, pants, skin, grass, or already neutral artwork. */
+export function repairJerseyMask(r,g,b,mr,mg,mb){
+ const sourceJerseyGreen=g>62&&g>r*1.25&&g>b*1.18;
+ return sourceJerseyGreen&&mg<35&&mb<35?255:mr;
+}
 /** Pure pixel transform is independently tested with deliberately tiny fixtures. */
 export function tintPixel(r,g,b,maskR,maskG,maskB,kit){
  const colors=[kit.jersey,kit.helmet,kit.pants].map(hexRgb);
@@ -54,7 +61,8 @@ async function makePortrait(team,role,variant){
   const ctx=canvas.getContext('2d',{willReadFrequently:true});if(!ctx)throw Error('2D canvas unavailable');
   const out=ctx.createImageData(width,height),s=raw.data,m=mattes.data,d=out.data;
   for(let i=0;i<s.length;i+=4){
-   const v=tintPixel(s[i],s[i+1],s[i+2],m[i],m[i+1],m[i+2],selected);
+   const redMask=repairJerseyMask(s[i],s[i+1],s[i+2],m[i],m[i+1],m[i+2]);
+   const v=tintPixel(s[i],s[i+1],s[i+2],redMask,m[i+1],m[i+2],selected);
    d[i]=v[0];d[i+1]=v[1];d[i+2]=v[2];d[i+3]=s[i+3];
   }
   ctx.putImageData(out,0,0);
