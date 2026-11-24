@@ -134,6 +134,10 @@ def check(browser_type, engine, width):
             page.locator('#dynasty-showcase.stage-awards').wait_for(timeout=26000)
             assert page.locator('#dynasty-showcase .award-card').count()==4
             assert page.locator('#dynasty-showcase .award-card .uniform-athlete-svg').count()==4, 'Player uniform portraits missing from honors'
+            assert page.locator('#dynasty-showcase .award-card').nth(2).locator('.uniform-athlete-svg').get_attribute('data-player-role')=='DEF', 'DPOY must use a defensive no-ball stance'
+            for card in page.locator('#dynasty-showcase .award-card').all():
+                assert card.get_attribute('data-uniform-team')==card.locator('.uniform-athlete-svg').get_attribute('data-uniform-team'), 'Award portrait shows the wrong program'
+
 
             r=page.locator('#dynasty-showcase .award-card').first.bounding_box()
             assert r and 0<=r['y'] and r['y']+r['height']<=page.viewport_size['height']-24, (
