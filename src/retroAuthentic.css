@@ -241,7 +241,7 @@ body{background:#090b10!important;color:#f3f0ed!important}
   grid-column:1!important;grid-row:1!important;position:relative;
   align-self:stretch;justify-self:stretch;width:100%;margin:0!important;
   grid-template-columns:minmax(0,1fr)!important;
-  grid-template-rows:auto auto auto auto 1fr!important;align-content:start;
+  grid-template-rows:auto auto auto auto auto 1fr!important;align-content:start;
   background:#141518!important;backdrop-filter:none;
  }
  .era-game-board .retro-stadium-hero .era-score-card .era-metal-strip{
@@ -289,3 +289,13 @@ body{background:#090b10!important;color:#f3f0ed!important}
   object-position:center bottom!important;
  }
 }
+
+/* Original reference places the four principal team statistics below quarters. */
+.era-reference-stats{min-width:0;padding:5px 5px 0;align-self:start}
+.era-reference-stats table{width:100%;border-collapse:collapse;table-layout:fixed;font:700 clamp(12px,1.05vw,16px)/1.2 var(--classic-ui);font-variant-numeric:tabular-nums;color:#f3efed}
+.era-reference-stats th,.era-reference-stats td{border:1px solid #77797d;padding:5px 4px;text-align:center}
+.era-reference-stats th:first-child{text-align:left;width:54%;overflow-wrap:anywhere;text-transform:uppercase}
+.era-reference-stats thead{background:linear-gradient(#9a2b38,#6b1c28)}
+.era-reference-stats tbody tr{background:#242528}
+.era-reference-stats tbody tr:nth-child(even){background:#1a1b1e}
+@media(min-width:1040px){.era-game-board .retro-stadium-hero .era-reference-stats{grid-column:1;grid-row:auto}}
