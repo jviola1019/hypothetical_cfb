@@ -213,7 +213,9 @@ def check(browser_type,engine,width):
             assert next_title_seed!=previous_complete_seed, "New round after a completed title reused the previous tournament seed"
         page.locator('[data-action="tab-research"]').click()
         page.locator(".audit-section").first.wait_for(timeout=30000)
-        assert page.locator('.coverage-intro').evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(36, 39, 45)', "Retro-06 uncertainty metric panel missing"
+        assert page.locator('.era-reports .coverage-intro').first.evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(36, 39, 45)', "Retro-06 uncertainty metric panel missing"
+        assert page.locator('.era-research-board .coverage-intro').count()==1, "Compact console validation interval study missing"
+
         assert page.locator('.coverage-intro strong').first.evaluate("""(el) => {
             const luminance = color => {
               const v=color.match(/\\d+/g).slice(0,3).map(Number).map(x=>{
