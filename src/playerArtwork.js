@@ -10,14 +10,14 @@ export function helmetBadge(teamId,instance='badge',variant='home'){
 
 export function athleteModel(teamId,options={}){
  const k=teamKit(teamId,options.variant||'home');
- const role=options.role==='RB'?'RB':'QB';
+ const role=options.role==='DEF'?'DEF':options.role==='RB'?'RB':'QB';
  const number=String(options.number||'26').replace(/[^0-9]/g,'').slice(0,2)||'26';
  const id='pl-'+String(teamId||'unknown').replace(/[^a-z0-9-]/gi,'').slice(0,25)+'-'+String(options.instance||'game').replace(/[^a-z0-9-]/gi,'').slice(0,25);
  const mirrored=options.face==='left';
  const jersey=k.jersey,contrast=k.number,trim=k.accent,helmet=k.helmet,pants=k.pants;
  const skin=['#9D6B56','#B48165','#72513F','#AF7757'][(String(teamId).length+(role==='RB'?1:0))%4];
  const pads=k.stripe==='none'?'':k.stripe==='triple'?`<path d="M76 181l55-10m-56 20 53-10m-53 20 52-10m82-20 55 10m-54 0 53 10m-54 0 53 10" stroke="${trim}" stroke-width="6"/>`:k.stripe==='shoulder'?`<path d="M87 149l53 34-22 27-52-31m184-31-49 35 20 25 53-30" fill="${trim}" stroke="#101216" stroke-width="3"/>`:`<path d="M73 181l57-8m81-1 57 9" stroke="${trim}" stroke-width="${k.stripe==='double'?19:10}"/>${k.stripe==='double'?`<path d="M73 181l57-8m81-1 57 9" stroke="${contrast}" stroke-width="5"/>`:''}`;
- const ball=`<g transform="translate(${role==='QB'?269:247} ${role==='QB'?220:238}) rotate(${role==='QB'?32:-26})"><ellipse rx="30" ry="20" fill="#714328" stroke="#d6b69c" stroke-width="3"/><path d="M-22 0H22" stroke="#f4e7d7" stroke-width="3"/><path d="M-12-9v18m7-18v18m7-18v18m7-18v18" stroke="#f4e7d7" stroke-width="2.5"/></g>`;
+ const ball=role==='DEF'?`<g><path d="M241 208l33-11q21 7 24 26l-16 21-34-9Z" fill="#1e242a" stroke="#f3f1ec" stroke-width="4"/><path d="M251 218l32 5m-23 7 23 4" stroke="${trim}" stroke-width="5" fill="none"/><path d="M76 261l-21 4-5 23 16 9 19-20Z" fill="#1c242c" stroke="#dadde0" stroke-width="4"/></g>`:`<g transform="translate(${role==='QB'?269:247} ${role==='QB'?220:238}) rotate(${role==='QB'?32:-26})"><ellipse rx="30" ry="20" fill="#714328" stroke="#d6b69c" stroke-width="3"/><path d="M-22 0H22" stroke="#f4e7d7" stroke-width="3"/><path d="M-12-9v18m7-18v18m7-18v18m7-18v18" stroke="#f4e7d7" stroke-width="2.5"/></g>`;
  const core=`<g transform="${mirrored?'translate(340 0) scale(-1 1)':''}">
  <ellipse cx="171" cy="414" rx="122" ry="14" fill="#06070a" opacity=".5"/>
  <path d="M113 274Q92 326 85 373l34 23q32-72 46-109Z" fill="url(#${id}-pants)" stroke="#282b30" stroke-width="5"/>
@@ -53,7 +53,7 @@ export function athleteModel(teamId,options={}){
  ${ball}
  <path d="M91 270L74 281M246 242l38 13" stroke="#e8e7e4" stroke-width="10" opacity=".85"/>
  </g>`;
- return `<svg class="uniform-athlete-svg" data-uniform-team="${escapeXml(k.id)}" data-uniform-variant="${k.variant}" viewBox="0 0 340 440" role="img" aria-label="${escapeXml(k.teamName)} original stylized ${role} in ${k.variant} school colors, not a real player's likeness or official uniform"><defs>
+ return `<svg class="uniform-athlete-svg" data-uniform-team="${escapeXml(k.id)}" data-uniform-variant="${k.variant}" data-player-role="${role}" viewBox="0 0 340 440" role="img" aria-label="${escapeXml(k.teamName)} original stylized ${role} in ${k.variant} school colors, not a real player's likeness or official uniform"><defs>
  <linearGradient id="${id}-jersey" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${trim}" stop-opacity=".8"/><stop offset=".24" stop-color="${jersey}"/><stop offset=".65" stop-color="${jersey}"/><stop offset="1" stop-color="#080b11" stop-opacity=".75"/></linearGradient>
  <linearGradient id="${id}-metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".9"/><stop offset=".25" stop-color="${helmet}"/><stop offset=".7" stop-color="${helmet}"/><stop offset="1" stop-color="#161821"/></linearGradient>
  <linearGradient id="${id}-skin" x1="0" y1="0" x2=".95" y2="1"><stop stop-color="#e7bda0"/><stop offset=".41" stop-color="${skin}"/><stop offset="1" stop-color="#3a2925"/></linearGradient>

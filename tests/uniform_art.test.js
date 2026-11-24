@@ -59,6 +59,10 @@ test('original player and helmet illustrations are deterministic and change with
  assert.match(a,/<linearGradient/);
  assert.match(a,/<pattern/);
  assert.match(b,/translate\(340 0\) scale\(-1 1\)/);
+ const defender=athleteModel('indiana',{instance:'def-test',role:'DEF'});
+ assert.match(defender,/data-player-role="DEF"/);
+ assert.doesNotMatch(defender,/<ellipse rx="30" ry="20" fill="#714328"/,'Defender should not carry a football');
+ assert.ok(defender.includes('fill="#1e242a"'),'Separate defensive-glove pose is missing');
  assert.ok(a!==b);
  assert.equal(a,athleteModel('ohio-state',{instance:'testA',number:'26',role:'QB'}));
  const h=helmetBadge('oregon','test-helmet');
