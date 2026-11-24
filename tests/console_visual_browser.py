@@ -44,6 +44,17 @@ def check(browser_type, engine, width):
         actual=[x.strip() for x in page.locator('.era-score-row>strong').all_text_contents()]
         generated=[x.strip() for x in page.locator('.fixture-score-number b').all_text_contents()]
         assert actual==generated, f'Console scoreboard mismatches canonical generated result: {actual} != {generated}'
+        def stat_rows(selector):
+            return page.locator(selector).evaluate_all("""(rows)=>Object.fromEntries(rows.map(row=>[
+                row.querySelector('th').textContent.trim().toLowerCase(),
+                [...row.querySelectorAll('td')].map(cell=>Number(cell.textContent.replaceAll(',','').trim()))
+            ]))""")
+        compact=stat_rows('.era-reference-stats tbody tr')
+        full=stat_rows('.era-dual-stat .stat-table tbody tr')
+        assert len(compact)==4, 'Original reference requires exactly four compact team statistics'
+        for label in ('passing yards','rushing yards','turnovers'):
+            assert compact[label]==full[label], f'Compact score panel diverges from canonical box score: {label}'
+        assert compact['total yards']==[sum(x) for x in zip(full['passing yards'],full['rushing yards'])], 'Compact total yards do not reconcile'
         if width>=1040:
             rows=page.locator('.retro-stadium-hero .era-score-card .era-score-row')
             first,second=rows.nth(0).bounding_box(),rows.nth(1).bounding_box()
