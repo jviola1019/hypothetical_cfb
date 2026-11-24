@@ -282,3 +282,60 @@ svg.viz .gridline{stroke:#b6b8ba!important}
 .market-ledger .ledger-intro,.ledger-cross{border-color:#6f737a!important}
 .research-stamp{padding:12px 16px!important;font:600 11px var(--display)!important}
 .schedule-section>p{color:#e8e6e3!important}
+
+/* Screenshot QA (Chromium 320px): old cartridge accents were still leaking
+   into the playoff-theater canvas and seed desk. Retain retro grayscale. */
+.playoff-theater .theater-main,
+.playoff-theater .theater-graphic,
+.playoff-theater .theater-copy{
+ background-color:#25282d!important;
+ background-image:none!important;
+ color:#f1efe9!important;
+ box-shadow:none!important;
+}
+.playoff-theater .theater-copy:before,
+.playoff-theater .theater-copy:after,
+.playoff-theater .theater-graphic:before,
+.playoff-theater .theater-graphic:after{display:none!important}
+.playoff-theater .theater-copy>span,
+.playoff-theater .theater-copy>small,
+.playoff-theater .theater-top span,
+.playoff-theater .theater-bottom span,
+.playoff-theater .theater-index{color:#d3d2ce!important}
+.playoff-theater .theater-top span:first-child{color:#f1efe9!important}
+.playoff-theater .theater-copy h3,
+.playoff-theater .theater-copy strong{
+ color:#f6f4ee!important;
+ text-shadow:none!important;
+ font-style:normal!important;
+}
+.playoff-theater .arena-lines{opacity:.24!important}
+.seed-leaders,.seed-all-scroll,.seed-expander,.bracket-seeding{
+ background:#25282d!important;
+ border-color:#6a6c71!important;
+ color:#f5f3ee!important
+}
+.seed-leaders .seed-row,.seed-leaders .seed-row span,
+.seed-leaders .seed-row small,.seed-source-chip,
+.seed-intro .eyebrow,.seed-intro h3{
+ background:#25282d!important;
+ color:#f2f0ed!important;
+ border-color:#6a6c71!important
+}
+.seed-leaders .seed-row strong{background:#852b36!important;color:#fff!important}
+.hud-playart svg rect{fill:#292d33!important;stroke:#787d84!important}
+.hud-playart svg text{fill:#e6e4df!important}
+.hud-playart .hud-routes path{stroke:#b33a48!important}
+.gameday-hud .hud-topline>span:first-child,.theater-top>span:first-child{
+ color:#e8e5df!important
+}
+.skip-link:not(:focus-visible){
+ position:fixed!important;top:-100px!important;left:0!important;
+ width:1px!important;height:1px!important;overflow:hidden!important;
+ clip-path:inset(50%)!important;padding:0!important;border:0!important
+}
+.skip-link:focus-visible{
+ top:9px!important;left:12px!important;clip-path:none!important;
+ width:auto!important;height:auto!important;overflow:visible!important;
+ padding:12px 16px!important
+}
