@@ -46,3 +46,10 @@ test('jersey matte repair recolors green source gaps without affecting skin or h
  const v=tintPixel(30,160,45,repairJerseyMask(30,160,45,0,0,0),0,0,o);
  assert.ok(v[0]>v[1], 'uncovered green source jersey must render in Ole Miss red');
 });
+
+test('photo stadium and visible full portrait heads rather than clipped award shoulders',()=>{
+ const css=read('src/retroAuthentic.css');
+ assert.ok(css.includes('retro-night-stadium.webp'));
+ assert.ok(css.includes('left:-35%!important'));
+ assert.ok(css.includes('jersey matte repair')===false); // correction lives in JS, not CSS filtering
+});

@@ -191,3 +191,11 @@ body{background:#090b10!important;color:#f3f0ed!important}
 .dynasty-showcase .era-title-final>strong{font-family:var(--classic-ui)!important;white-space:nowrap!important;letter-spacing:0!important;font-size:clamp(20px,2.6vw,29px)!important}
 .era-athlete-panel .retro-player-image.retro-loaded{image-rendering:auto!important;filter:drop-shadow(4px 8px 6px #000d) contrast(1.04) saturate(.92)!important}
 @media(max-width:720px){.awards-showcase .award-visual-model .retro-player-image{top:-5%!important;height:142%!important}.era-title-final{gap:5px!important}}
+
+/* Visual screenshot review: show helmet/face in each award, not cropped shoulder strips.
+   Use the bundled original crowd image behind the athletes, never a UI mockup. */
+.era-uniform-stage{background:linear-gradient(180deg,rgba(5,7,14,.39),rgba(8,11,17,.12) 42%,rgba(3,5,9,.8) 100%),url('../public/assets/retro-night-stadium.webp') center 53%/cover no-repeat!important}
+.awards-showcase .award-visual-model .retro-player-image,
+.dynasty-showcase.stage-awards .award-visual-model .retro-player-image,
+.dynasty-showcase.stage-finish .award-visual-model .retro-player-image{left:-35%!important;right:auto!important;top:-10%!important;bottom:auto!important;height:155%!important}
+@media(max-width:720px){.awards-showcase .award-visual-model .retro-player-image{left:-29%!important;top:-6%!important;height:144%!important}}
