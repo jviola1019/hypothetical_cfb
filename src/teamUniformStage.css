@@ -93,3 +93,12 @@
  .era-athlete-panel .uniform-athlete-svg,.dynasty-showcase .era-champion-athlete .uniform-athlete-svg{animation:none!important;transform:translateX(-50%)!important;will-change:auto!important}
  .dynasty-showcase .era-champion-athlete .uniform-athlete-svg{transform:none!important}
 }
+
+/* Frame the rendered models like the period's player-selection portraits. */
+.era-athlete-panel .uniform-athlete-svg{filter:drop-shadow(6px 8px 5px #020409ba) saturate(.96) contrast(1.05)!important}
+.era-athlete-panel .uniform-athlete-svg path{stroke-linecap:round;stroke-linejoin:round}
+.awards-showcase .award-visual-model .uniform-athlete-svg{height:164%!important;width:158%!important;bottom:-32%!important;right:-24%!important}
+.dynasty-showcase.stage-awards .award-visual-model .uniform-athlete-svg,.dynasty-showcase.stage-finish .award-visual-model .uniform-athlete-svg{height:166%!important;width:158%!important;bottom:-34%!important;right:-23%!important}
+@media(max-width:720px){
+ .awards-showcase .award-visual-model .uniform-athlete-svg{height:146%!important;width:150%!important;bottom:-26%!important;right:-22%!important}
+}
