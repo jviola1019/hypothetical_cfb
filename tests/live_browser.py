@@ -59,7 +59,7 @@ def check(browser_type,engine,width):
         assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(9, 11, 16)', "Retro console graphite background missing"
         assert page.locator('.brand-copy').evaluate("(el) => getComputedStyle(el).flexDirection")=='column', "Wordmark/subtitle should stack without collision"
         assert 'linear-gradient' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).backgroundImage"), "Console-era crimson selected navigation gradient missing"
-        assert 'Barlow Condensed' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).fontFamily"), "Uniform-stage console typography not applied"
+        assert 'Arial Narrow' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).fontFamily"), "Upright console typography not applied"
         if not page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"):
             trace=page.evaluate("""() => ({width:innerWidth,scroll:document.documentElement.scrollWidth,offenders:
               [...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:String(e.className?.baseVal||e.className||'').slice(0,80),

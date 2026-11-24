@@ -44,6 +44,14 @@ def check(browser_type, engine, width):
         actual=[x.strip() for x in page.locator('.era-score-row>strong').all_text_contents()]
         generated=[x.strip() for x in page.locator('.fixture-score-number b').all_text_contents()]
         assert actual==generated, f'Console scoreboard mismatches canonical generated result: {actual} != {generated}'
+        if width>=1040:
+            rows=page.locator('.retro-stadium-hero .era-score-card .era-score-row')
+            left,right=rows.nth(0).bounding_box(),rows.nth(1).bounding_box()
+            assert left and right and abs(left['y']-right['y'])<3 and left['x']+left['width']<=right['x']+3, (
+                f'Console two-team score overlay must use side-by-side columns: {left}, {right}'
+            )
+            assert page.locator('.era-athlete-left .retro-loaded').bounding_box()['height']>=500, 'Game render too small for main stage'
+
         assert page.locator('.era-game-board').bounding_box()['y']<200
         assert page.locator('.era-subtabs button').count()==4
         if not page.evaluate('document.documentElement.scrollWidth <= innerWidth+2'):
@@ -139,6 +147,9 @@ def check(browser_type, engine, width):
             assert page.locator('#dynasty-showcase .award-card').count()==4
             page.locator('#dynasty-showcase .award-card img.retro-loaded').first.wait_for(timeout=10000)
             assert page.locator('#dynasty-showcase .award-card img.retro-player-image.retro-loaded').count()==4, 'MVP/offense/defense/title art must all load as rendered photos'
+            page.locator('#dynasty-showcase .retro-champion-portrait img.retro-loaded').wait_for(timeout=10000)
+            assert page.locator('#dynasty-showcase .retro-champion-portrait img.retro-loaded').count()==1, 'Featured champion portrait not shown during award ceremony'
+
             assert page.locator('#dynasty-showcase .award-card .uniform-athlete-svg').count()==4, 'Player uniform portraits missing from honors'
             assert page.locator('#dynasty-showcase .award-card').nth(2).locator('.uniform-athlete-svg').get_attribute('data-player-role')=='DEF', 'DPOY must use a defensive no-ball stance'
             for card in page.locator('#dynasty-showcase .award-card').all():

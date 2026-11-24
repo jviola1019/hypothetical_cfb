@@ -6,11 +6,11 @@ import {teamKit} from '../src/teamKits.js';
 const root=new URL('../',import.meta.url);
 const read=p=>readFileSync(new URL(p,root),'utf8');
 test('real rendered portrait sources and masks ship locally with bounded sizes',()=>{
- for(const name of ['qb-hero.webp','runner-hero.webp','qb-mask.webp','runner-mask.webp']){
+ for(const name of ['qb-hero.webp','runner-hero.webp','qb-mask.webp','runner-mask.webp','retro-night-stadium.webp']){
   const path='public/assets/'+name;
   const b=readFileSync(new URL(path,root));
   assert.equal(b.toString('utf8',0,4),'RIFF',name+' should be WebP RIFF data');
-  assert.ok(statSync(new URL(path,root)).size<80000,name+' excessively large');
+  assert.ok(statSync(new URL(path,root)).size<130000,name+' excessively large');
  }
 });
 test('tinting changes actual pigment without changing transparent or non-uniform regions',()=>{

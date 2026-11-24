@@ -167,3 +167,15 @@ body{background:#090b10!important;color:#f3f0ed!important}
  .retro-champion-copy>b{font-size:9px!important}
  .retro-champion-copy .era-title-final{gap:5px!important;padding:5px!important}
 }
+/* An original texture-painted Saturday-night stadium replaces the flat geometry
+   behind the character render. 2000s game crowd textures are intentionally
+   compact and noisy, not claims of any real stadium or team venue. */
+.era-game-board .era-uniform-stage{background:
+ linear-gradient(180deg,#080a1160 0%,#0e111a39 44%,#05060ada 100%),
+ url('../public/assets/retro-night-stadium.webp') center 56%/cover no-repeat!important}
+.era-playoff-board .era-bracket-preview{background:
+ linear-gradient(#0a0b11e7,#0b0d10ea),
+ url('../public/assets/retro-night-stadium.webp') center/cover no-repeat!important}
+.dynasty-showcase{background:
+ linear-gradient(#060811ed,#0a0c11ea),
+ url('../public/assets/retro-night-stadium.webp') center/cover no-repeat!important}
