@@ -60,7 +60,14 @@ def check(browser_type,engine,width):
         assert page.locator('.brand-copy').evaluate("(el) => getComputedStyle(el).flexDirection")=='column', "Wordmark/subtitle should stack without collision"
         assert 'linear-gradient' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).backgroundImage"), "Console-era crimson selected navigation gradient missing"
         assert 'Roboto Condensed' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).fontFamily"), "Retro typography not applied"
-        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Retro 06 game layout overflows the viewport"
+        if not page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"):
+            trace=page.evaluate("""() => ({width:innerWidth,scroll:document.documentElement.scrollWidth,offenders:
+              [...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:String(e.className?.baseVal||e.className||'').slice(0,80),
+                right:Math.round(e.getBoundingClientRect().right),left:Math.round(e.getBoundingClientRect().left),
+                width:Math.round(e.getBoundingClientRect().width)}))
+                .filter(x=>x.right>innerWidth+2||x.left< -2).slice(0,32)
+            })""")
+            raise AssertionError(f"Console-era 320px body overflow: {json.dumps(trace)}")
 
         assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(36, 40, 48)', "Retro-06 score table failed to style"
         assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(255, 255, 255)', "Retro-06 quarter scores lack readable contrast"

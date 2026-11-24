@@ -88,5 +88,5 @@ def check(browser_type, engine, width):
 if __name__=='__main__':
     with sync_playwright() as pw:
         for engine in ('chromium','webkit'):
-            for width in (390,768,1366):
+            for width in (320,390,768,1366):
                 check(getattr(pw,engine), engine, width)
