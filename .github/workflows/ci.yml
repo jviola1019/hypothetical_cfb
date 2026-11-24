@@ -79,6 +79,28 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  console-source-inspection:
+    name: Browser source inspection archive (reproducible)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: console-repro-source
+          path: |
+            index.html
+            src/
+            public/
+            tests/
+            scripts/
+            package.json
+            package-lock.json
+          if-no-files-found: error
+          retention-days: 3
+
   console-visual:
     name: Console-era visual browser screenshot and interaction audit
     runs-on: ubuntu-24.04
