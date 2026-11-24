@@ -123,6 +123,10 @@ def check(browser_type,engine,width):
         # timed, deterministic, multi-stage broadcast runs before champion reveal.
         page.locator('[data-action="tab-playoff"]').click()
         page.locator('[data-field="format"]').select_option("fullFbs138")
+        assert page.locator('.swap-desk .swap-label b').evaluate("(e)=>getComputedStyle(e).color")=='rgb(241, 239, 234)', "Seed-trade label must not be white-on-cream"
+        assert page.locator('.swap-desk').evaluate("(e)=>getComputedStyle(e).backgroundColor")=='rgb(37, 40, 46)', "Retro seed-trade editor still inherits a cream surface"
+        assert page.locator('.seed-expander summary').evaluate("(e)=>getComputedStyle(e).backgroundColor")=='rgb(37, 40, 46)', "Expanded field menu lacks the retro graphite bar"
+
         initial_tournament_seed=page.locator('.tournament-overview').get_attribute('data-tournament-seed')
         assert initial_tournament_seed and initial_tournament_seed.isdigit()
         assert page.locator('.playoff-theater').count()==1

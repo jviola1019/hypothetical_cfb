@@ -339,3 +339,41 @@ svg.viz .gridline{stroke:#b6b8ba!important}
  width:auto!important;height:auto!important;overflow:visible!important;
  padding:12px 16px!important
 }
+
+/* Browser-screenshot QA: 1366px playoff seed desk was inheriting cream
+   legacy backgrounds under white labels, creating invisible headings. */
+.bracket-seeding,.bracket-seeding .seed-expander,
+.bracket-seeding .seed-expander>summary,
+.bracket-seeding .restore-wrap,.bracket-seeding .swap-desk,
+.bracket-seeding .swap-label,.bracket-seeding .swap-controls,
+.bracket-seeding .seed-intro{
+  background:#25282e!important;color:#f3f1ec!important;
+  border-color:#75777b!important;box-shadow:none!important
+}
+.bracket-seeding .seed-expander>summary{
+  border:1px solid #797b80!important;border-left:4px solid #a52b39!important;
+  padding:12px 15px!important;min-height:44px!important;
+  font:700 14px/1.2 var(--display)!important;text-transform:uppercase!important
+}
+.bracket-seeding .restore-wrap{border-top:1px solid #575b61!important;padding:12px 15px!important}
+.bracket-seeding .swap-desk{
+  border-top:2px solid #9a2f3c!important;
+  display:flex!important;gap:15px!important;
+  flex-wrap:wrap!important;padding:16px!important
+}
+.bracket-seeding .swap-label b,.bracket-seeding .swap-label span,
+.bracket-seeding .swap-controls>label{
+  color:#f1efea!important;background:transparent!important
+}
+.bracket-seeding .swap-label b{
+  font:700 20px/1.1 var(--display)!important;text-transform:uppercase!important
+}
+.bracket-seeding .swap-label span{font:400 12px/1.5 var(--font)!important;color:#dedcd8!important}
+.bracket-seeding .swap-controls label{font:700 11px var(--display)!important}
+.bracket-seeding .swap-controls select{background:#eeece7!important;color:#17191e!important;border-color:#b5b6b7!important;min-height:44px!important}
+.bracket-seeding .restore-wrap button{min-height:44px!important}
+@media(max-width:760px){
+ .bracket-seeding .swap-desk{display:grid!important;grid-template-columns:minmax(0,1fr)!important}
+ .bracket-seeding .swap-controls{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+ .bracket-seeding .swap-controls label,.bracket-seeding .swap-controls button{min-width:0!important;width:100%!important}
+}
