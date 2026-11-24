@@ -56,7 +56,7 @@ def check(browser_type,engine,width):
 
         # Verify the actual new game CSS and locally served stadium asset, rather
         # than passing on DOM-only assertions while a stylesheet 404s.
-        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(18, 19, 22)', "Console-era graphite background missing"
+        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(9, 11, 16)', "Retro console graphite background missing"
         assert page.locator('.brand-copy').evaluate("(el) => getComputedStyle(el).flexDirection")=='column', "Wordmark/subtitle should stack without collision"
         assert 'linear-gradient' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).backgroundImage"), "Console-era crimson selected navigation gradient missing"
         assert 'Barlow Condensed' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).fontFamily"), "Uniform-stage console typography not applied"
