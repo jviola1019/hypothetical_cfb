@@ -196,7 +196,17 @@ def check(browser_type,engine,width):
         page.locator('[data-action="tab-research"]').click()
         page.locator(".audit-section").first.wait_for(timeout=30000)
         assert page.locator('.coverage-intro').evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(36, 39, 45)', "Retro-06 uncertainty metric panel missing"
-        assert page.locator('.coverage-intro strong').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(255, 255, 255)', "Historical uncertainty numbers must contrast with dark metrics panel"
+        assert page.locator('.coverage-intro strong').first.evaluate("""(el) => {
+            const luminance = color => {
+              const v=color.match(/\\d+/g).slice(0,3).map(Number).map(x=>{
+                const n=x/255;return n<=0.04045?n/12.92:((n+0.055)/1.055)**2.4;
+              });
+              return 0.2126*v[0]+0.7152*v[1]+0.0722*v[2];
+            };
+            const fg=luminance(getComputedStyle(el).color);
+            const bg=luminance(getComputedStyle(el.closest('.coverage-intro')).backgroundColor);
+            return (Math.max(fg,bg)+0.05)/(Math.min(fg,bg)+0.05)>=4.5;
+        }"""), "Historical uncertainty numbers must meet 4.5:1 contrast, whether white or warm off-white"
         assert page.locator('.audit-explainer p b').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(246, 244, 239)', "Retro-06 explanatory emphasis lacks light-on-dark contrast"
 
         displayed=page.locator('.data-grid article strong').all_text_contents()
