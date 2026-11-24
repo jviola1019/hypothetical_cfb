@@ -71,3 +71,14 @@ Original source MIT licensed; source-data licenses, team branding, and NIL right
 ### v1.4 — exact simulated game-market accounting
 
 Game Simulation now reports **N exact wins, covers, overs, unders, and pushes out of N generated games**. The reference lines are retrospective, synthetic sample summaries—not sportsbook prices. An independently evaluated Elo winner estimate is labeled separately from the fictional game engine; any spread translated from Elo is explicitly an illustrative conversion, not a validated handicap. The model/graph arithmetic and limitations are recorded in [`docs/PROBABILITY_CONSISTENCY_AUDIT.md`](docs/PROBABILITY_CONSISTENCY_AUDIT.md).
+
+
+## Retro 06 console menu redesign (November 23, 2026)
+
+The current interface includes a period-inspired **graphite / muted-crimson / warm-silver** college-football menu treatment in `src/retro-06.css`. It uses upright **Roboto Condensed** display typography with local Arial Narrow/Arial fallback, rectangular scoreboards, compact data tables, original stadium artwork, reduced-motion support, and touch-first mobile stacking. The same style covers Game, Playoffs, Model & Validation, player box scores, full brackets, research graphs, the 15-second championship sequence, and tournament awards.
+
+- [Full implementation prompt and acceptance contract](docs/RETRO_06_EXECUTION_PROMPT.md)
+- [Design audit, data caveats, verification gates and limitations](docs/RETRO_06_VERIFICATION.md)
+- [Theme-specific automated regression checks](tests/retro_06_visual_contract.test.js)
+
+**Technical and scientific limits:** this is an independently designed fan simulator, not an EA SPORTS/NCAA product. The generated game engine and athlete props remain synthetic and not validated predictive odds. A visual refresh does not independently verify every 2026 starter, player availability, future outcome or score calibration. Prior theme layers remain in the cascade pending a separate consolidation regression.
