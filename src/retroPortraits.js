@@ -30,8 +30,8 @@ async function readSource(role){
  return sourceCache.get(role);
 }
 function blendChannel(original,target,brightness,weight){
- const shadow=Math.max(.20,Math.min(1.34,.47+brightness/145));
- const highlight=Math.max(0,(brightness-156)*.21);
+ const shadow=Math.max(.22,Math.min(1.16,.36+brightness/195));
+ const highlight=Math.max(0,(brightness-165)*.13);
  const tinted=Math.min(255,target*shadow+highlight);
  return Math.round(original*(1-weight)+tinted*weight);
 }
