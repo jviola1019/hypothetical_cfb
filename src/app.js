@@ -206,10 +206,21 @@ function consoleGamePane(g){
  }
 }
 
+function consoleReferenceStats(g){
+ if(!g?.teams||g.teams.length!==2)return '';
+ const rows=[
+  ['Passing yards',t=>t.passYards],
+  ['Rushing yards',t=>t.rushYards],
+  ['Total yards',t=>t.passYards+t.rushYards],
+  ['Turnovers',t=>t.turnovers]
+ ];
+ return `<div class="era-reference-stats"><table aria-label="Simulated team statistics"><thead><tr><th scope="col">TEAM STATS</th>${g.teams.map(t=>`<th scope="col">${esc(short(t.team))}</th>`).join('')}</tr></thead><tbody>${rows.map(([label,value])=>`<tr><th scope="row">${label}</th>${g.teams.map(t=>`<td>${integer(value(t))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+
 function consoleScorecard(g){
  if(!g)return `<div class="era-score-card"><div class="era-metal-strip">PRE-GAME</div><p>Select teams to generate a matchup.</p></div>`;
  const teams=g.teams||[];
- return `<section class="era-score-card" aria-label="Simulated final scoreboard"><div class="era-metal-strip">FINAL · SIMULATED GAME</div>${teams.map((t,i)=>`<div class="era-score-row ${g.winner===t.team?'won':''}" data-uniform-team="${esc(t.team)}" style="${kitStyle(t.team)}"><span class="era-team-emblem">${helmetBadge(t.team,'score'+i)}</span><b>${esc(name(t.team))}</b><strong>${integer(g.final[i])}</strong></div>`).join('')}<div class="era-quarter-wrap">${quarterTable(g)}</div><div class="era-result-seed">GAME SEED ${esc(g.seed)} · ${esc(locationName(g.config))}</div></section>`;
+ return `<section class="era-score-card" aria-label="Simulated final scoreboard"><div class="era-metal-strip">FINAL · SIMULATED GAME</div>${teams.map((t,i)=>`<div class="era-score-row ${g.winner===t.team?'won':''}" data-uniform-team="${esc(t.team)}" style="${kitStyle(t.team)}"><span class="era-team-emblem">${helmetBadge(t.team,'score'+i)}</span><b>${esc(name(t.team))}</b><strong>${integer(g.final[i])}</strong></div>`).join('')}<div class="era-quarter-wrap">${quarterTable(g)}</div>${consoleReferenceStats(g)}<div class="era-result-seed">GAME SEED ${esc(g.seed)} · ${esc(locationName(g.config))}</div></section>`;
 }
 
 function consolePlayerArt(g){
