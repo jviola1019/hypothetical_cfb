@@ -47,3 +47,9 @@ test('unknown late-round opponents remain explicit placeholders, not fabricated 
  assert.ok(app.includes('t.rounds[stage]'));
  assert.ok(css.includes('.era-bracket-match.era-future-match'));
 });
+
+test('desktop award phase compacts the champion panel so actual MVP cards appear immediately',()=>{
+ for(const selector of ['.dynasty-showcase.stage-awards .showcase-spotlight','.dynasty-showcase.stage-awards .showcase-winner','.dynasty-showcase.stage-awards .awards-grid','.dynasty-showcase.stage-awards .award-card']){
+  assert.ok(css.includes(selector),selector);
+ }
+});

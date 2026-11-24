@@ -162,6 +162,11 @@ def check(browser_type,engine,width):
         assert ':' in page.locator('#dynasty-showcase .era-title-final strong').inner_text(), "Championship score format missing"
         page.locator('#dynasty-showcase.stage-awards').wait_for(timeout=21000)
         assert page.locator('#dynasty-showcase .award-card').count()==4, "MVP OPOY DPOY and title-game MVP missing"
+        if width>=1100:
+            award=page.locator('#dynasty-showcase .awards-showcase .award-card').first.bounding_box()
+            assert award and award['y']>=0 and award['y']+award['height']<page.viewport_size['height']-24, (
+                f"Desktop MVP reveal must appear on screen during award phase: {award}, viewport {page.viewport_size}"
+            )
         if width<680:
             award_position=page.locator('#dynasty-showcase .awards-head').evaluate("(e)=>({top:e.getBoundingClientRect().top,bottom:e.getBoundingClientRect().bottom,height:innerHeight})")
             assert 0<=award_position['top']<award_position['height'] and award_position['bottom']>0, f"Mobile award ceremony announced off-screen: {award_position}"
