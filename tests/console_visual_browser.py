@@ -31,6 +31,10 @@ def check(browser_type, engine, width):
         assert page.locator('.era-game-board .era-score-row').count()==2
         assert page.locator('.era-game-board .era-quarter-wrap .score-table').count()==1
         assert page.locator('.era-game-board .era-action-art .uniform-athlete-svg').count()==2
+        page.locator('.era-athlete-left img.retro-loaded').wait_for(timeout=30000)
+        page.locator('.era-athlete-right img.retro-loaded').wait_for(timeout=30000)
+        assert page.locator('.era-game-board img.retro-player-image.retro-loaded').count()==2, 'Both rendered portraits must load and be tinted'
+        assert all(x.startswith('data:image/webp') for x in page.locator('.era-game-board img.retro-loaded').evaluate_all('(es)=>es.map(e=>e.currentSrc)')), 'Canvas recolor must generate inline, team-specific rendered portraits'
         assert page.locator('.era-game-board .era-team-emblem .uniform-helmet-svg').count()==2
         assert page.locator('.era-game-board .era-action-art [data-uniform-team]').count()==4
         assert page.locator('.era-game-board .era-right-rail .era-context-card').count()==2
@@ -93,7 +97,7 @@ def check(browser_type, engine, width):
         page.locator('[data-action="era-pane-box"]').click()
         assert page.locator('.era-dual-stat').count()==1
         if width>=768:
-            assert page.locator('.era-hero-grid').evaluate('(e)=>getComputedStyle(e).gridTemplateColumns.split(" ").length')==2
+            assert page.locator('.era-hero-grid').evaluate('(e)=>getComputedStyle(e).gridTemplateColumns.split(" ").length')==(1 if width>=1040 else 2)
         page.locator('[data-action="tab-playoff"]').click()
         page.locator('.era-playoff-board').wait_for()
         assert page.locator('.era-bracket-preview').count()==1
@@ -133,6 +137,8 @@ def check(browser_type, engine, width):
             page.locator('[data-action="playoff-run"]').click()
             page.locator('#dynasty-showcase.stage-awards').wait_for(timeout=26000)
             assert page.locator('#dynasty-showcase .award-card').count()==4
+            page.locator('#dynasty-showcase .award-card img.retro-loaded').first.wait_for(timeout=10000)
+            assert page.locator('#dynasty-showcase .award-card img.retro-player-image.retro-loaded').count()==4, 'MVP/offense/defense/title art must all load as rendered photos'
             assert page.locator('#dynasty-showcase .award-card .uniform-athlete-svg').count()==4, 'Player uniform portraits missing from honors'
             assert page.locator('#dynasty-showcase .award-card').nth(2).locator('.uniform-athlete-svg').get_attribute('data-player-role')=='DEF', 'DPOY must use a defensive no-ball stance'
             for card in page.locator('#dynasty-showcase .award-card').all():

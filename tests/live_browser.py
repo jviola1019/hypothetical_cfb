@@ -76,6 +76,9 @@ def check(browser_type,engine,width):
         assert page.evaluate("fetch('./public/assets/heritage-stadium.svg').then(r => r.ok)"), "Heritage stadium illustration missing"
         # The new console scorecard and the inspectable generated scorebug are one game.
         assert page.locator('.era-uniform-stage .uniform-athlete-svg').count()==2, "Dynamic home and away athlete models missing"
+        page.locator('.era-athlete-left img.retro-loaded').wait_for(timeout=30000)
+        page.locator('.era-athlete-right img.retro-loaded').wait_for(timeout=30000)
+        assert page.locator('.era-athlete-panel .retro-loaded').count()==2, 'Generated photographic portraits did not replace flat vectors'
         assert page.locator('.era-score-row .uniform-helmet-svg').count()==2, "School-specific helmets missing from game scoreboard"
         assert page.locator('.era-uniform-stage [data-uniform-team]').count()==4, "Both athlete panels and their figures must have source-mapped school IDs"
         compact=page.locator('.era-score-row>strong').all_text_contents()
