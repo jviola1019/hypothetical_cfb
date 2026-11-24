@@ -56,17 +56,28 @@ def check(browser_type,engine,width):
 
         # Verify the actual new game CSS and locally served stadium asset, rather
         # than passing on DOM-only assertions while a stylesheet 404s.
-        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(19, 21, 26)', "Retro-06 graphite background missing"
+        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(18, 19, 22)', "Console-era graphite background missing"
         assert page.locator('.brand-copy').evaluate("(el) => getComputedStyle(el).flexDirection")=='column', "Wordmark/subtitle should stack without collision"
-        assert page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).backgroundColor")=='rgb(155, 40, 54)', "Retro selected-menu crimson bar not applied"
+        assert 'linear-gradient' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).backgroundImage"), "Console-era crimson selected navigation gradient missing"
         assert 'Roboto Condensed' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).fontFamily"), "Retro typography not applied"
-        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"), "Retro 06 game layout overflows the viewport"
+        if not page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"):
+            trace=page.evaluate("""() => ({width:innerWidth,scroll:document.documentElement.scrollWidth,offenders:
+              [...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:String(e.className?.baseVal||e.className||'').slice(0,80),
+                right:Math.round(e.getBoundingClientRect().right),left:Math.round(e.getBoundingClientRect().left),
+                width:Math.round(e.getBoundingClientRect().width)}))
+                .filter(x=>x.right>innerWidth+2||x.left< -2).slice(0,32)
+            })""")
+            raise AssertionError(f"Console-era 320px body overflow: {json.dumps(trace)}")
 
         assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(36, 40, 48)', "Retro-06 score table failed to style"
         assert page.locator('.score-table tbody td').first.evaluate("(el) => getComputedStyle(el).color")=='rgb(255, 255, 255)', "Retro-06 quarter scores lack readable contrast"
 
-        assert "heritage-stadium.svg" in page.locator('.page-intro').evaluate("(el) => getComputedStyle(el).backgroundImage"), "Vintage stadium artwork not used"
+        assert "heritage-stadium.svg" in page.locator('.topbar').evaluate("(el) => getComputedStyle(el).backgroundImage"), "Console-era stadium masthead not used"
         assert page.evaluate("fetch('./public/assets/heritage-stadium.svg').then(r => r.ok)"), "Heritage stadium illustration missing"
+        # The new console scorecard and the inspectable generated scorebug are one game.
+        compact=page.locator('.era-score-row>strong').all_text_contents()
+        canonical=page.locator('.fixture-score-number b').all_text_contents()
+        assert [s.strip() for s in compact]==[s.strip() for s in canonical], 'Compact console scores diverge from canonical fixture'
         # The visible score pair must reproduce the printed point total and margin.
         estimates=page.locator('.snapshot-figures strong').all_text_contents()
         import re
@@ -146,6 +157,9 @@ def check(browser_type,engine,width):
         if engine=='chromium' and width in (390,1366):
             page.screenshot(path=str(OUT/f"{engine}-{width}-champion-reveal.png"),full_page=False,animations="allow")
         assert page.locator('#dynasty-showcase .showcase-winner').count()==1
+        assert page.locator('#dynasty-showcase .era-ceremony-trophy').count()==1, "Original trophy illustration missing"
+        assert page.locator('#dynasty-showcase .era-title-final').count()==1, "Generated championship score presentation missing"
+        assert ':' in page.locator('#dynasty-showcase .era-title-final strong').inner_text(), "Championship score format missing"
         page.locator('#dynasty-showcase.stage-awards').wait_for(timeout=21000)
         assert page.locator('#dynasty-showcase .award-card').count()==4, "MVP OPOY DPOY and title-game MVP missing"
         if width<680:
@@ -199,7 +213,9 @@ def check(browser_type,engine,width):
             assert next_title_seed!=previous_complete_seed, "New round after a completed title reused the previous tournament seed"
         page.locator('[data-action="tab-research"]').click()
         page.locator(".audit-section").first.wait_for(timeout=30000)
-        assert page.locator('.coverage-intro').evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(36, 39, 45)', "Retro-06 uncertainty metric panel missing"
+        assert page.locator('.era-reports .coverage-intro').first.evaluate("(el) => getComputedStyle(el).backgroundColor")=='rgb(36, 39, 45)', "Retro-06 uncertainty metric panel missing"
+        assert page.locator('.era-research-board .coverage-intro').count()==1, "Compact console validation interval study missing"
+
         assert page.locator('.coverage-intro strong').first.evaluate("""(el) => {
             const luminance = color => {
               const v=color.match(/\\d+/g).slice(0,3).map(Number).map(x=>{

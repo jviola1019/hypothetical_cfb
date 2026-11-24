@@ -79,6 +79,55 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  console-source-inspection:
+    name: Browser source inspection archive (reproducible)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: console-repro-source
+          path: |
+            index.html
+            src/
+            public/
+            tests/
+            scripts/
+            package.json
+            package-lock.json
+          if-no-files-found: error
+          retention-days: 3
+
+  console-visual:
+    name: Console-era visual browser screenshot and interaction audit
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright/python:v1.57.0-noble
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned real-browser driver
+        run: python -m pip install --disable-pip-version-check playwright==1.57.0
+      - name: Start same-origin ES module site
+        run: |
+          python -m http.server 4173 --bind 127.0.0.1 >/tmp/console-site.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4173/index.html >/dev/null && break || sleep 1; done
+          curl -fsS http://127.0.0.1:4173/index.html >/dev/null
+      - name: Verify console menu fidelity at 390, 768 and 1366 in both engines
+        run: python tests/console_visual_browser.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: console-era-visual-evidence
+          path: /tmp/console-era
+          retention-days: 10
+          if-no-files-found: ignore
+
   temporal-backtest:
     name: Pregame time-split replay backtest
     runs-on: ubuntu-24.04
