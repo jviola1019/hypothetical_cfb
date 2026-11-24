@@ -56,10 +56,10 @@ def check(browser_type,engine,width):
 
         # Verify the actual new game CSS and locally served stadium asset, rather
         # than passing on DOM-only assertions while a stylesheet 404s.
-        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(18, 19, 22)', "Console-era graphite background missing"
+        assert page.evaluate("getComputedStyle(document.body).backgroundColor") == 'rgb(9, 11, 16)', "Retro console graphite background missing"
         assert page.locator('.brand-copy').evaluate("(el) => getComputedStyle(el).flexDirection")=='column', "Wordmark/subtitle should stack without collision"
         assert 'linear-gradient' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).backgroundImage"), "Console-era crimson selected navigation gradient missing"
-        assert 'Barlow Condensed' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).fontFamily"), "Uniform-stage console typography not applied"
+        assert 'Arial Narrow' in page.locator('.nav-item.active').evaluate("(e)=>getComputedStyle(e).fontFamily"), "Upright console typography not applied"
         if not page.evaluate("document.documentElement.scrollWidth <= innerWidth+2"):
             trace=page.evaluate("""() => ({width:innerWidth,scroll:document.documentElement.scrollWidth,offenders:
               [...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:String(e.className?.baseVal||e.className||'').slice(0,80),
@@ -76,6 +76,9 @@ def check(browser_type,engine,width):
         assert page.evaluate("fetch('./public/assets/heritage-stadium.svg').then(r => r.ok)"), "Heritage stadium illustration missing"
         # The new console scorecard and the inspectable generated scorebug are one game.
         assert page.locator('.era-uniform-stage .uniform-athlete-svg').count()==2, "Dynamic home and away athlete models missing"
+        page.locator('.era-athlete-left img.retro-loaded').wait_for(timeout=30000)
+        page.locator('.era-athlete-right img.retro-loaded').wait_for(timeout=30000)
+        assert page.locator('.era-athlete-panel .retro-loaded').count()==2, 'Generated photographic portraits did not replace flat vectors'
         assert page.locator('.era-score-row .uniform-helmet-svg').count()==2, "School-specific helmets missing from game scoreboard"
         assert page.locator('.era-uniform-stage [data-uniform-team]').count()==4, "Both athlete panels and their figures must have source-mapped school IDs"
         compact=page.locator('.era-score-row>strong').all_text_contents()

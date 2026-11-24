@@ -1,0 +1,201 @@
+/* GRIDIRON / LAB 26 - VINTAGE CONSOLE RECONSTRUCTION, VERSION 2
+   Reference grammar: PS2-era NCAA Football menus, not the original licensed UI.
+   Originals: independently generated player renders and existing vector stadium.
+   This file intentionally loads AFTER the 2026 color-kit layer. */
+:root{--classic-ink:#0d0e12;--classic-plate:#22242a;--classic-ivory:#f0eeeb;--classic-steel:#a8abae;--classic-active:#a32635;--classic-deep:#5d1523;--classic-ui:'Arial Narrow','Roboto Condensed',Tahoma,Arial,sans-serif}
+body{background:#090b10!important;color:#f3f0ed!important}
+.topbar{background:linear-gradient(0deg,#11131de9,#090b13cb),url('../public/assets/heritage-stadium.svg') center 41%/cover!important;border-bottom:2px solid #a8a8ac!important}
+.topbar .brand-copy strong{font:900 clamp(28px,3.85vw,57px)/.94 var(--classic-ui)!important;font-stretch:condensed!important;font-style:italic!important;letter-spacing:-.032em!important;text-shadow:3px 4px #050609!important}
+.topbar .brand-copy small{font:700 clamp(10px,1vw,14px)/1.12 var(--classic-ui)!important;letter-spacing:.15em!important;font-style:normal!important;margin-left:18px!important}
+.topbar .nav-item,.era-menu-item,.era-metal-strip,.era-pane-title,.era-score-row b,.era-score-row strong,.era-bracket-column h3,.era-bracket-team b,.era-subtabs button,.era-report-heading strong,.era-keybar,.award-card h4,.awards-head strong{font-family:var(--classic-ui)!important;font-style:normal!important;font-weight:800!important;letter-spacing:.018em!important}
+.topbar .nav-item{font-size:clamp(16px,1.65vw,23px)!important}
+.era-menu-item{font-size:clamp(15px,1.46vw,20px)!important}
+.era-menu-item.selected,.topbar .nav-item.active,.topbar .nav-item[aria-current='page']{background:linear-gradient(#b13240,#79202d 87%)!important;border-top-color:#e8b0b1!important}
+.era-console-board{background:linear-gradient(#1d1d23f7,#090b10f7),url('../public/assets/heritage-stadium.svg') 40% 50%/cover!important;border:2px solid #8d9095!important;box-shadow:inset 0 0 0 1px #17191c,0 10px 24px #0009!important}
+.era-left-rail,.era-right-rail{background:linear-gradient(#17191dee,#101117f5)!important;border-color:#797b7f!important}
+.era-metal-strip,.era-pane-title{background:linear-gradient(#dededc,#96999c 48%,#484c52)!important;border-top:1px solid #f4f3f0!important;border-bottom:2px solid #4d5054!important;color:#16171b!important;text-shadow:0 1px #fff6!important}
+.era-pane-title{color:#f3f0ea!important;background:linear-gradient(#515359,#22252a 77%)!important;text-shadow:0 1px #000!important}
+.era-red-strip{background:linear-gradient(95deg,#631521,#a72936 56%,#651b28)!important;border:1px solid #ae9694!important;border-bottom:2px solid #d7c6c0!important}
+.era-left-rail .play-console .console-intro{background:linear-gradient(#c1c3c3,#888c90)!important}
+.era-left-rail .play-console .team-control select,.era-left-rail .play-console .venue-control select{font-family:var(--classic-ui)!important;font-style:normal!important;border:1px solid #d8d7d4!important;background:linear-gradient(#f1f1ef,#bbbbbb)!important;min-height:44px!important}
+.era-left-rail .play-console .action.primary{font-family:var(--classic-ui)!important;font-style:normal!important;background:linear-gradient(#af303b,#7f1b27)!important;border:2px solid #d4b0ab!important}
+.era-game-board .era-stage-main{isolation:isolate}
+/* Make the players/stadium the scene and the scoreboard the overlay, like the supplied images.
+   Below 1040 the screen returns to the conventional stacked scoreboard layout. */
+@media(min-width:1040px){
+ .era-game-board .retro-stadium-hero{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(420px,auto)!important;position:relative;gap:0!important;isolation:isolate}
+ .era-game-board .retro-stadium-hero .era-uniform-stage{grid-column:1;grid-row:1;min-height:424px!important;height:424px!important;max-height:none!important;margin:0!important}
+ .era-game-board .retro-stadium-hero .era-score-card{grid-column:1;grid-row:1;position:relative;z-index:6;justify-self:center;align-self:end;width:min(94%,645px);max-width:100%;margin:0 0 14px!important;min-height:0!important;border:2px solid #ddd9d2!important;outline:1px solid #1d1d20!important;box-shadow:0 7px 14px #000c!important;background:#16171bdc!important;backdrop-filter:blur(4px)}
+ .era-game-board .retro-stadium-hero .era-metal-strip{min-height:33px!important;font-size:18px!important;justify-content:center!important;background:linear-gradient(95deg,#5f111d,#b12b39 52%,#5f1420)!important;color:#fff!important;text-shadow:1px 1px #111!important}
+ .era-game-board .retro-stadium-hero .era-score-row{display:inline-grid!important;width:50%!important;grid-template-columns:34px minmax(0,1fr) 47px!important;min-height:49px!important;float:left;gap:3px!important;padding:3px 5px!important;border-bottom:1px solid #c4b6b3!important;border-left-width:4px!important}
+ .era-game-board .retro-stadium-hero .era-score-row b{font-size:clamp(13px,1.2vw,18px)!important}
+ .era-game-board .retro-stadium-hero .era-score-row strong{font-size:27px!important;padding:4px 2px!important}
+ .era-game-board .retro-stadium-hero .era-team-emblem{width:34px!important;height:31px!important}
+ .era-game-board .retro-stadium-hero .era-team-emblem svg{width:33px!important;height:27px!important}
+ .era-game-board .retro-stadium-hero .era-quarter-wrap{clear:both;min-height:0!important;padding:0 5px!important;flex:0 0 auto!important}
+ .era-game-board .retro-stadium-hero .era-quarter-wrap .score-table{min-width:100%!important}
+ .era-game-board .retro-stadium-hero .era-quarter-wrap .score-table th,.era-game-board .retro-stadium-hero .era-quarter-wrap .score-table td{padding:3px 3px!important;font-size:11px!important}
+ .era-game-board .retro-stadium-hero .era-result-seed{display:none!important}
+}
+/* Realistic illustrated render engine: photos recolored to selected 2026 kit.
+   Preserve the existing original vector as a fallback if an asset fails. */
+.era-uniform-stage{background:linear-gradient(180deg,#15152170 0%,#1c1c2550 53%,#06080ddf 100%),url('../public/assets/heritage-stadium.svg') center 53%/cover no-repeat!important;border-color:#818388!important}
+.era-uniform-stage:after{background:repeating-linear-gradient(0deg,transparent 0 3px,#03030717 4px),linear-gradient(90deg,#05060b6e,transparent 24%,transparent 78%,#05060b75)!important;z-index:7!important}
+.era-athlete-matchup{min-height:100%!important}
+.era-athlete-panel{min-height:100%!important;background:radial-gradient(ellipse 80% 60% at 49% 52%,color-mix(in srgb,var(--school-main) 18%,transparent),transparent 85%)!important}
+.era-athlete-panel .uniform-athlete-svg{opacity:.01!important;transition:opacity .2s!important;pointer-events:none!important}
+.era-athlete-panel .retro-player-image{position:absolute!important;z-index:2!important;bottom:0!important;left:50%!important;transform:translateX(-50%)!important;width:auto!important;max-width:none!important;height:clamp(275px,29vw,456px)!important;object-fit:contain!important;opacity:.26;filter:grayscale(1) brightness(.5)!important;transition:opacity .4s ease,filter .4s ease!important;will-change:auto!important;animation:retro-player-fade .7s cubic-bezier(.16,.75,.23,1) both!important}
+.era-athlete-panel .retro-player-image.retro-loaded{opacity:1!important;filter:drop-shadow(8px 9px 4px #000d) contrast(1.07) saturate(.95)!important}
+.era-athlete-panel.retro-rendered .uniform-athlete-svg{display:none!important}
+.era-athlete-panel .retro-player-image.retro-unavailable{display:none!important}
+.era-athlete-panel:has(.retro-unavailable) .uniform-athlete-svg{opacity:1!important}
+.era-athlete-panel:before{height:2px!important;box-shadow:0 1px var(--school-accent)!important}
+.era-athlete-name{z-index:8!important;min-height:38px!important;padding:4px!important;border-top:2px solid var(--school-accent)!important;background:linear-gradient(0deg,#050607ea,#181a20cd)!important}
+.era-athlete-name b{font-family:var(--classic-ui)!important;font-style:normal!important;font-size:clamp(14px,1.3vw,18px)!important}
+.era-athlete-name small{letter-spacing:.025em!important;font-family:var(--classic-ui)!important;font-size:8px!important}
+.era-stage-watermark{z-index:8!important;left:10px!important;right:10px!important;color:#e6e2db!important;font-family:var(--classic-ui)!important;letter-spacing:.06em!important;font-size:9px!important}
+@keyframes retro-player-fade{from{translate:0 18px;opacity:0}to{translate:0 0;opacity:1}}
+.era-game-board .era-score-row{border-left:5px solid var(--school-main)!important}
+.era-score-row .era-team-emblem{background:transparent!important;border:0!important}
+.era-dual-stat{gap:8px!important;padding-top:7px!important}
+.era-stat,.era-subpane-one,.era-ledger-pane{background:#131519ed!important;border-color:#777a7f!important}
+.era-stat h3,.era-subpane-one h3{font-family:var(--classic-ui)!important}
+.era-subtabs button{font-size:clamp(13px,1.2vw,17px)!important}
+/* Bracket: black scoreboard slots, silver rails and team-specific trim, not card stacks. */
+.era-playoff-board .era-bracket-preview{background:linear-gradient(#111318eb,#0a0b0ee8),url('../public/assets/heritage-stadium.svg') 50% 57%/cover!important}
+.era-playoff-board .era-bracket-column h3{font-family:var(--classic-ui)!important;font-size:clamp(14px,1.35vw,20px)!important;text-align:center!important;font-style:normal!important}
+.era-playoff-board .era-bracket-match{border:1px solid #92969c!important;box-shadow:0 1px #07080a, inset 0 1px #dfdfdf22!important;background:#14161a!important;border-radius:0!important}
+.era-playoff-board .era-bracket-team{min-height:29px!important}
+.era-playoff-board .era-bracket-team.won{box-shadow:inset 0 1px #ffffff38!important}
+.era-bracket-preview .era-red-strip{font-size:19px!important}
+.era-bracket-helmet .uniform-helmet-svg{filter:drop-shadow(0 2px 1px #000)!important}
+.era-playoff-board .era-bracket-champion{background:linear-gradient(140deg,#39151b,#0f1218)!important;border:2px solid #a9a4a0!important}
+/* Research uses a distinct game "scouting report" treatment: chart data is not recreated. */
+.era-research-board .era-research-panel{background:linear-gradient(170deg,#16191ddf,#0c0e12ef)!important;border:1px solid #878a8f!important;box-shadow:inset 0 1px #ffffff15!important}
+.era-research-board .era-research-panel h3,.era-research-board .era-pane-title{font-family:var(--classic-ui)!important;font-style:normal!important}
+.era-research-board .era-research-grid{gap:8px!important}
+.era-research-board svg{max-width:100%!important}
+/* Cinematic championship portrait; width and winner identity use real tournament state. */
+.dynasty-showcase .era-champion-athlete{overflow:hidden!important}
+.dynasty-showcase .era-champion-athlete .retro-player-image{position:absolute!important;bottom:-12%!important;left:50%!important;height:128%!important;width:auto!important;max-width:none!important;transform:translateX(-50%)!important;opacity:.35!important;filter:grayscale(1) brightness(.5)!important}
+.dynasty-showcase .era-champion-athlete .retro-player-image.retro-loaded{opacity:1!important;filter:drop-shadow(4px 4px 5px #000b)!important}
+.dynasty-showcase .era-champion-athlete.retro-rendered .uniform-athlete-svg{display:none!important}
+.dynasty-showcase .era-champion-athlete .retro-player-image.retro-unavailable{display:none!important}
+.awards-showcase .award-card{background:linear-gradient(105deg,color-mix(in srgb,var(--school-main,#6a2937) 37%,#14161b),#15161b 74%)!important;border-top:3px solid var(--school-accent,#bfbcb9)!important}
+.awards-showcase .award-visual-model{width:clamp(88px,11vw,145px)!important;mask-image:linear-gradient(90deg,transparent,#000 25%)!important}
+.awards-showcase .award-visual-model .uniform-athlete-svg{opacity:.01!important}
+.awards-showcase .award-visual-model .retro-player-image{position:absolute!important;bottom:-18%!important;right:-14%!important;height:132%!important;min-width:0!important;max-width:none!important;width:auto!important;opacity:.22!important;object-fit:contain!important;filter:grayscale(1) brightness(.6)!important}
+.awards-showcase .award-visual-model .retro-player-image.retro-loaded{opacity:.98!important;filter:saturate(.9) contrast(1.07) drop-shadow(-3px 1px 3px #000a)!important}
+.awards-showcase .award-card.retro-rendered .uniform-athlete-svg{display:none!important}
+.awards-showcase .retro-player-image.retro-unavailable{display:none!important}
+.awards-showcase .award-card h4{font-family:var(--classic-ui)!important;font-style:normal!important;letter-spacing:.012em!important;font-size:clamp(17px,1.8vw,26px)!important}
+.awards-head strong{font-family:var(--classic-ui)!important;font-size:clamp(20px,2vw,28px)!important}
+@media(max-width:1039px){
+ .era-game-board .retro-stadium-hero{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)!important}
+ .era-game-board .era-uniform-stage{min-height:308px!important;height:auto!important}
+ .era-game-board .era-athlete-panel .retro-player-image{height:clamp(280px,30vw,350px)!important}
+}
+@media(max-width:720px){
+ .topbar .brand-copy strong{font-size:clamp(24px,7.4vw,36px)!important}
+ .topbar .nav-item{font-size:clamp(12px,3.2vw,16px)!important}
+ .era-game-board .retro-stadium-hero{display:flex!important;flex-direction:column-reverse!important;gap:0!important}
+ .era-game-board .retro-stadium-hero .era-uniform-stage{height:265px!important;min-height:265px!important}
+ .era-game-board .retro-stadium-hero .era-score-card{min-height:0!important}
+ .era-athlete-panel .retro-player-image{height:310px!important;bottom:-12px!important}
+ .era-athlete-name b{font-size:13px!important}
+ .era-stage-watermark{font-size:8px!important}
+ .era-score-card .era-metal-strip{font-size:17px!important;min-height:32px!important}
+ .awards-showcase .award-card{min-height:148px!important;padding-right:98px!important}
+ .awards-showcase .award-visual-model{width:105px!important}
+ .awards-showcase .award-visual-model .retro-player-image{height:145%!important;bottom:-25%!important}
+}
+@media(max-width:360px){
+ .era-game-board .retro-stadium-hero .era-uniform-stage{height:228px!important;min-height:228px!important}
+ .era-game-board .retro-stadium-hero .era-athlete-panel .retro-player-image{height:264px!important;bottom:-17px!important}
+ .era-athlete-name b{font-size:12px!important}
+ .era-stage-watermark{font-size:7px!important}
+ .era-score-row b{font-size:15px!important}
+ .awards-showcase .award-visual-model{width:82px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .retro-player-image{animation:none!important;transition:none!important;translate:none!important}
+}
+/* Screenshot-audited second pass: actual side-by-side score, imposing player proportions. */
+@media(min-width:1040px){
+ .era-game-board .retro-stadium-hero .era-score-card{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:auto auto auto!important;align-items:stretch!important;overflow:hidden!important}
+ .era-game-board .retro-stadium-hero .era-score-card .era-metal-strip{grid-column:1/-1!important;grid-row:1!important}
+ .era-game-board .retro-stadium-hero .era-score-row{float:none!important;display:grid!important;width:100%!important;grid-column:auto!important;min-width:0!important;grid-row:2!important}
+ .era-game-board .retro-stadium-hero .era-quarter-wrap{grid-column:1/-1!important;grid-row:3!important;min-width:0!important}
+ .era-game-board .retro-stadium-hero .era-uniform-stage .era-athlete-left .retro-player-image{height:620px!important;bottom:-205px!important}
+ .era-game-board .retro-stadium-hero .era-uniform-stage .era-athlete-right .retro-player-image{height:510px!important;bottom:-90px!important}
+}
+.era-stage-watermark{display:none!important}
+.era-athlete-panel{overflow:hidden!important}
+.era-game-board .retro-stadium-hero .era-score-row.won{border-left:5px solid var(--school-accent)!important}
+.era-game-board .era-score-row strong{font-family:var(--classic-ui)!important}
+@media(max-width:720px){
+ .era-game-board .retro-stadium-hero .era-uniform-stage .era-athlete-left .retro-player-image{height:350px!important;bottom:-95px!important}
+ .era-game-board .retro-stadium-hero .era-uniform-stage .era-athlete-right .retro-player-image{height:325px!important;bottom:-58px!important}
+}
+@media(max-width:360px){
+ .era-game-board .retro-stadium-hero .era-uniform-stage .era-athlete-left .retro-player-image{height:297px!important;bottom:-78px!important}
+ .era-game-board .retro-stadium-hero .era-uniform-stage .era-athlete-right .retro-player-image{height:278px!important;bottom:-50px!important}
+}
+/* Center the awards on a full-size simulated title winner, not just tiny portraits. */
+.retro-champion-plate{position:relative!important;isolation:isolate!important;overflow:hidden!important;box-shadow:inset 0 1px #fffa,0 6px 16px #0008!important}
+.retro-champion-plate:before{content:'';position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 20% 53%,color-mix(in srgb,var(--school-main) 40%,transparent),transparent 65%)}
+.retro-champion-copy{position:relative;z-index:2;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 18px}
+.retro-champion-copy .retro-champion-kicker{font:800 12px/1.2 var(--classic-ui)!important;letter-spacing:.085em;color:#f1d6ca!important}
+.retro-champion-copy>strong{font:900 clamp(26px,3vw,43px)/.96 var(--classic-ui)!important;text-shadow:2px 3px #07080b!important;text-transform:uppercase;overflow-wrap:anywhere}
+.retro-champion-copy>b{font:700 11px/1 var(--classic-ui)!important;letter-spacing:.11em;color:#f3dbd0!important}
+.retro-champion-portrait{position:relative;z-index:2;width:100%;height:100%;overflow:hidden;background:linear-gradient(90deg,color-mix(in srgb,var(--school-main) 23%,#07080c),transparent)}
+.retro-champion-portrait .retro-player-image{position:absolute;bottom:-178px;left:50%;height:410px;width:auto;max-width:none;transform:translateX(-50%);opacity:.3;filter:grayscale(1) brightness(.6)}
+.retro-champion-portrait .retro-player-image.retro-loaded{opacity:1;filter:drop-shadow(5px 3px 6px #000a) contrast(1.06)}
+.dynasty-showcase.stage-awards .retro-champion-plate,.dynasty-showcase.stage-finish .retro-champion-plate{display:grid!important;grid-template-columns:260px minmax(0,1fr)!important;align-items:stretch!important;justify-content:stretch!important;gap:0!important;height:215px!important;min-height:0!important;max-width:1100px!important;margin:8px auto!important;padding:0!important}
+.dynasty-showcase.stage-awards .retro-champion-copy>strong,.dynasty-showcase.stage-finish .retro-champion-copy>strong{font-size:clamp(28px,3.1vw,46px)!important}
+.dynasty-showcase.stage-awards .retro-champion-copy .era-title-final,.dynasty-showcase.stage-finish .retro-champion-copy .era-title-final{margin:4px auto!important;max-width:420px!important;width:100%!important}
+.dynasty-showcase.stage-awards .award-visual-model .retro-player-image,.dynasty-showcase.stage-finish .award-visual-model .retro-player-image{
+ height:218%!important;bottom:-128%!important;right:-56%!important;opacity:.9!important
+}
+.dynasty-showcase.stage-awards .award-visual-model .retro-player-image.retro-loaded,.dynasty-showcase.stage-finish .award-visual-model .retro-player-image.retro-loaded{opacity:.95!important}
+@media(max-width:800px){
+ .dynasty-showcase.stage-awards .retro-champion-plate,.dynasty-showcase.stage-finish .retro-champion-plate{grid-template-columns:110px minmax(0,1fr)!important;height:150px!important}
+ .retro-champion-portrait .retro-player-image{height:280px;bottom:-140px}
+ .retro-champion-copy{gap:2px;padding:5px}
+ .retro-champion-copy .retro-champion-kicker{font-size:9px!important}
+ .retro-champion-copy>strong{font-size:clamp(20px,5vw,31px)!important}
+ .retro-champion-copy>b{font-size:9px!important}
+ .retro-champion-copy .era-title-final{gap:5px!important;padding:5px!important}
+}
+/* An original texture-painted Saturday-night stadium replaces the flat geometry
+   behind the character render. 2000s game crowd textures are intentionally
+   compact and noisy, not claims of any real stadium or team venue. */
+.era-game-board .era-uniform-stage{background:
+ linear-gradient(180deg,#080a1160 0%,#0e111a39 44%,#05060ada 100%),
+ url('../public/assets/retro-night-stadium.webp') center 56%/cover no-repeat!important}
+.era-playoff-board .era-bracket-preview{background:
+ linear-gradient(#0a0b11e7,#0b0d10ea),
+ url('../public/assets/retro-night-stadium.webp') center/cover no-repeat!important}
+.dynasty-showcase{background:
+ linear-gradient(#060811ed,#0a0c11ea),
+ url('../public/assets/retro-night-stadium.webp') center/cover no-repeat!important}
+
+/* PR13 visual audit: eliminate clipped anonymous award figures and unreadable final line. */
+.awards-showcase .award-visual-model{mask-image:linear-gradient(90deg,transparent 0%,#000 22%)!important;overflow:hidden!important}
+.awards-showcase .award-visual-model .retro-player-image,
+.dynasty-showcase.stage-awards .award-visual-model .retro-player-image,
+.dynasty-showcase.stage-finish .award-visual-model .retro-player-image{top:-9%!important;bottom:auto!important;right:-1%!important;height:162%!important;max-height:none!important;object-fit:contain!important;transform:none!important}
+.dynasty-showcase.stage-awards .era-title-final,
+.dynasty-showcase.stage-finish .era-title-final{display:grid!important;grid-template-columns:minmax(48px,1fr) auto minmax(48px,1fr)!important;gap:10px!important;align-items:center!important;justify-items:center!important;width:min(100%,560px)!important;max-width:560px!important;padding:6px 10px!important;letter-spacing:0!important}
+.dynasty-showcase .era-title-final>span{font-family:var(--classic-ui)!important;white-space:nowrap!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;letter-spacing:0!important;font-size:clamp(13px,1.55vw,20px)!important}
+.dynasty-showcase .era-title-final>strong{font-family:var(--classic-ui)!important;white-space:nowrap!important;letter-spacing:0!important;font-size:clamp(20px,2.6vw,29px)!important}
+.era-athlete-panel .retro-player-image.retro-loaded{image-rendering:auto!important;filter:drop-shadow(4px 8px 6px #000d) contrast(1.04) saturate(.92)!important}
+@media(max-width:720px){.awards-showcase .award-visual-model .retro-player-image{top:-5%!important;height:142%!important}.era-title-final{gap:5px!important}}
+
+/* Visual screenshot review: show helmet/face in each award, not cropped shoulder strips.
+   Use the bundled original crowd image behind the athletes, never a UI mockup. */
+.era-uniform-stage{background:linear-gradient(180deg,rgba(5,7,14,.39),rgba(8,11,17,.12) 42%,rgba(3,5,9,.8) 100%),url('../public/assets/retro-night-stadium.webp') center 53%/cover no-repeat!important}
+.awards-showcase .award-visual-model .retro-player-image,
+.dynasty-showcase.stage-awards .award-visual-model .retro-player-image,
+.dynasty-showcase.stage-finish .award-visual-model .retro-player-image{left:-35%!important;right:auto!important;top:-10%!important;bottom:auto!important;height:155%!important}
+@media(max-width:720px){.awards-showcase .award-visual-model .retro-player-image{left:-29%!important;top:-6%!important;height:144%!important}}
