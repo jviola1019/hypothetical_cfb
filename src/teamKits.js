@@ -14,5 +14,5 @@ export const teamKit=(id,variant='home')=>{
  return Object.freeze({id:typeof id==='string'?id:'unknown',teamName,jersey,accent,helmet:b[2],pants:variant==='away'?'#F7F6F2':'#E5E4E1',number:LUMA(jersey)>.179?'#000000':'#FFFFFF',stripe:b[3],variant,verified2026Uniform:false});
 };
 export const kitStyle=(id,variant='home')=>{const k=teamKit(id,variant);return '--school-main:'+k.jersey+';--school-accent:'+k.accent+';--school-helmet:'+k.helmet+';--school-ink:'+k.number+';';};
-export const jerseyClash=(a,b)=>{const [x,y]=[teamKit(a),teamKit(b)].map(k=>k.jersey.slice(1).match(/../g).map(v=>parseInt(v,16)));return Math.sqrt(x.reduce((n,v,i)=>n+(v-y[i])**2,0))<105?'away':'home';};
+export const jerseyClash=(a,b)=>{const [x,y]=[teamKit(a),teamKit(b)].map(k=>k.jersey.slice(1).match(/../g).map(v=>parseInt(v,16)));return Math.sqrt(x.reduce((n,v,i)=>n+(v-y[i])**2,0))<75?'away':'home';};
 export const teamKitCoverage=()=>({fbs:Object.keys(FBS_KITS).length,fcs:Object.keys(FCS_KITS).length});
